@@ -7,22 +7,18 @@ const { Content, Footer } = Layout;
 
 type Props = {
   children: ReactNode;
+  title: string;
 };
 
-const MainLayout: React.FC<Props> = ({ children }) => (
+const MainLayout: React.FC<Props> = ({ children, title }) => (
   <Layout>
     <MenuSider />
     <Layout className="site-layout" style={{ marginLeft: 200 }}>
-      <MenuHeader />
-      {/* <Header className="site-layout-background" style={{ padding: 0 }} /> */}
+      <MenuHeader title={title} />
       <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>
-        <div className="site-layout-background main-container" style={{ padding: 24 }}>
-          {children}
-        </div>
+        <div className="site-layout-background main-container">{children}</div>
       </Content>
-      <Footer style={{ textAlign: "center" }}>
-        Ant Design ©2018 Created by Ant UED
-      </Footer>
+      <Footer style={{ textAlign: "center" }}>NextJS Prisma</Footer>
     </Layout>
   </Layout>
 );

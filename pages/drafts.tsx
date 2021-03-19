@@ -1,6 +1,6 @@
 import React from "react";
 import { GetServerSideProps } from "next";
-import Layout from "../components/Layout";
+import MainLayout from "../components/layouts/MainLayout";
 import Post, { PostProps } from "../components/Post";
 import { useSession, getSession } from "next-auth/client";
 import prisma from "../lib/prisma";
@@ -37,15 +37,15 @@ const Drafts: React.FC<Props> = (props) => {
 
   if (!session) {
     return (
-      <Layout>
+      <MainLayout title="">
         <h1>My Drafts</h1>
         <div>You need to be authenticated to view this page.</div>
-      </Layout>
+      </MainLayout>
     );
   }
 
   return (
-    <Layout>
+    <MainLayout title="">
       <div className="page">
         <h1>My Drafts</h1>
         <main>
@@ -70,7 +70,7 @@ const Drafts: React.FC<Props> = (props) => {
           margin-top: 2rem;
         }
       `}</style>
-    </Layout>
+    </MainLayout>
   );
 };
 

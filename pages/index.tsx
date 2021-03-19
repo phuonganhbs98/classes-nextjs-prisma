@@ -22,7 +22,7 @@ type Props = {
 
 const Blog: React.FC<Props> = (props) => {
   return (
-    <MainLayout>
+    <MainLayout title="Lịch học và dạy">
       <div className="page">
         <h1>Public Feed</h1>
         <main>
