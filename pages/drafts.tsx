@@ -1,3 +1,5 @@
+// DELETE
+
 import React from "react";
 import { GetServerSideProps } from "next";
 import MainLayout from "../components/layouts/MainLayout";
