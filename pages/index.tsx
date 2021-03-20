@@ -16,7 +16,10 @@ const Blog: React.FC<Props> = (props) => {
           events={[]}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 500 }}
+          style={{
+            height: "calc(100vh - 24px - 70px - 64px - 16px - 16px)",
+            minHeight: 500,
+          }}
         />
       </div>
     </MainLayout>
