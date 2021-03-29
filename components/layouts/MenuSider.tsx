@@ -1,59 +1,38 @@
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Spin } from "antd";
 import React from "react";
-import {
-  AppstoreOutlined,
-  TeamOutlined,
-  UserOutlined,
-  UploadOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
-import Link from "next/link";
+import { useSession } from "next-auth/client"
 import { useRouter } from "next/router";
+import StudentBar from "../sidebar/StudentBar"
+import TeacherBar from "../sidebar/TeacherBar"
+import { LoadingOutlined } from "@ant-design/icons";
 
-type Props = {};
+const spinIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 
-const { Sider } = Layout;
+type Props = {
+  loading: any,
+  role: any
+};
 
-const MenuSider: React.FC<Props> = () => {
+const MenuSider: React.FC<Props> = ({role, loading}) => {
   const router = useRouter();
   const isActive: (pathname: string) => boolean = (pathname) => {
     return router.pathname === pathname;
   };
 
   return (
-    <Sider
-      style={{
-        overflow: "auto",
-        height: "100vh",
-        position: "fixed",
-        left: 0,
-      }}
-    >
-      <div className="logo" />
-      <Menu
-        theme="dark"
-        mode="inline"
-        defaultSelectedKeys={["4"]}
-        selectedKeys={[router.pathname]}
-      >
-        <Menu.Item key="/" icon={<AppstoreOutlined />} active={true}>
-          <Link href="/">Lịch trình</Link>
-        </Menu.Item>
-        <Menu.Item key="/classes" icon={<TeamOutlined />}>
-          <Link href="/classes">Danh sách lớp học</Link>
-        </Menu.Item>
-        <Menu.Item key="/students" icon={<UserOutlined />}>
-          <Link href="/students">Danh sách học sinh</Link>
-        </Menu.Item>
-        <Menu.Item key="/achievements" icon={<VideoCameraOutlined />}>
-          <Link href="/achievements">Bảng thành tích</Link>
-        </Menu.Item>
-        <Menu.Item key="/assignments" icon={<UploadOutlined />}>
-          <Link href="/assignments">Danh sách bài tập</Link>
-        </Menu.Item>
-      </Menu>
-    </Sider>
-  );
+    loading ?
+      (
+        <div style={{ width: 44 }} key="1">
+          <Spin indicator={spinIcon} />
+        </div>
+      ) :
+      (role === "STUDENT") ? (
+        <StudentBar pathname={router.pathname}/>
+      ) : (
+        <TeacherBar pathname={router.pathname}/>
+        )
+  )
+
 };
 
 export default MenuSider;
