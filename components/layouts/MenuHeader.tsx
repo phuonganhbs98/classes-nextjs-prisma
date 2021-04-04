@@ -42,21 +42,13 @@ const MenuHeader: React.FC<Props> = ({ title }) => {
           </Link>
         </>
       );
-      console.log("userId: ")
-      console.log(session?.userId)
 
   return (
     <Header
       className="site-layout-background"
-      // style={{
-      //   zIndex: 1,
-      //   width: "100%",
-      //   padding: 0,
-      // }}
       style={{ 
         padding: 0,
         marginBottom: '20px',
-        // width: '100%'
        }}
     >
       <PageHeader

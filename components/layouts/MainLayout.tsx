@@ -4,6 +4,7 @@ import MenuSider from "./MenuSider";
 import MenuHeader from "./MenuHeader";
 import { useSession } from "next-auth/client"
 import { LoadingOutlined } from "@ant-design/icons";
+import SignInForm from "../../pages/login";
 
 const { Content, Footer } = Layout;
 
@@ -14,11 +15,8 @@ type Props = {
 const spinIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 const MainLayout: React.FC<Props> = ({ children, title }) => {
   const [session, loading] = useSession();
-  console.log("------->Session: ");
-  console.log(session)
   const role = session ? session.role : null
-  
-  return (
+  return loading?(<p>Loading ....</p>):session?(
     <Layout style={{ minHeight: '100vh' }}>
         <MenuSider role={role} loading={loading}/>
       <Layout className="site-layout"
@@ -38,7 +36,7 @@ const MainLayout: React.FC<Props> = ({ children, title }) => {
         <Footer style={{ textAlign: "center" }}>NextJS Prisma</Footer>
       </Layout>
     </Layout>
-  );
+  ): <SignInForm />;
 }
 
 export default MainLayout;

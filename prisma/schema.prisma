@@ -29,7 +29,7 @@ model User {
   name            String?
   email           String        @unique
   emailVerified   DateTime?     @map(name: "email_verified")
-  password        String?       
+  password        String?
   role            Role          @default(STUDENT)
   image           String?
   birthDate       DateTime?     @map(name: "date_birth")
@@ -50,6 +50,7 @@ model Schedule {
   id      Int      @id @default(autoincrement())
   startAt DateTime @map(name: "start_at")
   endAt   DateTime @map(name: "end_at")
+  dayInWeek     Int
   class   Class    @relation(fields: [classId], references: [id])
   classId Int
 
