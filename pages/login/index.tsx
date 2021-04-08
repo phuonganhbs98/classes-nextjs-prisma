@@ -60,7 +60,7 @@ export default function SignInForm() {
                 <Button type="link" 
                         htmlType="button" 
                         style={{marginLeft: '30%'}}
-                        onClick={() => signIn('google', { callbackUrl: 'http://localhost:3000' })}>Đăng nhập bằng tài khoản google</Button>
+                        onClick={() => signIn('google')}>Đăng nhập bằng tài khoản google</Button>
             </Form>
 
         </div>
