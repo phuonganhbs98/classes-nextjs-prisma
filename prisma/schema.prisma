@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -7,26 +7,93 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
+model Class {
+  id           Int           @id @default(autoincrement())
+  name         String
+  capacity     Int
+  status       Status        @default(PREPARE)
+  teacher      User          @relation(fields: [teacherId], references: [id])
+  teacherId    Int
+  students     User[]        @relation(name: "student_Classes", references: [id])
+  schedules    Schedule[]
+  assignments  Assignment[]
+  achievements Achievement[]
+  startAt      DateTime      @map(name: "start_at")
+  endAt        DateTime      @map(name: "end_at")
+
+  @@map(name: "classes")
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map(name: "email_verified")
-  image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-  posts         Post[]
+  id              Int           @id @default(autoincrement())
+  name            String?
+  email           String        @unique
+  emailVerified   DateTime?     @map(name: "email_verified")
+  password        String?
+  role            Role          @default(STUDENT)
+  image           String?
+  birthDate       DateTime?     @map(name: "date_birth")
+  gender          Gender?
+  phoneNumber     String?       @map(name: "phone_number")
+  createdClasses  Class[]
+  acceptedClasses Class[]       @relation(name: "student_Classes", references: [id])
+  achievements    Achievement[]
+  assignments     Assignment[]
+  answers         Answer[]
+  createdAt       DateTime      @default(now()) @map(name: "created_at")
+  updatedAt       DateTime      @updatedAt @map(name: "updated_at")
 
   @@map(name: "users")
+}
+
+model Schedule {
+  id      Int      @id @default(autoincrement())
+  startAt DateTime @map(name: "start_at")
+  endAt   DateTime @map(name: "end_at")
+  dayInWeek     Int
+  class   Class    @relation(fields: [classId], references: [id])
+  classId Int
+
+  @@map(name: "schedules")
+}
+
+model Assignment {
+  id         Int       @id @default(autoincrement())
+  content    String
+  attachment String?
+  deadline   DateTime?
+  answers    Answer[]
+  teacher    User      @relation(fields: [teacherId], references: [id])
+  teacherId  Int
+  class      Class     @relation(fields: [classId], references: [id])
+  classId    Int
+
+  @@map(name: "assignments")
+}
+
+model Answer {
+  id           Int        @id @default(autoincrement())
+  content      String
+  attachment   String?
+  score        Float      @default(0)
+  student      User       @relation(fields: [studentId], references: [id])
+  studentId    Int
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignmentId Int
+
+  @@map(name: "answers")
+}
+
+model Achievement {
+  id        Int   @id @default(autoincrement())
+  score     Float @default(0)
+  student   User  @relation(fields: [studentId], references: [id])
+  studentId Int
+  class     Class @relation(fields: [classId], references: [id])
+  classId   Int
+  //studentId, classId
+
+  @@map(name: "achievements")
 }
 
 model Account {
@@ -59,4 +126,21 @@ model Session {
   updatedAt    DateTime @default(now()) @map(name: "updated_at")
 
   @@map(name: "sessions")
+}
+
+enum Role {
+  TEACHER
+  STUDENT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Status {
+  PREPARE
+  STUDYING
+  FINISHED
 }

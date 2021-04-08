@@ -24,31 +24,38 @@ const MenuHeader: React.FC<Props> = ({ title }) => {
     <div style={{ width: 44 }} key="1">
       <Spin indicator={spinIcon} />
     </div>
-  ) : session ? (
-    <Link href="/profile" key="1">
+  ) : 
+  session ? (
+    <Link href={`/users/${session?.userId}`} key="1" > 
       <a>
         <Avatar src={session?.user.image} />
+        {session?.user.name}
       </a>
     </Link>
   ) : (
-    <Link href="/api/auth/signin" key="1">
-      <a data-active={isActive("/signup")}>Đăng nhập</a>
-    </Link>
-  );
+        <>
+          <Link href="/login" key="1">
+            <a data-active={isActive("/login")}>Đăng nhập</a>
+          </Link>  /
+          <Link href="/signup" key="2">
+            <a data-active={isActive("/signup")}>Đăng ký</a>
+          </Link>
+        </>
+      );
 
   return (
     <Header
       className="site-layout-background"
-      style={{
-        zIndex: 1,
-        width: "100%",
+      style={{ 
         padding: 0,
-      }}
+        marginBottom: '20px',
+       }}
     >
       <PageHeader
         style={{ maxHeight: "64px", padding: 12, paddingLeft: 24 }}
         title={title}
-        extra={[auth]}
+        onBack={()=> router.back()}
+        extra={auth}
       />
     </Header>
   );

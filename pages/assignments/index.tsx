@@ -1,6 +1,5 @@
 import React from "react";
-import { PageHeader } from "antd";
-import MainLayout from "../components/layouts/MainLayout";
+import MainLayout from "../../components/layouts/MainLayout";
 
 const Assignments: React.FC = () => {
   return (
