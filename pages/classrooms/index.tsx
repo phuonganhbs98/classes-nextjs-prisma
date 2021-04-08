@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import deleteClass from '../../lib/classroom/deleteClass'
 import Link from "next/link";
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const {
     data,
     teachers
