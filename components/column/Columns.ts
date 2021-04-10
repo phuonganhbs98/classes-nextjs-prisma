@@ -19,11 +19,11 @@ const columnClasses = [
         dataIndex: 'capacity',
         key: 'key'
       },
-      // {
-      //   title:'SL hiện tại',
-      //   dataIndex: 'count',
-      //   key: 'count'
-      // },
+      {
+        title:'SL hiện tại',
+        dataIndex: 'count',
+        key: 'count'
+      },
       {
         title:'Trạng thái',
         dataIndex: 'status',

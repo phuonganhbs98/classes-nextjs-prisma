@@ -1,10 +1,5 @@
-import { PrismaClient } from "@prisma/client"
+import axios from "axios";
 
 export default async function deleteClass(id: number){
-    const prisma = new PrismaClient()
-    await prisma.class.delete({
-        where: {
-            id: id
-        }
-    })
+    await axios.delete(`http://localhost:3000/api/classrooms/${id}`).then(res=> console.log(res.data))
 }

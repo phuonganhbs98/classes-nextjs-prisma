@@ -43,7 +43,25 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         })
         res.status(200).json("success")
     } else if (method === 'GET') {
-        const result = await prisma.class.findMany()
+        const result = await prisma.class.findMany({
+            select:{
+                id: true,
+                name: true,
+                capacity: true,
+                teacherId: true,
+                teacher: {
+                    select:{
+                        name: true
+                    }
+                },
+                status: true,
+                students: {
+                    select:{
+                        id: true
+                    }
+                }
+            }
+        })
         res.status(200).json(result)
     }else if(method === 'PUT'){
         const {

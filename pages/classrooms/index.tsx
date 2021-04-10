@@ -1,57 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PageHeader, Button, Table } from "antd";
 import MainLayout from "../../components/layouts/MainLayout";
 import column from '../../components/column/Columns'
-import { Class, PrismaClient, User } from "@prisma/client";
+import { Class } from "@prisma/client";
 import { useSession } from "next-auth/client";
 import { getAllClassroom } from "../../lib/classroom/getClassroomInfor";
 import { useRouter } from "next/router";
 import deleteClass from '../../lib/classroom/deleteClass'
 import Link from "next/link";
 
-export async function getServerSideProps() {
-  const {
-    data,
-    teachers
-  } = await getAllClassroom()
-
-  return {
-    props: { data, teachers },
-  }
-}
-
 function onChange(pagination: any) {
   console.log('params', pagination);
 }
 
 const columns = column.columnClasses;
-
-function Classes({ data, teachers }) {
+type Props={}
+const Classes: React.FC<Props> = () => {
   const [session] = useSession()
+  const [data, setData] = useState([])
+  const [display, setDisplay] = useState({display: 'inline'})
+  useEffect(()=> {
+    getAllClassroom().then(res => {
+      setData(res)
+    })
+    if(session?.role==='STUDENT') {
+      setDisplay({display: 'none'})
+    }
+    else setDisplay({display: 'inline'})
+  },[session])
+  
   const router = useRouter()
-  let list = data ? data : null
-  let classes = []
-  if (session) {
-    if (session.role === 'TEACHER' && list.length > 0) {
-      list = data.filter((a: Class) => (a.teacherId === session.userId))
-
-    }
-    if (list.length > 0) {
-      list.forEach((x: Class) => {
-        teachers?.forEach((y: User) => {
-          if (y.id === x.teacherId) {
-            classes = [...classes, { ...x, teacherName: y.name }]
-          }
-        })
-      })
-    }
-  }
-  let count = 0
-  list = classes.length > 0 ? classes.map((a: Class) => ({
+  let list =[]
+  if(session?.role ==='TEACHER'){
+    list = data.filter((a:any)=>a.teacherId === session?.userId)
+  }else list = data
+  let count =0
+   list= list.length > 0 ? list.map((a: Class) => ({
     ...a,
     action: [
-      (<Button type="link" onClick={() => router.push(`/classrooms/${a.id}`)} >Xem</Button>),
-      (<Button type="primary" onClick={() => deleteClass(a.id)} danger>Xóa</Button>)
+      (<Button type="link" onClick={() => router.push({
+        pathname: `/classrooms/${a.id}`,
+        // query: {id: a.id}
+      })} >Xem</Button>),
+      (<Button style={display} type="primary" onClick={() => deleteClass(a.id)} danger>Xóa</Button>)
     ],
     key: ++count
   })) : []
@@ -64,6 +55,7 @@ function Classes({ data, teachers }) {
           <Link key="1" href="/classrooms/create">
             <Button
               type="primary"
+              style={display}
             >Tạo lớp mới</Button>
           </Link>
         ]}

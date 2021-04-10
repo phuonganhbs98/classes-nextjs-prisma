@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { Class } from ".prisma/client";
+import axios, { AxiosResponse } from "axios";
 
 export default async function updateStatusClass(id: number) {
-    const prisma = new PrismaClient()
-    const currentClass = await prisma.class.findUnique({
-        where: {
-            id: id
-        }
-    })
+    
+    let data :AxiosResponse<Class> = await axios.get(`http://localhost:3000/api/classrooms/${id}`)
+    const currentClass = data.data
     const now = new Date();
     let status = ''
     if (now < currentClass.startAt) {

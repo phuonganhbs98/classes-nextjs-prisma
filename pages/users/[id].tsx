@@ -1,53 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, PageHeader, Row, Col, Table, Divider } from "antd";
 import MainLayout from "../../components/layouts/MainLayout";
 import { signOut } from "next-auth/client";
-import { PrismaClient } from "@prisma/client";
 import Avatar from "antd/lib/avatar/avatar";
 import { formatDate } from '../../lib/formatDate'
-import { getAllClassroom } from '../../lib/classroom/getClassroomInfor'
 import column from '../../components/column/Columns'
 import deleteClass from '../../lib/classroom/deleteClass'
 import { useRouter } from "next/router";
+import { Class, Gender, Role } from ".prisma/client";
+import { getUserById } from "../../lib/user/getUser";
 
+type UserInfor = {
+  id: number,
+  role: Role,
+  gender: Gender,
+  birthDate: Date,
+  phoneNumber: string,
+  acceptedClasses: Class,
+  createdClasses: Class,
+  createdAt: Date,
+  email: string,
+  image: string,
+  name: string
+}
 export async function getServerSideProps({ params }) {
   let id = parseInt(params.id)
-  const prisma = new PrismaClient()
-  const user = await prisma.user.findUnique({
-    where: {
-      id: id
-    }
-  })
-  const result = {
-    ...user,
-    createdAtJson: user.createdAt.toJSON()
-  }
-  delete result.createdAt
-  delete result.updatedAt
-
-  let classes = []
-
-  // lay danh sach lop da tao
-  if (user.role === 'TEACHER') {
-    const { data } = await getAllClassroom()
-    let count = 0
-    data.forEach(x => {
-      if (x.teacherId === id) {
-        classes = [...classes, {
-          ...x,
-          teacherName: user.name,
-          key: ++count
-        }]
-      }
-    });
-  } else {
-// neu la sv/hs thi phai hien thi cac lop da dang ky
-  }
-
   return {
     props: {
-      result,
-      classes
+      id
     }
   }
 }
@@ -56,13 +36,31 @@ function onChange(pagination: any) {
   console.log('params', pagination);
 }
 
-export default function Profile({ result, classes }) {
-  const gender = result.gender === 'FEMALE' ? "Nữ" : result.gender === 'MALE' ? "Nam" : "Không có thông tin"
-  const birthDate = result.dateBirth ? new Date(result.dateBirth).toDateString() : "Không có thông tin"
-  const phoneNumber = result.phoneNumber ? result.phoneNumber : "Không có thông tin"
-  const classListTitle = (result.role === 'STUDENT' ? 'Các lớp đang tham gia' : 'Các lớp đã tạo').toUpperCase()
+const Profile: React.FC<{ id: number }> = (props) => {
+  const id = props.id
+  const [user, setUser] = useState<UserInfor>()
+  const [classes, setClasses] = useState<Class[]>([])
+  const [show, setShow] = useState(false)
+  const gender = user?.gender === 'FEMALE' ? "Nữ" : user?.gender === 'MALE' ? "Nam" : "Không có thông tin"
+  const birthDate = user?.birthDate ? formatDate(new Date(user?.birthDate)) : "Không có thông tin"
+  const phoneNumber = user?.phoneNumber ? user?.phoneNumber : "Không có thông tin"
+  const classListTitle = (user?.role === 'STUDENT' ? 'Các lớp đang tham gia' : 'Các lớp đã tạo').toUpperCase()
   const columns = column.columnClasses
   const router = useRouter()
+  useEffect(()=>{
+    getUserById(id).then(res => {
+      setUser(res)
+      if(res.role === 'STUDENT') {
+        setClasses(res.acceptedClasses)
+        setShow(false)
+      }
+      else {
+        setClasses(res.createdClasses)
+        setShow(true)
+      }
+    })
+  },[])
+  const editButton = show?{display: 'inline'}:{display: 'none'}
   let data = []
   if (classes.length > 0) {
     classes.forEach(x => {
@@ -70,7 +68,7 @@ export default function Profile({ result, classes }) {
         ...x,
         action: [
           (<Button key="1" type="link" onClick={() => router.push(`/classrooms/${x.id}`)} >Xem</Button>),
-          (<Button key ="2" type="primary" onClick={() => deleteClass(x.id)} danger>Xóa</Button>)],
+          (<Button key="2" type="ghost" style={editButton} onClick={() => deleteClass(x.id)} danger>Xóa</Button>)],
       }]
     });
   }
@@ -90,7 +88,7 @@ export default function Profile({ result, classes }) {
           <Avatar
             size={200}
             shape="circle"
-            src={result?.image}
+            src={user?.image}
             alt="avatar"
           />
         </Col>
@@ -98,20 +96,20 @@ export default function Profile({ result, classes }) {
           <p style={{
             fontSize: '30px',
             fontWeight: 'bolder'
-          }}>{result.name}</p>
+          }}>{user?.name}</p>
           <Row key="r2">
             <Col key="3" span={12}>
-              <strong>Vai trò:</strong> <h1>{result.role}</h1>
+              <strong>Vai trò:</strong> <h1>{user?.role}</h1>
               <strong>Giới tính:</strong> <h1>{gender}</h1>
             </Col>
             <Col key="4" span={12}>
               <strong>Ngày sinh:</strong> <h1>{birthDate}</h1>
-              <strong>Ngày tham gia:</strong> <h1>{formatDate(new Date(result.createdAtJson))}</h1>
+              <strong>Ngày tham gia:</strong> <h1>{formatDate(new Date(user?.createdAt))}</h1>
             </Col>
           </Row>
           <Row key="r3">
             <Col key="5" span={12} >
-              <strong>Email: </strong> <h1>{result.email}</h1>
+              <strong>Email: </strong> <h1>{user?.email}</h1>
             </Col>
             <Col key="6" span={12}>
               <strong>Số điện thoại: </strong> <h1>{phoneNumber}</h1>
@@ -127,3 +125,5 @@ export default function Profile({ result, classes }) {
     </MainLayout>
   );
 };
+
+export default Profile;
