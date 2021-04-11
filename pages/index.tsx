@@ -14,6 +14,13 @@ type Props = {};
 const Blog: React.FC<Props> = (props) => {
   const [session, loading] = useSession();
   const spinIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
+  const events=[{
+    id: 0,
+    title: 'All Day Event very long title',
+    // allDay: true,
+    start: new Date('2021 04 12'),
+    end: new Date('2021 04 12'),
+  }]
   return (
     loading?(
       <div style={{ width: 44 }} key="1">
@@ -24,7 +31,7 @@ const Blog: React.FC<Props> = (props) => {
       <div style={{ padding: 16 }}>
         <Calendar
           localizer={localizer}
-          events={[]}
+          events={events}
           startAccessor="start"
           endAccessor="end"
           style={{

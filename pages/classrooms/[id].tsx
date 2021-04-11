@@ -1,5 +1,5 @@
 import MainLayout from "../../components/layouts/MainLayout";
-import { List, PageHeader, Button, Row, Col, Divider, Tooltip } from "antd";
+import { List, PageHeader, Button, Row, Col, Divider, Tooltip, Alert } from "antd";
 import { useSession } from "next-auth/client";
 import { formatDate, formatTime, formatDay } from "../../lib/formatDate"
 import { getClassById } from '../../lib/classroom/getClassroomInfor'
@@ -7,9 +7,10 @@ import deleteClass from '../../lib/classroom/deleteClass'
 import React, { useEffect, useState } from "react";
 import { Schedule, ClassStatus, RegisterStatus } from ".prisma/client";
 import checkRegister from "../../lib/register/checkRegister";
-import {sendRegister, cancel} from "../../lib/register/handleRegister";
+import { sendRegister, cancel } from "../../lib/register/handleRegister";
 import { useRouter } from "next/router";
 import { MinusOutlined } from '@ant-design/icons';
+import RegisterRequest from "../../components/RegisterRequest";
 
 type ClassroomInfor = {
     id: number;
@@ -55,6 +56,7 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
     const [canEdit, setCanEdit] = useState(false)
     const [register, setRegister] = useState<Boolean>()
     const [registerButton, setRegisterButton] = useState<string>()
+    const [showAlert, setShowAlert] = useState(false)
 
     useEffect(() => {
         if (session) {
@@ -63,7 +65,7 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
             getClassById(id).then(res => {
                 setData(res.data)
                 setSchedules(res.schedules)
-                if (data?.teacherId === session.userId) setCanEdit(true)
+                if (res.data.teacherId === session.userId) setCanEdit(true)
                 else setCanEdit(false)
             })
             checkRegister(session.userId, id).then(res => {
@@ -83,6 +85,7 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
 
     const editButton = canEdit ? { display: 'inline' } : { display: 'none' }
     const disableButton = ((role === 'STUDENT') && !register) ? false : true
+    const showRequest = (role === 'TEACHER') ? 'inline' : 'none'
     let schedule = []
     if (schedules.length > 0) {
         schedules.forEach((x: Schedules) => {
@@ -98,16 +101,35 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
     }
 
     const handleRegister = () => {
-        sendRegister(userId, id)
-        setRegister(true)
-        setRegisterButton('Đã đăng ký')
+        if (data.capacity > data.count) {
+            sendRegister(userId, id)
+            setRegister(true)
+            setRegisterButton('Đã đăng ký')
+            setShowAlert(false)
+        } else {
+            setShowAlert(true)
+        }
     }
 
-    const cancelRegister = () =>{
+    const cancelRegister = () => {
         cancel(userId, id)
         setRegister(false)
         setRegisterButton('Đăng ký')
     }
+
+    const closeAlert = () => {
+        setShowAlert(false)
+    }
+    console.log(showAlert)
+    let alert = showAlert ?
+        <Alert
+            // message="Không thể đăng ký "
+            message="Lớp đã đầy"
+            type="warning"
+            onClose={closeAlert}
+            showIcon
+            closable
+        /> : null
     return (
         <MainLayout title="Thông tin lớp học">
             <PageHeader
@@ -115,12 +137,16 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
                 extra={[
                     <Button key='1' disabled={disableButton} type="primary" onClick={() => handleRegister()}>{registerButton}</Button>,
                     (<Tooltip title="Hủy đăng ký">
-                        <Button type="primary" size="small" style={{display: disableButton?'inline':'none'}} shape="circle" icon={<MinusOutlined />} onClick={() => cancelRegister()} danger/>
+                        <Button type="primary" size="small" style={{ display: ((role === 'STUDENT') && disableButton) ? 'inline' : 'none' }} shape="circle" icon={<MinusOutlined />} onClick={() => cancelRegister()} danger />
                     </Tooltip>),
                     <Button key='2' style={editButton} type="ghost">Sửa</Button>,
-                    <Button key='3' style={editButton} type="primary" onClick={() => deleteClass(id)} danger>Xóa</Button>
+                    <Button key='3' style={editButton} type="primary" onClick={() => deleteClass(id)} danger>Xóa</Button>,
+                    <br />,
+
+
                 ]}
             ></PageHeader>
+            {[alert]}
             <p style={{
                 fontSize: '30px',
                 fontWeight: 'bolder',
@@ -156,6 +182,10 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
                     />
                 </Col>
             </Row>
+            <RegisterRequest
+                display={showRequest}
+                classId={id}
+            />
         </MainLayout>
     )
 }

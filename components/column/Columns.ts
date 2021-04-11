@@ -36,6 +36,30 @@ const columnClasses = [
       }
 ]
 
+const columnStudents=[
+  {
+    title:'ID',
+    dataIndex: 'id',
+  },
+  {
+    title:'Tên sinh viên',
+    dataIndex: 'name',
+  },
+  {
+    title:'Email',
+    dataIndex: 'email',
+  },
+  {
+    title:'Số điện thoại',
+    dataIndex: 'phoneNumber',
+  },
+  {
+    title:'Hành động',
+    dataIndex: 'action',
+  }
+]
+
 export default {
-    columnClasses
+    columnClasses,
+    columnStudents
 };

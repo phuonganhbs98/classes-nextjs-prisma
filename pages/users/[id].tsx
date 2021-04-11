@@ -121,7 +121,7 @@ const Profile: React.FC<{ id: number }> = (props) => {
       <br />
       <br />
       <Divider orientation="left" dashed={true} style={{ fontSize: '20px', fontWeight: 'bolder' }}>{classListTitle}</Divider>
-      <Table columns={columns} dataSource={data} onChange={onChange} />
+      <Table columns={columns} dataSource={data} onChange={onChange} rowKey={(record)=> {return record.id.toString()}}/>
     </MainLayout>
   );
 };

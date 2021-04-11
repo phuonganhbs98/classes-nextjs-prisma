@@ -11,3 +11,9 @@ export async function cancel(studentId:number, classId:number) {
     .then(res => console.log(res.data))
     .catch(err =>console.error(err))
 }
+
+export async function accept(studentId:number, classId:number) {
+    await axios.put(`http://localhost:3000/api/registers/${studentId}/${classId}`)
+    .then(res => console.log(res.data))
+    .catch(err =>console.error(err))
+}
