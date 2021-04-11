@@ -5,8 +5,7 @@ import { formatDate, formatTime, formatDay } from "../../lib/formatDate"
 import { getClassById } from '../../lib/classroom/getClassroomInfor'
 import deleteClass from '../../lib/classroom/deleteClass'
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { Schedule, Status } from ".prisma/client";
+import { Schedule, ClassStatus } from ".prisma/client";
 
 type ClassroomInfor = {
     id: number;
@@ -16,7 +15,7 @@ type ClassroomInfor = {
         name: string;
     };
     teacherName: string;
-    status: Status;
+    status: ClassStatus;
     capacity: number;
     students: {
         id: number;
@@ -44,15 +43,12 @@ export async function getServerSideProps({ params }) {
 
 const ClassroomInfor: React.FC<{ id: number }> = (props) => {
     const [session] = useSession()
-    const router = useRouter()
     const id = props.id
     const [role, setRole] = useState()
     const [userId, setUserId] = useState()
     const [data, setData] = useState<ClassroomInfor>()
     const [schedules, setSchedules] = useState<Schedules[]>([])
     const [canEdit, setCanEdit] = useState(false)
-    console.log("startAt")
-    console.log(data?.startAt?true:false)
     useEffect(() => {
         if (session) {
             setRole(session.role)

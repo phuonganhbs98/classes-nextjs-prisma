@@ -8,51 +8,65 @@ generator client {
 }
 
 model Class {
-  id           Int           @id @default(autoincrement())
-  name         String
-  capacity     Int
-  status       Status        @default(PREPARE)
-  teacher      User          @relation(fields: [teacherId], references: [id])
-  teacherId    Int
-  students     User[]        @relation(name: "student_Classes", references: [id])
-  schedules    Schedule[]
-  assignments  Assignment[]
-  achievements Achievement[]
-  startAt      DateTime      @map(name: "start_at")
-  endAt        DateTime      @map(name: "end_at")
+  id               Int           @id @default(autoincrement())
+  name             String
+  capacity         Int
+  status           ClassStatus   @default(PREPARE)
+  teacher          User          @relation(fields: [teacherId], references: [id])
+  teacherId        Int
+  students         User[]        @relation(name: "student_Classes", references: [id])
+  registerRequests Register[]
+  schedules        Schedule[]
+  assignments      Assignment[]
+  achievements     Achievement[]
+  startAt          DateTime      @map(name: "start_at")
+  endAt            DateTime      @map(name: "end_at")
 
   @@map(name: "classes")
 }
 
+model Register {
+  id        Int            @id @default(autoincrement())
+  status    RegisterStatus @default(REGISTERED)
+  studentId Int
+  student   User           @relation(fields: [studentId], references: [id])
+  classId   Int
+  classroom Class          @relation(fields: [classId], references: [id])
+
+  @@unique([studentId, classId])
+  @@map(name: "register_requests")
+}
+
 model User {
-  id              Int           @id @default(autoincrement())
-  name            String?
-  email           String        @unique
-  emailVerified   DateTime?     @map(name: "email_verified")
-  password        String?
-  role            Role          @default(STUDENT)
-  image           String?
-  birthDate       DateTime?     @map(name: "date_birth")
-  gender          Gender?
-  phoneNumber     String?       @map(name: "phone_number")
-  createdClasses  Class[]
-  acceptedClasses Class[]       @relation(name: "student_Classes", references: [id])
-  achievements    Achievement[]
-  assignments     Assignment[]
-  answers         Answer[]
-  createdAt       DateTime      @default(now()) @map(name: "created_at")
-  updatedAt       DateTime      @updatedAt @map(name: "updated_at")
+  id               Int           @id @default(autoincrement())
+  name             String?
+  email            String        @unique
+  emailVerified    DateTime?     @map(name: "email_verified")
+  password         String?
+  role             Role          @default(STUDENT)
+  image            String?
+  birthDate        DateTime?     @map(name: "date_birth")
+  gender           Gender?
+  phoneNumber      String?       @map(name: "phone_number")
+  registerRequests Register[]
+  createdClasses   Class[]
+  acceptedClasses  Class[]       @relation(name: "student_Classes", references: [id])
+  achievements     Achievement[]
+  assignments      Assignment[]
+  answers          Answer[]
+  createdAt        DateTime      @default(now()) @map(name: "created_at")
+  updatedAt        DateTime      @updatedAt @map(name: "updated_at")
 
   @@map(name: "users")
 }
 
 model Schedule {
-  id      Int      @id @default(autoincrement())
-  startAt DateTime @map(name: "start_at")
-  endAt   DateTime @map(name: "end_at")
-  dayInWeek     Int
-  class   Class    @relation(fields: [classId], references: [id])
-  classId Int
+  id        Int      @id @default(autoincrement())
+  startAt   DateTime @map(name: "start_at")
+  endAt     DateTime @map(name: "end_at")
+  dayInWeek Int
+  class     Class    @relation(fields: [classId], references: [id])
+  classId   Int
 
   @@map(name: "schedules")
 }
@@ -139,8 +153,13 @@ enum Gender {
   OTHER
 }
 
-enum Status {
+enum ClassStatus {
   PREPARE
   STUDYING
   FINISHED
+}
+
+enum RegisterStatus {
+  REGISTERED
+  ACCEPTED
 }

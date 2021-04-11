@@ -40,7 +40,6 @@ const Classes: React.FC<Props> = () => {
     action: [
       (<Button type="link" onClick={() => router.push({
         pathname: `/classrooms/${a.id}`,
-        // query: {id: a.id}
       })} >Xem</Button>),
       (<Button style={display} type="primary" onClick={() => deleteClass(a.id)} danger>Xóa</Button>)
     ],

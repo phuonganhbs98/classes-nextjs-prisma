@@ -7,9 +7,9 @@ export default async function updateStatusClass(id: number) {
     const currentClass = data.data
     const now = new Date();
     let status = ''
-    if (now < currentClass.startAt) {
+    if (now < new Date(currentClass.startAt)) {
         status = 'PREPARE'
-    } else if (now > currentClass.endAt) {
+    } else if (now > new Date(currentClass.endAt)) {
         status = 'FINISHED'
     } else status = 'STUDYING'
     if (status !== currentClass.status) {
