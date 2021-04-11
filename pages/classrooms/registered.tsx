@@ -5,6 +5,8 @@ import { useSession } from "next-auth/client";
 import { ClassStatus, User } from ".prisma/client";
 import getRegisteredClass from "../../lib/register/getRegisteredClass";
 import Columns from "../../components/column/Columns";
+import { cancel } from "../../lib/register/handleRegister";
+import { useRouter } from "next/router";
 
 type RegisteredClass = {
   id: number,
@@ -19,9 +21,9 @@ const Classes: React.FC = () => {
   const [session, loading] = useSession()
   const [studentId, setStudentId] = useState(session ? session.userId : 0)
   const [data, setData] = useState<RegisteredClass[]>([])
+  const router = useRouter()
   let list = []
   useEffect(() => {
-    console.log("999999")
     if (session) {
       setStudentId(session.userId)
       getRegisteredClass(session.userId).then(res => {
@@ -30,12 +32,15 @@ const Classes: React.FC = () => {
 
     }
   }, [session])
-  let count = 0
+
+  const cancelRegister = (classId:number) =>{
+    cancel(studentId, classId)
+    router.reload()
+}
   if (data.length > 0) {
     list = data.map((x: RegisteredClass) => ({
       ...x,
-      action: (<Button type="ghost" danger>Hủy đăng ký</Button>),
-      key: count++
+      action: (<Button type="ghost" onClick={()=> cancelRegister(x.id)} danger>Hủy đăng ký</Button>),
     }))
   }
   function onChange(pagination: any) {
@@ -45,7 +50,7 @@ const Classes: React.FC = () => {
   const column = Columns.columnClasses
   return (
     <MainLayout title="Các lớp đã đăng ký">
-      <Table columns={column} dataSource={list} onChange={onChange} />
+      <Table columns={column} dataSource={list} onChange={onChange} rowKey={(record)=> {return record.id.toString()}}/>
     </MainLayout>
   );
 };
