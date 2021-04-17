@@ -8,19 +8,19 @@ generator client {
 }
 
 model Class {
-  id               Int           @id @default(autoincrement())
+  id               Int                  @id @default(autoincrement())
   name             String
   capacity         Int
-  status           ClassStatus   @default(PREPARE)
-  teacher          User          @relation(fields: [teacherId], references: [id])
+  status           ClassStatus          @default(PREPARE)
+  teacher          User                 @relation(fields: [teacherId], references: [id])
   teacherId        Int
-  students         User[]        @relation(name: "student_Classes", references: [id])
+  students         ClassroomToStudent[]
   registerRequests Register[]
   schedules        Schedule[]
   assignments      Assignment[]
   achievements     Achievement[]
-  startAt          DateTime      @map(name: "start_at")
-  endAt            DateTime      @map(name: "end_at")
+  startAt          DateTime             @map(name: "start_at")
+  endAt            DateTime             @map(name: "end_at")
 
   @@map(name: "classes")
 }
@@ -37,25 +37,34 @@ model Register {
   @@map(name: "register_requests")
 }
 
+model ClassroomToStudent {
+  studentId Int
+  student   User  @relation(fields: [studentId], references: [id])
+  classId   Int
+  classroom Class @relation(fields: [classId], references: [id])
+
+  @@id([studentId, classId])
+}
+
 model User {
-  id               Int           @id @default(autoincrement())
+  id               Int                  @id @default(autoincrement())
   name             String?
-  email            String        @unique
-  emailVerified    DateTime?     @map(name: "email_verified")
+  email            String               @unique
+  emailVerified    DateTime?            @map(name: "email_verified")
   password         String?
-  role             Role          @default(STUDENT)
+  role             Role                 @default(STUDENT)
   image            String?
-  birthDate        DateTime?     @map(name: "date_birth")
+  birthDate        DateTime?            @map(name: "date_birth")
   gender           Gender?
-  phoneNumber      String?       @map(name: "phone_number")
+  phoneNumber      String?              @map(name: "phone_number")
   registerRequests Register[]
   createdClasses   Class[]
-  acceptedClasses  Class[]       @relation(name: "student_Classes", references: [id])
+  acceptedClasses  ClassroomToStudent[]
   achievements     Achievement[]
   assignments      Assignment[]
   answers          Answer[]
-  createdAt        DateTime      @default(now()) @map(name: "created_at")
-  updatedAt        DateTime      @updatedAt @map(name: "updated_at")
+  createdAt        DateTime             @default(now()) @map(name: "created_at")
+  updatedAt        DateTime             @updatedAt @map(name: "updated_at")
 
   @@map(name: "users")
 }
@@ -72,14 +81,17 @@ model Schedule {
 }
 
 model Assignment {
-  id         Int       @id @default(autoincrement())
+  id         Int              @id @default(autoincrement())
+  title      String
   content    String
   attachment String?
   deadline   DateTime?
   answers    Answer[]
-  teacher    User      @relation(fields: [teacherId], references: [id])
+  status     AssignmentStatus @default(ASSIGNED)
+  createdAt  DateTime         @default(now()) @map(name: "created_at")
+  teacher    User             @relation(fields: [teacherId], references: [id])
   teacherId  Int
-  class      Class     @relation(fields: [classId], references: [id])
+  class      Class            @relation(fields: [classId], references: [id])
   classId    Int
 
   @@map(name: "assignments")
@@ -162,4 +174,9 @@ enum ClassStatus {
 enum RegisterStatus {
   REGISTERED
   ACCEPTED
+}
+
+enum AssignmentStatus {
+  ASSIGNED
+  EXPIRED
 }

@@ -25,19 +25,17 @@ const CreateClassroomForm: React.FC = () => {
     const [session] = useSession()
     const layout = {
         labelCol: { span: 8, offset: 0 },
-        wrapperCol: { span: 8 },
+        wrapperCol: { span: 10 },
     };
-
     const tailLayout = {
-        wrapperCol: { offset: 8, span: 16 },
+        wrapperCol: { offset: 8, span: 8 },
+        // wrapperCol: { offset: 8, span: 8 },
     };
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
     };
 
     const onFinish = async (values: any) => {
-        console.log('Received values of form: ');
-        // process data
         const data = {
             ...values,
             teacherId: session ? session.userId : null,
@@ -54,8 +52,8 @@ const CreateClassroomForm: React.FC = () => {
     let [startDate, setStartDate] = useState(null);
     const onChangeDate = (e: Moment) => {
         setStartDate(e)
-        console.log(e.toString())
-        console.log(formatDate(e.toDate()))
+        // console.log(e.toString())
+        // console.log(formatDate(e.toDate()))
     }
     const checkEndDate = (_: any, value: Moment) => {
         if (value > startDate) {
@@ -66,7 +64,6 @@ const CreateClassroomForm: React.FC = () => {
 
     return (
         < MainLayout title="Tạo lớp mới">
-
             <Form
                 {...layout}
                 name="basic"
@@ -105,7 +102,8 @@ const CreateClassroomForm: React.FC = () => {
                 >
                     <DatePicker />
                 </Form.Item>
-                <Form.List name="schedules">
+                <Form.Item label="Thời khóa biểu" >
+                <Form.List name="schedules" >
                     {(fields, { add, remove }) => {
                         return (
                             <>
@@ -122,10 +120,10 @@ const CreateClassroomForm: React.FC = () => {
                                             return Promise.reject(new Error('Thời gian kết thúc phải lớn hơn thời gian bắt đầu'))
                                         }
                                         return (
-                                            <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                                            <Space key={key} style={{ display: 'flex', marginBottom: 8, alignItems:'initial' }} align="baseline" >
 
-                                                <Form.Item label="Thời khóa biểu">
-                                                    <Input.Group compact>
+                                                <Form.Item  >
+                                                    <Input.Group compact >
                                                         <Form.Item
                                                             {...restField}
                                                             name={[name, 'day']}
@@ -170,6 +168,7 @@ const CreateClassroomForm: React.FC = () => {
                                                         </Form.Item>
                                                     </Input.Group>
                                                 </Form.Item>
+                                                <MinusCircleOutlined style={{marginTop: '5px'}} onClick={() => remove(name)} />
                                             </Space>
                                         )
                                     })
@@ -183,14 +182,9 @@ const CreateClassroomForm: React.FC = () => {
                         )
                     }}
 
-
-
-
-
-
-                </Form.List>
-                <Form.Item {...tailLayout}>
-                    <Button type="primary" htmlType="submit">
+                </Form.List></Form.Item>
+                <Form.Item {...tailLayout} >
+                    <Button type="primary" htmlType="submit" style={{margin: '0 0 30px'}}>
                         Tạo lớp
                         </Button>
                 </Form.Item>

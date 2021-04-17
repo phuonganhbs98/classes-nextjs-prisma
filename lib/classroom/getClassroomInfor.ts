@@ -6,15 +6,8 @@ export async function getAllClassroom() {
         if (res.data) {
             res.data.forEach((x: any) => {
                 updateStatusClass(x.id)
-                data = [
-                    ...data,
-                    {
-                        ...x,
-                        teacherName: x.teacher.name,
-                        count: x.students.length
-                    }
-                ]
             })
+            data = res.data
         }
     })
 
@@ -26,11 +19,7 @@ export async function getClassById(id: number) {
     let data = null
     let schedules = []
     await axios.get(`http://localhost:3000/api/classrooms/${id}`).then(res => {
-        data = {
-            ...res.data,
-            teacherName: res.data.teacher.name,
-            count: res.data.students.length
-        }
+        data = res.data
         schedules = data.schedules
     })
 

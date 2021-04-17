@@ -7,22 +7,10 @@ import { formatDate } from '../../lib/formatDate'
 import column from '../../components/column/Columns'
 import deleteClass from '../../lib/classroom/deleteClass'
 import { useRouter } from "next/router";
-import { Class, Gender, Role } from ".prisma/client";
+import { Role } from ".prisma/client";
 import { getUserById } from "../../lib/user/getUser";
+import { API } from "../../prisma/type/type";
 
-type UserInfor = {
-  id: number,
-  role: Role,
-  gender: Gender,
-  birthDate: Date,
-  phoneNumber: string,
-  acceptedClasses: Class,
-  createdClasses: Class,
-  createdAt: Date,
-  email: string,
-  image: string,
-  name: string
-}
 export async function getServerSideProps({ params }) {
   let id = parseInt(params.id)
   return {
@@ -31,18 +19,17 @@ export async function getServerSideProps({ params }) {
     }
   }
 }
-
 function onChange(pagination: any) {
   console.log('params', pagination);
 }
-
 const Profile: React.FC<{ id: number }> = (props) => {
   const id = props.id
-  const [user, setUser] = useState<UserInfor>()
-  const [classes, setClasses] = useState<Class[]>([])
+  const [role, setRole] = useState<Role>()
+  const [user, setUser] = useState<API.UserInfor>()
+  const [classes, setClasses] = useState<API.AcceptedClass[]|API.Classroom[]>([])
   const [show, setShow] = useState(false)
   const gender = user?.gender === 'FEMALE' ? "Nữ" : user?.gender === 'MALE' ? "Nam" : "Không có thông tin"
-  const birthDate = user?.birthDate ? formatDate(new Date(user?.birthDate)) : "Không có thông tin"
+  const birthDate = user?.birthDate ? formatDate(new Date(user?.birthDate), true) : "Không có thông tin"
   const phoneNumber = user?.phoneNumber ? user?.phoneNumber : "Không có thông tin"
   const classListTitle = (user?.role === 'STUDENT' ? 'Các lớp đang tham gia' : 'Các lớp đã tạo').toUpperCase()
   const columns = column.columnClasses
@@ -50,6 +37,7 @@ const Profile: React.FC<{ id: number }> = (props) => {
   useEffect(()=>{
     getUserById(id).then(res => {
       setUser(res)
+      setRole(res.role)
       if(res.role === 'STUDENT') {
         setClasses(res.acceptedClasses)
         setShow(false)
@@ -63,14 +51,29 @@ const Profile: React.FC<{ id: number }> = (props) => {
   const editButton = show?{display: 'inline'}:{display: 'none'}
   let data = []
   if (classes.length > 0) {
-    classes.forEach(x => {
-      data = [...data, {
-        ...x,
-        action: [
-          (<Button key="1" type="link" onClick={() => router.push(`/classrooms/${x.id}`)} >Xem</Button>),
-          (<Button key="2" type="ghost" style={editButton} onClick={() => deleteClass(x.id)} danger>Xóa</Button>)],
-      }]
-    });
+    if(role === Role.STUDENT){
+      classes.forEach((x:any) => {
+        data = [...data, {
+          ...x.classroom,
+          teacherName: x.classroom.teacher.name,
+          count: x.classroom.students.length,
+          action: [
+            (<Button key="1" type="link" onClick={() => router.push(`/classrooms/${x.classroom.id}`)} >Xem</Button>),]
+        }]
+      });
+    } else {
+      classes.forEach((x:any) => {
+        data = [...data, {
+          ...x,
+          teacherName: x.teacher.name,
+          count: x.students.length,
+          action: [
+            (<Button key="1" type="link" onClick={() => router.push(`/classrooms/${x.id}`)} >Xem</Button>),
+            (<Button key="2" type="ghost" style={editButton} onClick={() => deleteClass(x.id)} danger>Xóa</Button>)],
+        }]
+      });
+    }
+    
   }
   return (
     <MainLayout title="Thông tin cá nhân">
@@ -121,7 +124,7 @@ const Profile: React.FC<{ id: number }> = (props) => {
       <br />
       <br />
       <Divider orientation="left" dashed={true} style={{ fontSize: '20px', fontWeight: 'bolder' }}>{classListTitle}</Divider>
-      <Table columns={columns} dataSource={data} onChange={onChange} rowKey={(record)=> {return record.id.toString()}}/>
+      <Table columns={columns} dataSource={data} onChange={onChange} rowKey={(record)=> {return record.id?.toString()}}/>
     </MainLayout>
   );
 };

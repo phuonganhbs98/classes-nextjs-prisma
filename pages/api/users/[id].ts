@@ -15,8 +15,38 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 gender: true,
                 birthDate: true,
                 phoneNumber: true,
-                acceptedClasses: true,
-                createdClasses: true,
+                acceptedClasses: {
+                    select: {
+                        classroom: {
+                            select: {
+                                id: true,
+                                name: true,
+                                capacity: true,
+                                students: true,
+                                status: true,
+                                teacher: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                createdClasses: {
+                    select: {
+                        id: true,
+                        name: true,
+                        capacity: true,
+                        students: true,
+                        status: true,
+                        teacher: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                },
                 createdAt: true,
                 email: true,
                 image: true,

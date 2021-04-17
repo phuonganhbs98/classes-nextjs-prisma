@@ -1,6 +1,5 @@
 import { Layout, Menu, Spin } from "antd";
 import React from "react";
-import { useSession } from "next-auth/client"
 import { useRouter } from "next/router";
 import StudentBar from "../sidebar/StudentBar"
 import TeacherBar from "../sidebar/TeacherBar"
@@ -18,7 +17,6 @@ const MenuSider: React.FC<Props> = ({role, loading}) => {
   const isActive: (pathname: string) => boolean = (pathname) => {
     return router.pathname === pathname;
   };
-
   return (
     loading ?
       (

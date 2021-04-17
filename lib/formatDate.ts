@@ -1,36 +1,38 @@
-export function formatDate(date: Date) {
-    const a = formatDay(date.getDay())
-    return a + ', ' + date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
+import { format } from 'date-fns'
+import { vi } from 'date-fns/locale'
+
+export function formatDate(date: Date, time?: boolean) {
+    if (typeof time === 'undefined' || time)
+        return format(date, 'Pp', { locale: vi })
+    return format(date, 'P', { locale: vi })
+
 }
 
 export function formatTime(time: Date) {
-    const hour = time.getHours()
-    const minute = time.getMinutes()
-    if (minute === 0) return hour + 'h '
-    return hour + 'h' + minute +'ph'
+    return format(time, 'p')
 }
 
 export function formatDay(day: Number) {
     switch (day) {
         case 0:
             return 'Chủ nhật'
-            
+
         case 1:
             return 'Thứ 2'
-            
+
         case 2:
             return 'Thứ 3'
-            
+
         case 3:
             return 'Thứ 4'
-            
+
         case 4:
             return 'Thứ 5'
-            
+
         case 5:
             return 'Thứ 6'
-            
+
         default:
-            return 'Thứ 7'           
+            return 'Thứ 7'
     }
 }

@@ -23,7 +23,4 @@ export default async function updateStatusClass(id: number) {
         })
     }
 
-
-
-
 }

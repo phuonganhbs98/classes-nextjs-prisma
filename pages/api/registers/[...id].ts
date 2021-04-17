@@ -55,16 +55,47 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(200).json("Register success!")
     } else if (method === 'DELETE') {
         const classId = parseInt(req.query.id[1])
-        await prisma.$transaction([
-            prisma.register.delete({
-                where: {
-                    studentId_classId: {
-                        studentId: studentId,
-                        classId: classId
-                    }
+        const register = await prisma.register.findUnique({
+            where:{
+                studentId_classId:{
+                    studentId: studentId,
+                    classId: classId
                 }
-            })
-        ])
+            }
+        })
+        if(register.status === RegisterStatus.REGISTERED){
+            await prisma.$transaction([
+                prisma.register.delete({
+                    where: {
+                        studentId_classId: {
+                            studentId: studentId,
+                            classId: classId
+                        }
+                    }
+                })
+            ])
+        }
+        else {
+            await prisma.$transaction([
+                prisma.register.delete({
+                    where:{
+                        studentId_classId:{
+                            studentId: studentId,
+                            classId: classId
+                        }
+                    }
+                }),
+                prisma.classroomToStudent.delete({
+                    where:{
+                        studentId_classId:{
+                            studentId: studentId,
+                            classId: classId
+                        }
+                    }
+                })
+            ])
+        }
+        
         res.status(200).json("Cancel register success!")
     } else if (method === 'PUT') {
         const classId = parseInt(req.query.id[1])
@@ -86,18 +117,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 }
             }),
 
-            prisma.class.update({
-                where: {
-                    id: classId
-                },
-                data: {
-                    // students: { connectOrCreate: [student] }
-                    students: {
-                        connect: [student].map(stu => ({id: stu.id}))
-                    }
-                },
-                include:{
-                    students: true
+            prisma.classroomToStudent.create({
+                data:{
+                    studentId: studentId,
+                    classId: classId
                 }
             })
         ])

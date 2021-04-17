@@ -57,7 +57,7 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                 status: true,
                 students: {
                     select:{
-                        id: true
+                        studentId: true
                     }
                 }
             }

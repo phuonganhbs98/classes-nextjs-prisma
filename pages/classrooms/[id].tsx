@@ -1,5 +1,5 @@
 import MainLayout from "../../components/layouts/MainLayout";
-import { List, PageHeader, Button, Row, Col, Divider, Tooltip, Alert } from "antd";
+import { List, PageHeader, Button, Row, Col, Divider, Tooltip, Alert, Descriptions } from "antd";
 import { useSession } from "next-auth/client";
 import { formatDate, formatTime, formatDay } from "../../lib/formatDate"
 import { getClassById } from '../../lib/classroom/getClassroomInfor'
@@ -8,34 +8,11 @@ import React, { useEffect, useState } from "react";
 import { Schedule, ClassStatus, RegisterStatus } from ".prisma/client";
 import checkRegister from "../../lib/register/checkRegister";
 import { sendRegister, cancel } from "../../lib/register/handleRegister";
-import { useRouter } from "next/router";
 import { MinusOutlined } from '@ant-design/icons';
-import RegisterRequest from "../../components/RegisterRequest";
-
-type ClassroomInfor = {
-    id: number;
-    name: string;
-    teacherId: number;
-    teacher: {
-        name: string;
-    };
-    teacherName: string;
-    status: ClassStatus;
-    capacity: number;
-    students: {
-        id: number;
-    }[];
-    startAt: Date;
-    endAt: Date;
-    schedules: Schedule[];
-    count: number
-}
-
-type Schedules = {
-    dayInWeek: number,
-    startAt: Date,
-    endAt: Date
-}
+import RegisterRequest from "../../components/classroom/RegisterRequest";
+import StudentList from "../../components/classroom/StudentList";
+import AssignmentList from "../../components/classroom/AssignmentList";
+import { API } from "../../prisma/type/type";
 
 export async function getServerSideProps({ params }) {
     let id = parseInt(params.id)
@@ -51,8 +28,8 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
     const id = props.id
     const [role, setRole] = useState()
     const [userId, setUserId] = useState()
-    const [data, setData] = useState<ClassroomInfor>()
-    const [schedules, setSchedules] = useState<Schedules[]>([])
+    const [data, setData] = useState<API.Classroom>()
+    const [schedules, setSchedules] = useState<API.Schedules[]>([])
     const [canEdit, setCanEdit] = useState(false)
     const [register, setRegister] = useState<Boolean>()
     const [registerButton, setRegisterButton] = useState<string>()
@@ -88,7 +65,7 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
     const showRequest = (role === 'TEACHER') ? 'inline' : 'none'
     let schedule = []
     if (schedules.length > 0) {
-        schedules.forEach((x: Schedules) => {
+        schedules.forEach((x: API.Schedules) => {
             schedule = [
                 ...schedule,
                 [
@@ -100,8 +77,17 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
         schedule = [(<p>Chưa cập nhật</p>)]
     }
 
+    let classes=null
+    if(data){
+        classes = {
+            ...data,
+            teacherName: data.teacher.name,
+            count: data.students.length
+        }
+    }
+
     const handleRegister = () => {
-        if (data.capacity > data.count) {
+        if (classes.capacity > classes.count) {
             sendRegister(userId, id)
             setRegister(true)
             setRegisterButton('Đã đăng ký')
@@ -123,7 +109,6 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
     console.log(showAlert)
     let alert = showAlert ?
         <Alert
-            // message="Không thể đăng ký "
             message="Lớp đã đầy"
             type="warning"
             onClose={closeAlert}
@@ -142,8 +127,6 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
                     <Button key='2' style={editButton} type="ghost">Sửa</Button>,
                     <Button key='3' style={editButton} type="primary" onClick={() => deleteClass(id)} danger>Xóa</Button>,
                     <br />,
-
-
                 ]}
             ></PageHeader>
             {[alert]}
@@ -151,38 +134,43 @@ const ClassroomInfor: React.FC<{ id: number }> = (props) => {
                 fontSize: '30px',
                 fontWeight: 'bolder',
                 margin: '0 20px 0 2%',
-            }}> {data?.name} </p>
+            }}> {classes?.name} </p>
             <Divider orientation="right" plain={false} style={{ fontSize: '14px' }}>
                 <em>Được tạo bởi:
-                    <a href={`/users/${data?.teacherId}`}> {data?.teacherName}</a></em>
+                    <a href={`/users/${classes?.teacherId}`}> {classes?.teacherName}</a></em>
             </Divider>
-            <Row align="top" justify="space-around" style={{
+            <Row align="middle" justify="space-around" style={{
                 marginTop: '2em'
             }}>
-                <Col key="1" span={10} push={1}>
-                    <p><strong>ID: </strong>{data?.id}</p>
-                    <p><strong>Trạng thái: </strong>{data?.status}</p>
-                    <Divider key={1} />
-                    <p><strong>Số lượng học viên tối đa: </strong>{data?.capacity}</p>
-                    <p><strong>Sĩ số: </strong>{data?.count}</p>
-                    <Divider key={2} />
-                    <p><strong>Ngày bắt đầu: </strong>{data ? formatDate(new Date(data.startAt)) : null}</p>
-                    <p><strong>Ngày kết thúc: </strong>{data ? formatDate(new Date(data.endAt)) : null}</p>
+                <Col key="1" span={6} push={0}>
+                    <p><strong>ID: </strong>{classes?.id}</p>
+                    <p><strong>Trạng thái: </strong>{classes?.status}</p>
+                    <p><strong>Số lượng học viên tối đa: </strong>{classes?.capacity}</p>
                 </Col>
-                <Col key="2" span={10} push={1}>
+                <Col key="3" span={6} push={0}>
+                    <p><strong>Sĩ số: </strong>{classes?.count}</p>
+                    <p><strong>Ngày bắt đầu: </strong>{classes ? formatDate(new Date(classes.startAt), false) : null}</p>
+                    <p><strong>Ngày kết thúc: </strong>{classes ? formatDate(new Date(classes.endAt), false) : null}</p>
+                </Col>
+                <Col key="2" span={8} push={0}>
                     <List
                         size="small"
                         header={<strong>Thời khóa biểu</strong>}
                         bordered={false}
                         dataSource={schedule}
-                        renderItem={(item, index) => <List.Item key={index}>{item}</List.Item>}
-                        style={{
-                            margin: '0px 5% 20px'
-                        }}
+                        renderItem={(item, index) => <List.Item key={item}>{item}</List.Item>}
                     />
                 </Col>
             </Row>
             <RegisterRequest
+                display={showRequest}
+                classId={id}
+            />
+            <StudentList
+                display={showRequest}
+                classId={id}
+            />
+            <AssignmentList
                 display={showRequest}
                 classId={id}
             />

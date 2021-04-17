@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { PageHeader, Button, Table } from "antd";
 import MainLayout from "../../components/layouts/MainLayout";
 import column from '../../components/column/Columns'
-import { Class, RegisterStatus } from "@prisma/client";
 import { useSession } from "next-auth/client";
 import { getAllClassroom } from "../../lib/classroom/getClassroomInfor";
 import { useRouter } from "next/router";
 import deleteClass from '../../lib/classroom/deleteClass'
 import Link from "next/link";
-import checkRegister from "../../lib/register/checkRegister";
+import { API } from "../../prisma/type/type";
 
 function onChange(pagination: any) {
   console.log('params', pagination);
@@ -18,7 +17,7 @@ const columns = column.columnClasses;
 type Props = {}
 const Classes: React.FC<Props> = () => {
   const [session] = useSession()
-  const [data, setData] = useState([])
+  const [data, setData] = useState<API.Classroom[]>([])
   const [editDisplay, setEditDisplay] = useState({ display: 'inline' })
   useEffect(() => {
     getAllClassroom().then(res => {
@@ -37,8 +36,10 @@ const Classes: React.FC<Props> = () => {
   } else {
     list = data
   }
-  list = list.length > 0 ? list.map((a: Class) => ({
+  list = list.length > 0 ? list.map((a: API.Classroom) => ({
     ...a,
+    teacherName: a.teacher.name,
+    count: a.students.length,
     action: [
       (<Button key={a.id} type="link" onClick={() => router.push({
         pathname: `/classrooms/${a.id}`,

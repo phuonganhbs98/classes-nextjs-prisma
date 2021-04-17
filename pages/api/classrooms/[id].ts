@@ -22,7 +22,14 @@ export default async function findUnique(req: NextApiRequest, res: NextApiRespon
                 capacity: true,
                 students: {
                     select:{
-                        id: true
+                        student:{
+                            select:{
+                                id:true,
+                                name: true,
+                                email: true,
+                                phoneNumber: true
+                            }
+                        }
                     }
                 },
                 startAt: true,

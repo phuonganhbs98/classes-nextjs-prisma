@@ -59,7 +59,35 @@ const columnStudents=[
   }
 ]
 
+const columnAssignments = [
+  {
+    title:'ID',
+    dataIndex: 'id',
+  },
+  {
+    title:'Tiêu đề',
+    dataIndex: 'title',
+  },
+  {
+    title:'Lớp',
+    dataIndex: 'className',
+  },
+  {
+    title:'Thời hạn',
+    dataIndex: 'deadlineFormat',
+  },
+  {
+    title:'Status',
+    dataIndex: 'statusRender',
+  },
+  {
+    title:'Hành động',
+    dataIndex: 'action',
+  }
+]
+
 export default {
     columnClasses,
-    columnStudents
+    columnStudents,
+    columnAssignments
 };
