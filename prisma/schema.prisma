@@ -98,15 +98,19 @@ model Assignment {
 }
 
 model Answer {
-  id           Int        @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   content      String
   attachment   String?
-  score        Float      @default(0)
-  student      User       @relation(fields: [studentId], references: [id])
+  score        Float         @default(0)
+  student      User          @relation(fields: [studentId], references: [id])
   studentId    Int
-  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignment   Assignment    @relation(fields: [assignmentId], references: [id])
   assignmentId Int
+  status       AnswerStatus?
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  updatedAt    DateTime      @default(now()) @map(name: "updated_at")
 
+  @@unique([studentId, assignmentId])
   @@map(name: "answers")
 }
 
@@ -179,4 +183,9 @@ enum RegisterStatus {
 enum AssignmentStatus {
   ASSIGNED
   EXPIRED
+}
+
+enum AnswerStatus {
+  SUBMITTED
+  LATE
 }

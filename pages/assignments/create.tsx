@@ -66,64 +66,64 @@ const CreateAssignmentForm: React.FC = () => {
 
     return (
         <MainLayout title='Giao bài tập mới'>
-            <Form
-                {...layout}
-                name="basic"
-                layout="horizontal"
-                initialValues={{ remember: false }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                style={{
-                    paddingTop: "10%"
-                }}
-            >
-                <Form.Item
-                    label='Lớp'
-                    name='classId'
-                    // hasFeedback
-                    rules={[{ required: true, message: 'Hãy chọn một lớp' }]}
+            <div className="site-layout-background">
+                <Form
+                    {...layout}
+                    name="basic"
+                    layout="horizontal"
+                    initialValues={{ remember: false }}
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
+                    style={{
+                        paddingTop: "2%"
+                    }}
                 >
-                    <Select placeholder='Hãy chọn một lớp'>
-                        {classes}
-                    </Select>
-                </Form.Item>
-                <Form.Item
-                    label="Tiêu đề"
-                    name="title"
-                >
-                    <Input />
-                    <small>Có thể bỏ qua</small>
-                </Form.Item>
-                <Form.Item
-                    label="Nội dung đề bài"
-                    name="content"
-                    rules={[{ required: true, message: 'Xin vui lòng nhập nội dung đề bài !' }]}
-                >
-                    <Input.TextArea placeholder='Đề bài / Nội dung câu hỏi' />
-                </Form.Item>
-                <Form.Item
-                    label="Đường dẫn bổ sung"
-                    name="attachment"
-                >
-                    <Input />
-                    <small>Có thể bỏ qua</small>
-                </Form.Item>
-                <Form.Item
-                    label="Thời hạn"
-                    name="deadline"
-                    rules={[
-                        { required: true, message: 'Xin vui lòng nhập thời hạn !' },
-                        { validator: checkDeadline }
-                    ]}
-                >
-                    <DatePicker showTime format='DD-MM-YYYY HH:mm:ss' allowClear={true} />
-                </Form.Item>
-                <Form.Item {...tailLayout} >
-                    <Button type="primary" htmlType="submit" style={{ margin: '0 0 30px' }}>
-                        Tạo bài tập
+                    <Form.Item
+                        label='Lớp'
+                        name='classId'
+                        rules={[{ required: true, message: 'Hãy chọn một lớp' }]}
+                    >
+                        <Select placeholder='Hãy chọn một lớp'>
+                            {classes}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        label="Tiêu đề"
+                        name="title"
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Nội dung đề bài"
+                        name="content"
+                        rules={[{ required: true, message: 'Xin vui lòng nhập nội dung đề bài !' }]}
+                    >
+                        <Input.TextArea placeholder='Đề bài / Nội dung câu hỏi' />
+                    </Form.Item>
+                    <Form.Item
+                        label="Đường dẫn bổ sung"
+                        name="attachment"
+                    >
+                        <Input />
+                    </Form.Item>
+                    {/* <small>Có thể bỏ qua</small> */}
+                    <Form.Item
+                        label="Thời hạn"
+                        name="deadline"
+                        rules={[
+                            { required: true, message: 'Xin vui lòng nhập thời hạn !' },
+                            { validator: checkDeadline }
+                        ]}
+                    >
+                        <DatePicker showTime format='DD-MM-YYYY HH:mm:ss' allowClear={true} />
+                    </Form.Item>
+                    <Form.Item {...tailLayout} >
+                        <Button type="primary" htmlType="submit" style={{ margin: '0 0 30px' }}>
+                            Tạo bài tập
                     </Button>
-                </Form.Item>
-            </Form>
+                    </Form.Item>
+                </Form>
+            </div>
         </MainLayout>
     )
 }

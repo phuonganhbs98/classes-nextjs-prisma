@@ -1,5 +1,4 @@
-import { Button, Divider, Table, Tooltip } from "antd";
-import { session } from "next-auth/client";
+import { Button, Table } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { getClassById } from "../../lib/classroom/getClassroomInfor";
@@ -9,7 +8,10 @@ import { cancel } from "../../lib/register/handleRegister";
 
 type Props = {
     classId: number,
-    display: string
+    reloadRequest: boolean,
+    // setReloadRequest: any,
+    reload:boolean,
+    setReload: any
 }
 type StudentInfor = {
     id: number,
@@ -26,18 +28,16 @@ function onChange(pagination: any) {
     console.log('params', pagination);
 }
 const columns = Columns.columnStudents
-const StudentList: React.FC<Props> = ({ classId, display }) => {
+const StudentList: React.FC<Props> = ({ classId, reloadRequest, reload, setReload }) => {
     const [data, setData] = useState<Student[]>([])
-    const [visible, setVisible] = useState<Boolean>(false)
-    const [click, setClick] = useState<Boolean>(false)
+    // const [reload, setReload] = useState<boolean>(false)
     const router = useRouter()
     let students = []
     useEffect(() => {
-        console.log('qqqqq')
         getClassById(classId).then(res => {
             setData(res.data.students)
         })
-    }, [display, click])
+    }, [reload, reloadRequest])
 
     if (data.length > 0) {
         data.forEach((x: Student) => {
@@ -67,30 +67,17 @@ const StudentList: React.FC<Props> = ({ classId, display }) => {
 
     const handleDelete = (studentId: number) => {
         cancel(studentId, classId)
-        if(click) setClick(false)
-        else setClick(true)
-        // router.reload()
+        if(reload) setReload(false)
+        else setReload(true)
     }
 
-    const handleClick = () => {
-        if (visible) setVisible(false)
-        else setVisible(true)
-    }
     return (
-        <div style={{ display: display }}>
-            <Divider orientation="left" dashed={true} plain={true} style={{ paddingBottom: '20px' }}>
-                <Tooltip title="Xem danh sách sinh viên lớp">
-                    <Button style={{ fontSize: '20px', fontWeight: 'bolder' }} type="text" onClick={() => handleClick()}>Danh sách sinh viên</Button>
-                </Tooltip>
-            </Divider>
             <Table
-                style={{ display: visible ? 'inline' : 'none' }}
                 columns={columns}
                 dataSource={students}
                 onChange={onChange}
                 rowKey={(record) => { return record.id.toString() }}
             />
-        </div>
     )
 }
 

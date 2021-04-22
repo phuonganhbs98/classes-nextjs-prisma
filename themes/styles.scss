@@ -4,12 +4,18 @@
   background: rgba(255, 255, 255, 0.2);
 }
 .site-layout .site-layout-background {
+  padding: 2% ;
   background: #fff;
 }
 
 .main-container {
   min-height: calc(100vh - 24px - 70px - 64px);
 }
+.content{
+  // padding: 2%;
+  margin-top: 20px;
+}
+
 
 th{
   font-weight: 600 !important;

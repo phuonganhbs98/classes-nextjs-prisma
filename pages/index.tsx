@@ -28,7 +28,7 @@ const Blog: React.FC<Props> = (props) => {
     </div>
     ) :session?(
     <MainLayout title="Lịch học và dạy">
-      <div style={{ padding: 16 }}>
+      <div style={{ padding: 16 }} className="site-layout-background">
         <Calendar
           localizer={localizer}
           events={events}

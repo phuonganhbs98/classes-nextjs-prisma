@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { PageHeader, Button, Table } from "antd";
 import MainLayout from "../../components/layouts/MainLayout";
-import column from '../../components/column/Columns'
+// import column from '../../components/column/Columns'
 import { useSession } from "next-auth/client";
 import { getAllClassroom } from "../../lib/classroom/getClassroomInfor";
 import { useRouter } from "next/router";
@@ -13,7 +13,43 @@ function onChange(pagination: any) {
   console.log('params', pagination);
 }
 
-const columns = column.columnClasses;
+const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'key'
+  },
+  {
+    title: 'Tên lớp',
+    dataIndex: 'name',
+    key: 'key'
+  },
+  {
+    title: 'Giáo viên',
+    dataIndex: 'teacherName',
+    key: 'key'
+  },
+  {
+    title: 'SL tối đa',
+    dataIndex: 'capacity',
+    key: 'key'
+  },
+  {
+    title: 'SL hiện tại',
+    dataIndex: 'count',
+    key: 'count'
+  },
+  {
+    title: 'Trạng thái',
+    dataIndex: 'status',
+    key: 'key'
+  },
+  {
+    title: 'Hành động',
+    dataIndex: 'action',
+    key: 'key'
+  }
+];
 type Props = {}
 const Classes: React.FC<Props> = () => {
   const [session] = useSession()
@@ -51,19 +87,20 @@ const Classes: React.FC<Props> = () => {
   const router = useRouter()
   return (
     <MainLayout title="Danh sách lớp học">
-      <PageHeader
-        title=""
-        extra={[
-          <Link key="1" href="/classrooms/create">
-            <Button
-              type="primary"
-              style={editDisplay}
-            >Tạo lớp mới</Button>
-          </Link>
-        ]}
-      ></PageHeader>
-
-      <Table columns={columns} dataSource={list} onChange={onChange} rowKey={(record)=> {return record.id.toString()}}/>
+      <div className="site-layout-background">
+        <PageHeader
+          title=""
+          extra={[
+            <Link key="1" href="/classrooms/create">
+              <Button
+                type="primary"
+                style={editDisplay}
+              >Tạo lớp mới</Button>
+            </Link>
+          ]}
+        ></PageHeader>
+        <Table columns={columns} dataSource={list} onChange={onChange} rowKey={(record) => { return record.id.toString() }} />
+      </div>
     </MainLayout>
   );
 };

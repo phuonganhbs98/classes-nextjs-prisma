@@ -27,7 +27,7 @@ declare namespace API {
     status: ClassStatus,
     teacher:{
       name: string
-    }
+    },
   }
 
   type Schedules = {
@@ -47,7 +47,8 @@ declare namespace API {
     classId: number
     class: {
       name: string
-    }
+    },
+    teacherId: number
   }
 
   type AnswerItem = {
@@ -61,10 +62,22 @@ declare namespace API {
     studentId: number,
     assignmentId: number,
     assignment: {
+      teacherId: number,
       content: string,
       title: string
     },
-    status: string
+    status: string,
+    createdAt: Date,
+    updatedAt: Date
+  }
+
+  type RegisteredClass = {
+    id: number,
+    name: string,
+    count: number,
+    teacherName: string,
+    status: ClassStatus,
+    capacity: number
   }
 }
 

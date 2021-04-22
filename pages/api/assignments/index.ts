@@ -4,8 +4,6 @@ import prisma from "../../../lib/prisma";
 export default async function managerAssignment(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
     if (method === 'POST') {
-        console.log('req.body')
-        console.log(req.body)
         const {
             title,
             content,
@@ -47,7 +45,12 @@ export default async function managerAssignment(req: NextApiRequest, res: NextAp
                     status: true,
                     deadline: true,
                     answers: true,
-                    classId: true
+                    classId: true,
+                    class: {
+                        select:{
+                            name: true
+                        }
+                    }
                 }
             })
         }else {

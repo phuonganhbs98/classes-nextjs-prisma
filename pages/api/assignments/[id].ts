@@ -20,34 +20,58 @@ export default async function assignmentItemManager(req: NextApiRequest, res: Ne
                 answers: true,
                 classId: true,
                 class: {
-                    select:{
+                    select: {
                         name: true
                     }
-                }
+                },
+                teacherId: true
             }
         })
         res.status(200).json(result)
     } else if (method === 'PUT') {
-        await prisma.$transaction([
-            prisma.assignment.update({
-                where: {
-                    id: id
-                },
-                data: {
-                    status: AssignmentStatus.EXPIRED
-                }
-            })
-        ])
+        if (!req.body.data.status) {
+            const {
+                title,
+                content,
+                attachment,
+                deadline
+            } = req.body.data
+            await prisma.$transaction([
+                prisma.assignment.update({
+                    where: {
+                        id: id
+                    },
+                    data: {
+                        title: title,
+                        content: content,
+                        attachment: attachment,
+                        deadline: deadline
+                    }
+                })
+            ])
+        } else {
+            const {status} = req.body.data
+            await prisma.$transaction([
+                prisma.assignment.update({
+                    where: {
+                        id: id
+                    },
+                    data: {
+                        status: status
+                    }
+                })
+            ])
+        }
         res.status(200).json('ok')
-    } else if(method === 'DELETE'){
+    } else if (method === 'DELETE') {
         await prisma.$transaction([
             prisma.answer.deleteMany({
-                where:{
+                where: {
                     assignmentId: id
                 }
             }),
             prisma.assignment.delete({
-                where:{
+                where: {
                     id: id
                 }
             })

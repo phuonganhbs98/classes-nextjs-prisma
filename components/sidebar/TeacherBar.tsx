@@ -53,6 +53,7 @@ const TeacherBar: React.FC<Props> = ({ pathname }) => {
       style={{
         overflow: "auto",
         height: "100vh",
+        // position:'absolute'
       }}
     >
       <div className="logo" />

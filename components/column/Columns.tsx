@@ -86,8 +86,29 @@ const columnAssignments = [
   }
 ]
 
+const columnAnswers=[
+  {
+    title:'ID',
+    dataIndex: 'id',
+  },
+  {
+    title:'Sinh viên',
+    dataIndex: 'studentName',
+  },
+  {
+    title:'Câu trả lời',
+    dataIndex: 'content',
+    render: (text, record)=> (<strong>record.content</strong>)
+  },
+  {
+    title:'',
+    dataIndex: 'action',
+  }
+]
+
 export default {
     columnClasses,
     columnStudents,
-    columnAssignments
+    columnAssignments,
+    columnAnswers
 };

@@ -11,7 +11,7 @@ const { Content, Footer } = Layout;
 
 type Props = {
   children: ReactNode;
-  title: string;
+  title: ReactNode;
 };
 const spinIcon = <LoadingOutlined style={{ fontSize: 30 }} spin />;
 const MainLayout: React.FC<Props> = ({ children, title }) => {
@@ -38,10 +38,10 @@ const MainLayout: React.FC<Props> = ({ children, title }) => {
                 overflow: "initial",
               }}
             >
-              <div className="site-layout-background main-container"
+              <div className=" main-container"
                 style={{
                   // padding: '0 20px'
-                  padding:20,
+                  // padding:20,
                   minHeight: 360
                 }}>{children}</div>
             </Content>

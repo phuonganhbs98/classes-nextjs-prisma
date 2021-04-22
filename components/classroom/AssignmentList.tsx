@@ -11,20 +11,19 @@ import Link from "next/link";
 
 type Props = {
     classId: number,
-    display: string
+    visible: string
 }
 function onChange(pagination: any) {
     console.log('params', pagination);
 }
-const AssignmentList: React.FC<Props> = ({ classId, display }) => {
+const AssignmentList: React.FC<Props> = ({ classId, visible }) => {
     const [data, setData] = useState<API.AssignmentItem[]>([])
-    const [visible, setVisible] = useState<Boolean>(false)
     const [checkReload, setCheckReload] = useState<boolean>(false)
     const router = useRouter()
     let assignments = []
     useEffect(() => {
         findAll({ classId: classId }).then(res => setData(res))
-    }, [checkReload, session])
+    }, [checkReload])
 
     if (data.length > 0) {
         data.forEach((x: API.AssignmentItem) => {
@@ -36,11 +35,10 @@ const AssignmentList: React.FC<Props> = ({ classId, display }) => {
                     ...x,
                     deadlineFormat: formatDate(new Date(x.deadline), true),
                     statusRender: <>{x.status==="ASSIGNED"?<Badge status="success" />:<Badge status="error" />}{x.status}</>,
-                    className: <Link href={`/classrooms/${x.classId}`}>{className? className: 'Lớp'}</Link>,
                     action: [
                         <Tooltip overlay='Xem' key={1}><Button key={1} type='link' icon={<EyeOutlined />} onClick={() => router.push(`/assignments/${x.id}`)} ></Button></Tooltip>,
-                        <Tooltip overlay='Sửa' key={2}><Button key={2} type='link' icon={<EditOutlined />} onClick={() => handleEdit(x.id)} ></Button></Tooltip>,
-                        <Tooltip overlay='Xóa' key={3}><Button key={3} type='link' icon={<DeleteOutlined />} onClick={() => handleDelete(x.id)} danger></Button></Tooltip>
+                        <Tooltip overlay='Sửa' key={2}><Button key={2} style={{display: visible}} type='link' icon={<EditOutlined />} onClick={() => handleEdit(x.id)} ></Button></Tooltip>,
+                        <Tooltip overlay='Xóa' key={3}><Button key={3} style={{display: visible}} type='link' icon={<DeleteOutlined />} onClick={() => handleDelete(x.id)} danger></Button></Tooltip>
                     ]
                 }
             ]
@@ -51,32 +49,40 @@ const AssignmentList: React.FC<Props> = ({ classId, display }) => {
         
     }
 
-    const handleClick = () => {
-        if (visible) setVisible(false)
-        else setVisible(true)
-    }
-
     const handleDelete = (assignmentId: number) => {
         deleteAssignment(assignmentId)
         if (checkReload) setCheckReload(false)
         else setCheckReload(true)
     }
-    const columns = Columns.columnAssignments
+    const columns = [
+        {
+          title:'ID',
+          dataIndex: 'id',
+        },
+        {
+          title:'Tiêu đề',
+          dataIndex: 'title',
+        },
+        {
+          title:'Thời hạn',
+          dataIndex: 'deadlineFormat',
+        },
+        {
+          title:'Status',
+          dataIndex: 'statusRender',
+        },
+        {
+          title:'Hành động',
+          dataIndex: 'action',
+        }
+      ]
     return (
-        <div style={{ display: display }}>
-            <Divider orientation="left" dashed={true} plain={true} style={{ paddingBottom: '20px' }}>
-                <Tooltip title="Xem danh sách bài tập đã giao">
-                    <Button style={{ fontSize: '20px', fontWeight: 'bolder' }} type="text" onClick={() => handleClick()}>Danh sách bài tập</Button>
-                </Tooltip>
-            </Divider>
             <Table
-                style={{ display: visible ? 'inline' : 'none' }}
                 columns={columns}
                 dataSource={assignments}
                 onChange={onChange}
                 rowKey={(record) => { return record.id.toString() }}
             />
-        </div>
     )
 }
 

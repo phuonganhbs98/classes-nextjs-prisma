@@ -9,7 +9,8 @@ import { DownOutlined, UpOutlined, CaretDownOutlined, CaretUpOutlined } from '@a
 
 type Props = {
     classId: number,
-    display: string
+    reload: boolean,
+    setReload: any
 }
 type StudentInfor = {
     id: number,
@@ -24,17 +25,16 @@ function onChange(pagination: any) {
     console.log('params', pagination);
 }
 const columns = Columns.columnStudents
-const RegisterRequest: React.FC<Props> = ({ classId, display }) => {
+const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
     const [data, setData] = useState<ListStudents[]>([])
-    const [visible, setVisible] = useState<Boolean>(false)
-    const [checkReload, setCheckLoad] = useState<Boolean>(false)
+    // const [reload, setReload] = useState<boolean>(false)
     const router = useRouter()
     let students = []
     useEffect(() => {
         getRegisteredStudents(classId).then((res: ListStudents[]) => {
             setData(res)
         })
-    }, [display])
+    }, [reload])
     if (data.length > 0) {
         data.forEach((x: ListStudents) => {
             students = [
@@ -57,28 +57,16 @@ const RegisterRequest: React.FC<Props> = ({ classId, display }) => {
 
     const handleAccept = (studentId: number) => {
         accept(studentId, classId)
-        if(checkReload) setCheckLoad(false)
-        else setCheckLoad(true)
-    }
-    const handleClick = () => {
-        if (visible) setVisible(false)
-        else setVisible(true)
+        if (reload) setReload(false)
+        else setReload(true)
     }
     return (
-        <div style={{ display: display }}>
-            <Divider orientation="left" dashed={true} plain={true} style={{ paddingBottom: '20px' }}>
-                <Tooltip title="Xem các yêu cầu vào lớp">
-                    <Button style={{ fontSize: '20px', fontWeight: 'bolder' }} type="text" onClick={() => handleClick()}>Yêu cầu vào lớp{visible ? <CaretUpOutlined /> : <CaretDownOutlined />}</Button>
-                </Tooltip>
-            </Divider>
-            <Table
-                style={{ display: visible ? 'inline' : 'none' }}
-                columns={columns}
-                dataSource={students}
-                onChange={onChange}
-                rowKey={(record) => { return record.id.toString() }}
-            />
-        </div>
+        <Table
+            columns={columns}
+            dataSource={students}
+            onChange={onChange}
+            rowKey={(record) => { return record.id.toString() }}
+        />
     )
 }
 
