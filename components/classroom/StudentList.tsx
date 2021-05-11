@@ -79,12 +79,20 @@ const StudentList: React.FC<Props> = ({ classId, reloadRequest, reload, setReloa
         {
             title: 'Số điện thoại',
             dataIndex: 'phoneNumber',
+<<<<<<< HEAD
             // align: 'center'
+=======
+            align: 'center'
+>>>>>>> d8a7b22745c5ae88d8ec926d48a7f4413adbb58d
         },
         {
             title: 'Hành động',
             dataIndex: 'action',
+<<<<<<< HEAD
             // align: 'center'
+=======
+            align: 'center'
+>>>>>>> d8a7b22745c5ae88d8ec926d48a7f4413adbb58d
         }
     ]
 
