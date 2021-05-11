@@ -28,6 +28,9 @@ declare namespace API {
     teacher:{
       name: string
     },
+    teacherId: number,
+    startAt: Date,
+    endAt: Date
   }
 
   type Schedules = {

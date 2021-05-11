@@ -48,7 +48,21 @@ export default async function answerDetail(req: NextApiRequest, res: NextApiResp
                     }
                 })
             ])
-        } else {
+        } else if(req.body.data.status){
+            const {status} = req.body.data
+            await prisma.$transaction([
+                prisma.answer.update({
+                    where: {
+                        id: id
+                    },
+                    data: {
+                        status: status
+                    }
+                })
+            ])
+        res.status(200).json('ok')
+        }
+        else {
             const {
                 content,
                 attachment,

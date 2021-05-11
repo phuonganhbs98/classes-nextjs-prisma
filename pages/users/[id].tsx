@@ -82,7 +82,7 @@ const Profile: React.FC<{ id: number }> = (props) => {
           title=""
           extra={[
             <Button key="3">Sửa</Button>,
-            <Button key="1" type="primary" danger onClick={() => signOut()}>
+            <Button key="1" type="primary" danger onClick={() => signOut({callbackUrl: '/login'})}>
               Đăng xuât
           </Button>,
           ]}

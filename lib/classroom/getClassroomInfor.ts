@@ -4,9 +4,9 @@ export async function getAllClassroom() {
     let data = []
     await axios.get("http://localhost:3000/api/classrooms").then(res => {
         if (res.data) {
-            res.data.forEach((x: any) => {
-                updateStatusClass(x.id)
-            })
+            // res.data.forEach((x: any) => {
+            //     updateStatusClass(x.id)
+            // })
             data = res.data
         }
     })

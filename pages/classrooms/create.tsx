@@ -56,8 +56,6 @@ const CreateClassroomForm: React.FC = () => {
     let [startDate, setStartDate] = useState(null);
     const onChangeDate = (e: Moment) => {
         setStartDate(e)
-        // console.log(e.toString())
-        // console.log(formatDate(e.toDate()))
     }
     const checkEndDate = (_: any, value: Moment) => {
         console.log(value)

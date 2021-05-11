@@ -1,6 +1,7 @@
 import React from "react"
 import { Form, Input, Button } from "antd";
 import { signIn } from "next-auth/client";
+import alert from "../../lib/alert";
 
 type Props = {}
 
@@ -14,6 +15,7 @@ const tailLayout = {
 
 export default function SignInForm() {
     const onFinish = (values: any) => {
+        alert('Đăng nhập thành công', 'success')
         console.log('Success:', values);
     };
 
