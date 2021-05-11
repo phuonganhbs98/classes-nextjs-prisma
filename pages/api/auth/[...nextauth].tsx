@@ -17,6 +17,13 @@ const options = {
   adapter: Adapters.Prisma.Adapter({ prisma }),
   secret: process.env.SECRET,
   theme: 'dark',
+  session: {
+    // jwt: true
+    maxAge: 24*60*60
+  },
+  // jwt: {
+  //   secret: process.env.SECRET,
+  // },
   callbacks: {
     /**
      * @param  {object}  token     Decrypted JSON Web Token
@@ -32,6 +39,8 @@ const options = {
       // console.log("i'm in signin function")
       // console.log(user)
       // console.log(profile)
+      // console.log(localStorage)
+      
       return true;
     },
 
@@ -56,8 +65,10 @@ const options = {
       session.userId = token.id
       return session
     }
+  },
+  events:{
+    async signIn(message) { 
+    },
   }
 };
-
-//
 

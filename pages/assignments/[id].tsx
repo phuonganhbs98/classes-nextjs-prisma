@@ -7,7 +7,7 @@ import { formatDate } from "../../lib/formatDate"
 import { API } from "../../prisma/type/type"
 import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons'
 import { useRouter } from "next/router"
-import { getAllAnswer } from "../../lib/answer/answer"
+import { getAllAnswer, updateStatusAnswer } from "../../lib/answer/answer"
 import { Role } from ".prisma/client"
 import AnswerForm from "../../components/answer/AnswerForm"
 import { checkStudentSubmit } from '../../lib/answer/answer'
@@ -16,14 +16,6 @@ import Link from "next/link"
 import Modal from "antd/lib/modal/Modal"
 import moment from "moment"
 
-// export async function getServerSideProps({ params }) {
-//     let id = parseInt(params.id)
-//     return {
-//         props: {
-//             id
-//         }
-//     }
-// }
 const AssignmentDetail: React.FC = (props) => {
     const [session] = useSession()
     const router = useRouter()
@@ -45,8 +37,6 @@ const AssignmentDetail: React.FC = (props) => {
             setRole(session.role)
             setUserId(session.userId)
         }
-        console.log('test id')
-        console.log(Number.isNaN(id))
         if (!Number.isNaN(id)) {
             updateStatus(id)
             getAssignmentById(id)
@@ -58,15 +48,23 @@ const AssignmentDetail: React.FC = (props) => {
                         } else setVisible(false)
                     }
                     setDeadline(res.deadline)
+                    getAllAnswer(id)
+                        .then(answers => {
+                            setAnswers(answers)
+                        })
+                        .catch(err => console.error(err))
                 })
                 .catch(err => console.error(err))
-
-            getAllAnswer(id)
-                .then(res => setAnswers(res))
-                .catch(err => console.error(err))
         }
+    }, [session, id, reload])
 
-    }, [session,id, reload])
+    // useEffect(() => {
+    //     if (answers.length > 0) {
+    //         answers.forEach((x: API.AnswerItem) => {
+    //             updateStatusAnswer(x.id, x.createdAt, deadline)
+    //         })
+    //     }
+    // }, [answers.length, reload, deadline])
 
 
     useEffect(() => {
@@ -164,10 +162,12 @@ const AssignmentDetail: React.FC = (props) => {
     };
 
     const onFinish = async (values: any) => {
-        if(!Number.isNaN(id)){
-            update(id, values)
-            if(reload) setReload(false)
-            else setReload(true)
+        if (!Number.isNaN(id)) {
+            await update(id, values)
+                .then(res => {
+                    if (reload) setReload(false)
+                    else setReload(true)
+                })
         }
         setIsModalVisible(false)
         // router.push('/assignments')
@@ -199,7 +199,7 @@ const AssignmentDetail: React.FC = (props) => {
                         </Tabs.TabPane>
                     </Tabs>
                 ) : checkSubmitAssign ? (
-                    <ShowAnswer data={answerOfStu} reloadAnswer={reloadAnswer} setReloadAnswer={setReloadAnswer} deadline={deadline}/>
+                    <ShowAnswer data={answerOfStu} reloadAnswer={reloadAnswer} setReloadAnswer={setReloadAnswer} deadline={deadline} />
                 ) : (
                     <AnswerForm
                         data={answerOfStu}

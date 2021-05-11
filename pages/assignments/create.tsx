@@ -4,6 +4,7 @@ import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
+import alert from "../../lib/alert";
 import { create } from "../../lib/assignment/assignment";
 import { getAllClassroom } from "../../lib/classroom/getClassroomInfor";
 import { formatDate } from "../../lib/formatDate";
@@ -42,6 +43,7 @@ const CreateAssignmentForm: React.FC = () => {
 
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
+        alert('Tạo thất bại', 'Error')
     };
 
     const onFinish = async (values: any) => {
@@ -54,10 +56,12 @@ const CreateAssignmentForm: React.FC = () => {
         if (typeof values.title === 'undefined') {
             data.title = 'Bài tập ngày ' + formatDate(new Date(), false)
         }
-        create(data)
-        router.push('/assignments')
+        await create(data)
+        .then(res => {
+            alert('Tạo thành công', 'Success')
+            router.push('/assignments')
+        })
     }
-
     const checkDeadline = (_: any, value: string) => {
         if (new Date(value) > new Date())
             return Promise.resolve()

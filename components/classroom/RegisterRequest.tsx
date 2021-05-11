@@ -1,11 +1,8 @@
 import { Button, Divider, Table, Tooltip } from "antd";
-import { session } from "next-auth/client";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import getRegisteredStudents from "../../lib/register/getRegisteredStudents";
 import { accept } from "../../lib/register/handleRegister";
-import Columns from "../column/Columns";
-import { DownOutlined, UpOutlined, CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 
 type Props = {
     classId: number,
@@ -24,10 +21,9 @@ type ListStudents = {
 function onChange(pagination: any) {
     console.log('params', pagination);
 }
-const columns = Columns.columnStudents
+
 const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
     const [data, setData] = useState<ListStudents[]>([])
-    // const [reload, setReload] = useState<boolean>(false)
     const router = useRouter()
     let students = []
     useEffect(() => {
@@ -54,6 +50,30 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
             ]
         })
     }
+
+    const columns = [
+        {
+          title:'ID',
+          dataIndex: 'id',
+        },
+        {
+          title:'Tên sinh viên',
+          dataIndex: 'name',
+        },
+        {
+          title:'Email',
+          dataIndex: 'email',
+        },
+        {
+          title:'Số điện thoại',
+          dataIndex: 'phoneNumber',
+        },
+        {
+          title:'Hành động',
+          dataIndex: 'action',
+        //   align: 'center'
+        }
+      ]
 
     const handleAccept = (studentId: number) => {
         accept(studentId, classId)

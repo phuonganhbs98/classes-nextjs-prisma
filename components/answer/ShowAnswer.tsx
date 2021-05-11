@@ -41,7 +41,6 @@ const ShowAnswer: React.FC<Props> = ({ data, reloadAnswer, setReloadAnswer, dead
         setIsModalVisible(false)
         if (reloadAnswer) setReloadAnswer(false)
         else setReloadAnswer(true)
-
     }
     return (
         <>

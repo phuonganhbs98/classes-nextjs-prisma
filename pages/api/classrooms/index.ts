@@ -1,7 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import checkToken from "../../../lib/interceptor/checkToken";
 import prisma from "../../../lib/prisma";
 
 export default async function create(req: NextApiRequest, res: NextApiResponse) {
+    checkToken(req, res)
     const method = req.method
     if (method === 'POST') {
         const {
@@ -59,7 +61,9 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                     select:{
                         studentId: true
                     }
-                }
+                },
+                startAt: true,
+                endAt: true
             }
         })
         res.status(200).json(result)

@@ -26,28 +26,28 @@ const StudentBar: React.FC<Props> = ({ pathname }) => {
 
     const menuClass = (
         <Menu>
-            <Menu.Item key="/classrooms">
-                <Link href="/classrooms" >Tất cả các lớp học </Link>
+            <Menu.Item key="/students/classrooms">
+                <Link href="/students/classrooms" >Tất cả các lớp học </Link>
             </Menu.Item>
-            <Menu.Item key="/classrooms/registered">
-                <Link href="/classrooms/registered">Các lớp đã đăng ký</Link>
+            <Menu.Item key="/students/classrooms/registered">
+                <Link href="/students/classrooms/registered">Các lớp đã đăng ký</Link>
             </Menu.Item>
-            <Menu.Item key="/classrooms/active">
-                <Link href="/classrooms/active" >Các lớp đang học</Link>
+            <Menu.Item key="/students/classrooms/active">
+                <Link href="/students/classrooms/active" >Các lớp đang học</Link>
             </Menu.Item>
         </Menu>
     )
 
     const menuAssignment = (
         <Menu>
-            <Menu.Item key="/assignments">
-                <Link href="/assignments">Tất cả bài tập</Link>
+            <Menu.Item key="/students/assignments">
+                <Link href="/students/assignments">Tất cả bài tập</Link>
             </Menu.Item>
-            <Menu.Item key="/assignments/done">
-                <Link href="/assignments/done" >Bài tập đã làm</Link>
+            <Menu.Item key="/students/assignments/done">
+                <Link href="/students/assignments/done" >Bài tập đã làm</Link>
             </Menu.Item>
-            <Menu.Item key="/assignments/unfinished">
-                <Link href="/assignments/unfinished" >Bài tập chưa hoàn thành</Link>
+            <Menu.Item key="/students/assignments/unfinished">
+                <Link href="/students/assignments/unfinished" >Bài tập chưa hoàn thành</Link>
             </Menu.Item>
         </Menu>
     )
@@ -69,7 +69,7 @@ const StudentBar: React.FC<Props> = ({ pathname }) => {
                 style={{
                 }}
             >
-                <Menu.Item key="/" icon={<AppstoreOutlined />} active={true}>
+                <Menu.Item key="/students/schedule" icon={<AppstoreOutlined />} active={true}>
                     <Link href="/"><p className={hide}>Thời khóa biểu</p></Link>
                 </Menu.Item>
                 {collapsed ? (
@@ -85,25 +85,25 @@ const StudentBar: React.FC<Props> = ({ pathname }) => {
                 ) : (
                     <>
                         <SubMenu key="sub1" icon={<UserOutlined />} title="Lớp học">
-                            <Menu.Item key="/classrooms">
-                                <Link href="/classrooms" >Tất cả các lớp học </Link>
+                            <Menu.Item key="/students/classrooms">
+                                <Link href="/students/classrooms" >Tất cả các lớp học </Link>
                             </Menu.Item>
-                            <Menu.Item key="/classrooms/registered">
-                                <Link href="/classrooms/registered">Các lớp đã đăng ký</Link>
+                            <Menu.Item key="/students/classrooms/registered">
+                                <Link href="/students/classrooms/registered">Các lớp đã đăng ký</Link>
                             </Menu.Item>
-                            <Menu.Item key="/classrooms/active">
-                                <Link href="/classrooms/active" >Các lớp đang học</Link>
+                            <Menu.Item key="/students/classrooms/active">
+                                <Link href="/students/classrooms/active" >Các lớp đang học</Link>
                             </Menu.Item>
                         </SubMenu>
                         <SubMenu key="sub2" icon={<TeamOutlined />} title="Bài tập">
-                            <Menu.Item key="/assignments">
-                                <Link href="/assignments">Tất cả bài tập</Link>
+                            <Menu.Item key="/students/assignments">
+                                <Link href="/students/assignments">Tất cả bài tập</Link>
                             </Menu.Item>
-                            <Menu.Item key="/assignments/done">
-                                <Link href="/assignments/done" >Bài tập đã làm</Link>
+                            <Menu.Item key="/students/assignments/done">
+                                <Link href="/students/assignments/done" >Bài tập đã làm</Link>
                             </Menu.Item>
-                            <Menu.Item key="/assignments/unfinished">
-                                <Link href="/assignments/unfinished" >Bài tập chưa hoàn thành</Link>
+                            <Menu.Item key="/students/assignments/unfinished">
+                                <Link href="/students/assignments/unfinished" >Bài tập chưa hoàn thành</Link>
                             </Menu.Item>
                         </SubMenu>
                     </>

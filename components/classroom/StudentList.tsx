@@ -1,16 +1,14 @@
-import { Button, Table } from "antd";
+import { Button, Table, Tooltip } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { getClassById } from "../../lib/classroom/getClassroomInfor";
-import Columns from "../column/Columns";
 import { MinusOutlined } from '@ant-design/icons';
 import { cancel } from "../../lib/register/handleRegister";
 
 type Props = {
     classId: number,
     reloadRequest: boolean,
-    // setReloadRequest: any,
-    reload:boolean,
+    reload: boolean,
     setReload: any
 }
 type StudentInfor = {
@@ -27,10 +25,8 @@ type Student = {
 function onChange(pagination: any) {
     console.log('params', pagination);
 }
-const columns = Columns.columnStudents
 const StudentList: React.FC<Props> = ({ classId, reloadRequest, reload, setReload }) => {
     const [data, setData] = useState<Student[]>([])
-    // const [reload, setReload] = useState<boolean>(false)
     const router = useRouter()
     let students = []
     useEffect(() => {
@@ -52,32 +48,59 @@ const StudentList: React.FC<Props> = ({ classId, reloadRequest, reload, setReloa
                             onClick={() => router.push({
                                 pathname: `/users/${x.student.id}`,
                             })} >Xem</Button>,
-                        <Button
-                            type="ghost"
-                            shape="circle"
-                            size='small'
-                            icon={<MinusOutlined />}
-                            onClick={() => handleDelete(x.student.id)}
-                            danger ></Button>,
+                        <Tooltip title='Xóa khỏi lớp'>
+                            <Button
+                                type="ghost"
+                                shape="circle"
+                                size='small'
+                                icon={<MinusOutlined />}
+                                onClick={() => handleDelete(x.student.id)}
+                                danger ></Button>
+                        </Tooltip>,
                     ]
                 }
             ]
         })
     }
 
+    const columns = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+        },
+        {
+            title: 'Tên sinh viên',
+            dataIndex: 'name',
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+        },
+        {
+            title: 'Số điện thoại',
+            dataIndex: 'phoneNumber',
+            // align: 'center'
+        },
+        {
+            title: 'Hành động',
+            dataIndex: 'action',
+            // align: 'center'
+        }
+    ]
+
     const handleDelete = (studentId: number) => {
         cancel(studentId, classId)
-        if(reload) setReload(false)
+        if (reload) setReload(false)
         else setReload(true)
     }
 
     return (
-            <Table
-                columns={columns}
-                dataSource={students}
-                onChange={onChange}
-                rowKey={(record) => { return record.id.toString() }}
-            />
+        <Table
+            columns={columns}
+            dataSource={students}
+            onChange={onChange}
+            rowKey={(record) => { return record.id.toString() }}
+        />
     )
 }
 

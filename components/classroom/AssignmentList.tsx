@@ -5,18 +5,16 @@ import React, { useEffect, useState } from "react";
 import { deleteAssignment, findAll, updateStatus } from "../../lib/assignment/assignment";
 import { formatDate } from "../../lib/formatDate";
 import { API } from "../../prisma/type/type";
-import Columns from "../column/Columns";
 import {EyeOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons'
-import Link from "next/link";
 
 type Props = {
     classId: number,
-    visible: string
+    isTeacher: boolean
 }
 function onChange(pagination: any) {
     console.log('params', pagination);
 }
-const AssignmentList: React.FC<Props> = ({ classId, visible }) => {
+const AssignmentList: React.FC<Props> = ({ classId, isTeacher }) => {
     const [data, setData] = useState<API.AssignmentItem[]>([])
     const [checkReload, setCheckReload] = useState<boolean>(false)
     const router = useRouter()
@@ -37,8 +35,8 @@ const AssignmentList: React.FC<Props> = ({ classId, visible }) => {
                     statusRender: <>{x.status==="ASSIGNED"?<Badge status="success" />:<Badge status="error" />}{x.status}</>,
                     action: [
                         <Tooltip overlay='Xem' key={1}><Button key={1} type='link' icon={<EyeOutlined />} onClick={() => router.push(`/assignments/${x.id}`)} ></Button></Tooltip>,
-                        <Tooltip overlay='Sửa' key={2}><Button key={2} style={{display: visible}} type='link' icon={<EditOutlined />} onClick={() => handleEdit(x.id)} ></Button></Tooltip>,
-                        <Tooltip overlay='Xóa' key={3}><Button key={3} style={{display: visible}} type='link' icon={<DeleteOutlined />} onClick={() => handleDelete(x.id)} danger></Button></Tooltip>
+                        isTeacher?<Tooltip overlay='Sửa' key={2}><Button key={2} type='link' icon={<EditOutlined />} onClick={() => handleEdit(x.id)} ></Button></Tooltip>:'',
+                        isTeacher?<Tooltip overlay='Xóa' key={3}><Button key={3} type='link' icon={<DeleteOutlined />} onClick={() => handleDelete(x.id)} danger></Button></Tooltip>:''
                     ]
                 }
             ]
