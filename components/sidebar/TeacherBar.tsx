@@ -28,19 +28,19 @@ const TeacherBar: React.FC<Props> = ({ pathname }) => {
       <Menu.Item key="/teachers/classrooms">
         <Link href="/teachers/classrooms">Danh sách lớp học</Link>
       </Menu.Item>
-      <Menu.Item key="/teachers/classrooms/create">
-        <Link href="/teachers/classrooms/create">Tạo lớp mới</Link>
+      <Menu.Item key="/classrooms/create">
+        <Link href="/classrooms/create">Tạo lớp mới</Link>
       </Menu.Item>
     </Menu>
   )
 
   const menuAssignment = (
     <Menu>
-      <Menu.Item key="/teachers/assignments">
-        <Link href="/teachers/assignments">Danh sách bài tập</Link>
+      <Menu.Item key="/assignments">
+        <Link href="/assignments">Danh sách bài tập</Link>
       </Menu.Item>
-      <Menu.Item key="/teachers/assignments/create" icon={<UploadOutlined />}>
-        <Link href="/teachers/assignments/create">Giao bài tập</Link>
+      <Menu.Item key="/assignments/create" icon={<UploadOutlined />}>
+        <Link href="/assignments/create">Giao bài tập</Link>
       </Menu.Item>
     </Menu>
   )
@@ -73,8 +73,8 @@ const TeacherBar: React.FC<Props> = ({ pathname }) => {
               <Menu.Item key="/teachers/classrooms">
                 <Link href="/teachers/classrooms">Danh sách lớp học</Link>
               </Menu.Item>
-              <Menu.Item key="/teachers/classrooms/create">
-                <Link href="/teachers/classrooms/create">Tạo lớp mới</Link>
+              <Menu.Item key="/classrooms/create">
+                <Link href="/classrooms/create">Tạo lớp mới</Link>
               </Menu.Item>
             </SubMenu>
           )
