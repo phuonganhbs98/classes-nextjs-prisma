@@ -4,7 +4,8 @@ import prisma from "../../../lib/prisma";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const method = req.method
-    const studentId = parseInt(req.query.id[0])
+    const studentId =parseInt(req.query.id[0])
+    console.log('studentId: '+studentId)
     if (method === 'GET') {
         let result = null
         if (req.query.id[1]) { //check register

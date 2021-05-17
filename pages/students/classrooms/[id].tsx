@@ -7,7 +7,10 @@ import AssignmentList from "../../../components/classroom/AssignmentList";
 
 const ClassroomInfor: React.FC = () => {
     const router = useRouter()
-    const id = parseInt(router.query.id)
+    let id=-1
+    if(!Array.isArray(router.query?.id)){
+        id = parseInt(router.query.id)
+    }
 
     return (
         <MainLayout title="Thông tin lớp học">

@@ -19,7 +19,10 @@ const AnswerDetail: React.FC = () => {
     const [reload, setReload] = useState<boolean>(false)
     const [canScoring, setCanScoring] = useState<boolean>(false)
     const router = useRouter()
-    const id = parseInt(router.query?.id)
+    let id=-1
+    if(!Array.isArray(router.query?.id)){
+        id = parseInt(router.query.id)
+    }
     useEffect(() => {
         getAnswerById(id)
             .then(res => {

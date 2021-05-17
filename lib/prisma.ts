@@ -8,15 +8,24 @@ declare global {
   }
 }
 
-let prisma: PrismaClient;
+let prisma = new PrismaClient({
+  log: [{ level: 'query', emit: 'event' }],
+});
 
-if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient();
-} else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient();
-  }
-  prisma = global.prisma;
-}
 
+// if (process.env.NODE_ENV === "production") {
+//   prisma = new PrismaClient({
+//     log: [{ level: 'query', emit: 'event' }],
+//   });
+// } else {
+//   if (!global.prisma) {
+//     global.prisma = new PrismaClient({
+//       log: [{ level: 'query', emit: 'event' }],
+//     });
+//   }
+//   prisma = global.prisma;
+// }
+prisma.$on("query", e => {
+  console.log({query: e.query, params: e.params})
+})
 export default prisma;

@@ -4,7 +4,7 @@ import prisma from "../../../../lib/prisma";
 
 export default async (req:NextApiRequest, res: NextApiResponse) => {
     const method = req.method
-    const classId = parseInt(req.query.id[0])
+    const classId = Array.isArray(req.query.id)?0:parseInt(req.query.id)
     if(method === 'GET'){
         const result = await prisma.register.findMany({
             where:{

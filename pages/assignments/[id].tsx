@@ -19,7 +19,10 @@ import moment from "moment"
 const AssignmentDetail: React.FC = (props) => {
     const [session] = useSession()
     const router = useRouter()
-    const id = parseInt(router.query.id)
+    let id=-1
+    if(!Array.isArray(router.query?.id)){
+        id = parseInt(router.query.id)
+    }
     const [role, setRole] = useState<Role>()
     const [userId, setUserId] = useState<number>()
     const [visible, setVisible] = useState<boolean>(false)

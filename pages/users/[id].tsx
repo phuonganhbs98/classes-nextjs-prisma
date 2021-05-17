@@ -8,8 +8,8 @@ import column from '../../components/column/Columns'
 import deleteClass from '../../lib/classroom/deleteClass'
 import { useRouter } from "next/router";
 import { Role } from ".prisma/client";
-import { getUserById } from "../../lib/user/getUser";
 import { API } from "../../prisma/type/type";
+import { getUserById } from "../../lib/user/getUser";
 
 export async function getServerSideProps({ params }) {
   let id = parseInt(params.id)

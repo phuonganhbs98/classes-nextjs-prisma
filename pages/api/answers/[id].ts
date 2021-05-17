@@ -3,7 +3,7 @@ import prisma from "../../../lib/prisma";
 
 export default async function answerDetail(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    const id = parseInt(req.query.id)
+    const id = Array.isArray(req.query.id)?0:parseInt(req.query.id)
     if (method === 'GET') {
         const result = await prisma.answer.findUnique({
             where: {

@@ -1,9 +1,8 @@
+import { PrismaClient } from ".prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import checkToken from "../../../lib/interceptor/checkToken";
 import prisma from "../../../lib/prisma";
 
 export default async function create(req: NextApiRequest, res: NextApiResponse) {
-    checkToken(req, res)
     const method = req.method
     if (method === 'POST') {
         const {
@@ -15,10 +14,10 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
             teacherId
         } = JSON.parse(req.body)
 
-        let newSchedules=[]
+        let newSchedules = []
         if (schedules) {
-            schedules.forEach((x:any) => {
-                newSchedules=[
+            schedules.forEach((x: any) => {
+                newSchedules = [
                     ...newSchedules,
                     {
                         startAt: x.startAt,
@@ -28,7 +27,7 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                 ]
             });
         }
-         await prisma.class.create({
+        await prisma.class.create({
             include: {
                 schedules: true
             },
@@ -45,32 +44,44 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         })
         res.status(200).json("success")
     } else if (method === 'GET') {
+        const name = Array.isArray(req.query.name) ? null : req.query.name
+        const teacherName = Array.isArray(req.query.teacherName) ? null : req.query.teacherName
         const result = await prisma.class.findMany({
-            select:{
+            select: {
                 id: true,
                 name: true,
                 capacity: true,
                 teacherId: true,
                 teacher: {
-                    select:{
+                    select: {
                         name: true
                     }
                 },
                 status: true,
                 students: {
-                    select:{
+                    select: {
                         studentId: true
                     }
                 },
                 startAt: true,
                 endAt: true
+            },
+            where: {
+                name: {
+                    contains: name
+                },
+                teacher:{
+                    name:{
+                        contains: teacherName
+                    }
+                }
             }
         })
         res.status(200).json(result)
-    }else if(method === 'PUT'){
+    } else if (method === 'PUT') {
         const {
-           id,
-           status
+            id,
+            status,
         } = JSON.parse(req.body)
         await prisma.class.update({
             where: {

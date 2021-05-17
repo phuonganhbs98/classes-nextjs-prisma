@@ -1,13 +1,14 @@
-import { List, PageHeader, Button, Row, Col, Divider, Tooltip, Alert, Descriptions, Tabs } from "antd";
+import { List, PageHeader, Button, Row, Col, Divider, Tooltip, Alert, Descriptions, Tabs, Tag, message, Popconfirm } from "antd";
 import React, { useEffect, useState } from "react";
 import { RegisterStatus } from ".prisma/client";
-import { MinusOutlined } from '@ant-design/icons';
+import { MinusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { API } from "../../../prisma/type/type";
 import { getClassById } from "../../../lib/classroom/getClassroomInfor";
 import checkRegister from "../../../lib/register/checkRegister";
 import { formatDate, formatDay, formatTime } from "../../../lib/formatDate";
 import { cancel, sendRegister } from "../../../lib/register/handleRegister";
 import deleteClass from "../../../lib/classroom/deleteClass";
+import EditClassForm from "./EditClassForm";
 
 const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeacher }) => {
     const [role, setRole] = useState<string>()
@@ -17,7 +18,8 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
     const [canEdit, setCanEdit] = useState(false)
     const [register, setRegister] = useState<Boolean>()
     const [registerButton, setRegisterButton] = useState<string>()
-    const [showAlert, setShowAlert] = useState<boolean>(false)
+    const [reload, setReload] = useState<boolean>(false)
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
 
     useEffect(() => {
         const role = localStorage.getItem('role')
@@ -30,7 +32,7 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
             if (isTeacher) setCanEdit(true)
             else setCanEdit(false)
         })
-    }, [])
+    }, [reload])
 
     useEffect(() => {
         if (userId) {
@@ -79,9 +81,8 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
             sendRegister(userId, id)
             setRegister(true)
             setRegisterButton('Đã đăng ký')
-            setShowAlert(false)
         } else {
-            setShowAlert(true)
+            message.error('Lớp đã đầy')
         }
     }
 
@@ -91,25 +92,22 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
         setRegisterButton('Đăng ký')
     }
 
-    const closeAlert = () => {
-        setShowAlert(false)
-    }
-    console.log(showAlert)
-    let alert = showAlert ?
-        <Alert
-            message="Lớp đã đầy"
-            type="warning"
-            onClose={closeAlert}
-            showIcon
-            closable
-        /> : null
     return (
         <div className="site-layout-background">
             <PageHeader
-                title=""
+                title={<div style={{
+                    fontSize: '30px',
+                    fontWeight: 'bolder',
+                    margin: '0 20px 0 2%',
+                }}> {classes?.name} </div>}
                 extra={isTeacher ? [
-                    <Button key='2' style={editButton} type="ghost">Sửa</Button>,
-                    <Button key='3' style={editButton} type="primary" onClick={() => deleteClass(id)} danger>Xóa</Button>,
+                    <Button key='2' type="primary" shape='round' icon={<EditOutlined />} onClick={() => setIsModalVisible(true)}>Sửa</Button>,
+                    <Popconfirm
+                        title="Bạn chắc chắn chứ ?"
+                        onConfirm={() => deleteClass(id)}
+                    >
+                        <Button key='3' type="primary" shape='round' icon={<DeleteOutlined />} danger>Xóa</Button>
+                    </Popconfirm>,
                     <br />,
                 ] : [
                     <Button key='1' disabled={disableButton} type="primary" onClick={() => handleRegister()}>{registerButton}</Button>,
@@ -118,13 +116,7 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
                     </Tooltip>),
                 ]}
             ></PageHeader>
-            {[alert]}
-            <p style={{
-                fontSize: '30px',
-                fontWeight: 'bolder',
-                margin: '0 20px 0 2%',
-            }}> {classes?.name} </p>
-            <Divider orientation="right" plain={false} style={{ fontSize: '14px' }}>
+            <Divider orientation="left" plain={false} style={{ fontSize: '14px' }}>
                 <em>Được tạo bởi:
                     <a href={`/users/${classes?.teacherId}`}> {classes?.teacherName}</a></em>
             </Divider>
@@ -133,7 +125,12 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
             }}>
                 <Col key="1" span={6} push={0}>
                     <p><strong>ID: </strong>{classes?.id}</p>
-                    <p><strong>Trạng thái: </strong>{classes?.status}</p>
+                    <p><strong>Trạng thái: </strong>{
+                        new Date() < new Date(classes?.startAt) ?
+                            <Tag color="orange">Sắp bắt đầu</Tag> :
+                            new Date() > new Date(classes?.endAt) ?
+                                <Tag color="red">Đã kết thúc</Tag> :
+                                <Tag color="green"> Đang mở</Tag>}</p>
                     <p><strong>Số lượng học viên tối đa: </strong>{classes?.capacity}</p>
                 </Col>
                 <Col key="3" span={6} push={0}>
@@ -151,6 +148,13 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
                     />
                 </Col>
             </Row>
+            <EditClassForm
+                classroom={data}
+                reload={reload}
+                setReload={setReload}
+                isModalVisible={isModalVisible}
+                setIsModalVisible={setIsModalVisible}
+            />
         </div>
     )
 }

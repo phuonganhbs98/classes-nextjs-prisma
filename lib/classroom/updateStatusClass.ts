@@ -1,20 +1,19 @@
-import { Class } from ".prisma/client";
-import axios, { AxiosResponse } from "axios";
+import { API } from "../../prisma/type/type";
 
-export default async function updateStatusClass(id: number) {
+export default async function updateStatusClass(classroom: API.Classroom) {
     
-    let data :AxiosResponse<Class> = await axios.get(`http://localhost:3000/api/classrooms/${id}`)
-    const currentClass = data.data
     const now = new Date();
+    const endDate = classroom.endAt
+    const startDate = classroom.startAt
     let status = ''
-    if (now < new Date(currentClass.startAt)) {
+    if (now < new Date(startDate)) {
         status = 'PREPARE'
-    } else if (now > new Date(currentClass.endAt)) {
+    } else if (now > new Date(endDate)) {
         status = 'FINISHED'
     } else status = 'STUDYING'
-    if (status !== currentClass.status) {
+    if (status !== classroom.status) {
         const update = {
-            id: id,
+            id: classroom.id,
             status: status
         }
         const res = await fetch('http://localhost:3000/api/classrooms', {
@@ -22,5 +21,6 @@ export default async function updateStatusClass(id: number) {
             method: 'PUT'
         })
     }
+    return status;
 
 }

@@ -13,7 +13,7 @@ const { Content, Footer } = Layout;
 
 type Props = {
   children: ReactNode;
-  title: ReactNode | string | number;
+  title:  string | ReactNode;
 };
 
 const MainLayout: React.FC<Props> = ({ children, title }) => {

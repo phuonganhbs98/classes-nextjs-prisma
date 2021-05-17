@@ -1,10 +1,11 @@
+import { id } from "date-fns/locale";
 import { NextApiRequest, NextApiResponse } from "next-auth/_utils";
 import prisma from "../../../lib/prisma";
 
 export default async function findUnique(req: NextApiRequest, res: NextApiResponse){
     const method = req.method
+    const id = Array.isArray(req.query.id)?0:parseInt(req.query.id)
     if(method === 'GET'){
-        const id = parseInt(req.query.id[0])
         const result= await prisma.class.findUnique({
             where:{
                 id: id
@@ -39,7 +40,6 @@ export default async function findUnique(req: NextApiRequest, res: NextApiRespon
         })
         res.status(200).json(result)
     }else if(method === 'DELETE'){
-        const id = parseInt(req.query.id[0])
         await prisma.$transaction([
             prisma.schedule.deleteMany({
                 where: {
@@ -64,6 +64,25 @@ export default async function findUnique(req: NextApiRequest, res: NextApiRespon
                 }
             }),
             prisma.class.delete({
+                where:{
+                    id: id
+                }
+            })
+        ])
+        res.status(200).json("Delete success!")
+    }else if(method ==='PUT'){
+        const {
+            name, capacity, startAt, endAt, status
+        } = req.body.data
+        await prisma.$transaction([
+            prisma.class.update({
+                data:{
+                    name:name,
+                    capacity: capacity,
+                    startAt: startAt,
+                    endAt: endAt,
+                    status: status
+                },
                 where:{
                     id: id
                 }

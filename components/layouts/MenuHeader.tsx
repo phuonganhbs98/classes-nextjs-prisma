@@ -2,11 +2,11 @@ import { Avatar, Button, Dropdown, Layout, Menu, PageHeader } from "antd";
 import { signOut, useSession } from "next-auth/client";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { ReactNode } from "react";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
 
 type Props = {
-  title: string;
+  title: string | ReactNode;
 };
 
 const { Header } = Layout;

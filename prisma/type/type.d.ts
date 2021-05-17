@@ -24,13 +24,14 @@ declare namespace API {
     name: string,
     capacity: number,
     students: ClassroomToStudent[],
-    status: ClassStatus,
+    status: string,
     teacher:{
       name: string
     },
     teacherId: number,
     startAt: Date,
-    endAt: Date
+    endAt: Date,
+    schedules: Schedules[]
   }
 
   type Schedules = {
