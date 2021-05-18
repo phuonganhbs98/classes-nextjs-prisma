@@ -3,6 +3,21 @@ import prisma from "../../../lib/prisma";
 
 export default async function managerAssignment(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
+    const selectData = {
+        id: true,
+        title: true,
+        content: true,
+        attachment: true,
+        status: true,
+        deadline: true,
+        answers: true,
+        classId: true,
+        class: {
+            select: {
+                name: true
+            }
+        }
+    }
     if (method === 'POST') {
         const {
             title,
@@ -12,10 +27,10 @@ export default async function managerAssignment(req: NextApiRequest, res: NextAp
             teacherId,
             attachment
         } = req.body.data
-
+        let result = null
         await prisma.$transaction([
             prisma.assignment.create({
-                data:{
+                data: {
                     title: title,
                     content: content,
                     deadline: deadline,
@@ -24,55 +39,53 @@ export default async function managerAssignment(req: NextApiRequest, res: NextAp
                     attachment: attachment
                 }
             })
-        ])
-        res.status(200).json("Create assignment success")
-    }else if(method==='GET'){
-        const classId = req.query.classId
-        const teacherId = req.query.teacherId
+        ]).then(res => result = res)
+        res.status(200).json(result)
+    } else if (method === 'GET') {
+        const classId = Array.isArray(req.query.classId) ? '0' : req.query.classId
+        const teacherId = Array.isArray(req.query.teacherId) ? '0' : req.query.teacherId
+        const studentId = Array.isArray(req.query.studentId) ? '0' : req.query.studentId
         let result = null
-        if(typeof classId === 'undefined' && typeof teacherId === 'undefined'){
+        if (typeof classId === 'undefined' && typeof teacherId === 'undefined' && typeof studentId === 'undefined') {
             result = await prisma.assignment.findMany()
-        }else if(typeof classId !== 'undefined'){
+        } else if (typeof classId !== 'undefined') {
             result = await prisma.assignment.findMany({
                 where: {
-                    classId: parseInt(classId[0])
+                    classId: parseInt(classId)
                 },
-                select:{
-                    id: true,
-                    title: true,
-                    content: true,
-                    attachment: true,
-                    status: true,
-                    deadline: true,
-                    answers: true,
-                    classId: true,
-                    class: {
-                        select:{
-                            name: true
-                        }
+                select: selectData
+            })
+        } else if (typeof studentId !== 'undefined') {
+            console.log('StudentID: ' + studentId)
+            let arrayId = []
+            const classId = await prisma.classroomToStudent.findMany({
+                select: {
+                    classId: true
+                },
+                where: {
+                    studentId: parseInt(studentId)
+                }
+
+            }).then(async res => {
+                res.forEach(x => arrayId.push(x.classId))
+            })
+
+            result = await prisma.assignment.findMany({
+                select: selectData,
+                where: {
+                    classId: {
+                        in: arrayId
                     }
                 }
             })
-        }else {
+
+            res.status(200).json(result)
+        } else {
             result = await prisma.assignment.findMany({
                 where: {
                     teacherId: parseInt(teacherId[0])
                 },
-                select:{
-                    id: true,
-                    title: true,
-                    content: true,
-                    attachment: true,
-                    status: true,
-                    deadline: true,
-                    answers: true,
-                    classId: true,
-                    class: {
-                        select:{
-                            name: true
-                        }
-                    }
-                }
+                select: selectData
             })
         }
         res.status(200).json(result)

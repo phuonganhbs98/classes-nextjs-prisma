@@ -5,7 +5,7 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { Tabs } from "antd";
 import RegisterRequest from "../../../components/classroom/RegisterRequest";
 import StudentList from "../../../components/classroom/StudentList";
-import AssignmentList from "../../../components/classroom/AssignmentList";
+import AssignmentList from "../../assignments/component/AssignmentList";
 
 const ClassroomInfor: React.FC = () => {
     const router = useRouter()

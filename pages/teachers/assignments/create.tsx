@@ -1,28 +1,23 @@
-import { Button, DatePicker, Form, Input, InputNumber, Select } from "antd";
-import { el } from "date-fns/locale";
-import { useSession } from "next-auth/client";
+import { Button, DatePicker, Form, Input, InputNumber, message, Select } from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import MainLayout from "../../components/layouts/MainLayout";
-import alert from "../../lib/alert";
-import { create } from "../../lib/assignment/assignment";
-import { getAllClassroom } from "../../lib/classroom/getClassroomInfor";
-import { formatDate } from "../../lib/formatDate";
-import { API } from "../../prisma/type/type";
+import MainLayout from "../../../components/layouts/MainLayout";
+import { create } from "../../../lib/assignment/assignment";
+import { getAllClassroom } from "../../../lib/classroom/getClassroomInfor";
+import { formatDate } from "../../../lib/formatDate";
+import { API } from "../../../prisma/type/type";
 
 const CreateAssignmentForm: React.FC = () => {
     const router = useRouter()
-    const [session] = useSession()
     const [data, setData] = useState<API.Classroom[]>([])
-    const [teacherId, setTeacherId] = useState()
+    const [teacherId, setTeacherId] = useState<number>()
     useEffect(() => {
-        if (session) {
-            setTeacherId(session.userId)
-            getAllClassroom().then(res => {
-                setData(res.filter(x => x.teacherId === session.userId))
-            })
-        }
-    }, [])
+        const userId = parseInt(localStorage.getItem('userId'))
+        setTeacherId(userId)
+        getAllClassroom().then(res => {
+            setData(res.filter(x => x.teacherId === userId))
+        })
+    }, [teacherId])
     let classes = []
     if (data.length > 0) {
         data.forEach((x: API.Classroom) => {
@@ -43,7 +38,7 @@ const CreateAssignmentForm: React.FC = () => {
 
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
-        alert('Tạo thất bại', 'Error')
+        message.error('Tạo thất bại')
     };
 
     const onFinish = async (values: any) => {
@@ -57,10 +52,10 @@ const CreateAssignmentForm: React.FC = () => {
             data.title = 'Bài tập ngày ' + formatDate(new Date(), false)
         }
         await create(data)
-        .then(res => {
-            alert('Tạo thành công', 'Success')
-            router.push('/assignments')
-        })
+            .then(res => {
+                message.success('Tạo thành công')
+                router.push(`/teachers/assignments`)
+            })
     }
     const checkDeadline = (_: any, value: string) => {
         if (new Date(value) > new Date())

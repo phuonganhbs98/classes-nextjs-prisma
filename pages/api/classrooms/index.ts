@@ -4,6 +4,26 @@ import prisma from "../../../lib/prisma";
 
 export default async function create(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
+    const selectData = {
+        id: true,
+        name: true,
+        capacity: true,
+        teacherId: true,
+        teacher: {
+            select: {
+                name: true
+            }
+        },
+        status: true,
+        students: {
+            select: {
+                studentId: true
+            }
+        },
+        startAt: true,
+        endAt: true
+    }
+
     if (method === 'POST') {
         const {
             name,
@@ -29,7 +49,7 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         }
         await prisma.class.create({
             include: {
-                schedules: true
+                schedules: true,
             },
             data: {
                 name: name,
@@ -46,37 +66,41 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
     } else if (method === 'GET') {
         const name = Array.isArray(req.query.name) ? null : req.query.name
         const teacherName = Array.isArray(req.query.teacherName) ? null : req.query.teacherName
-        const result = await prisma.class.findMany({
-            select: {
-                id: true,
-                name: true,
-                capacity: true,
-                teacherId: true,
-                teacher: {
-                    select: {
-                        name: true
+        const studentId = Array.isArray(req.query.studentId) ? null : req.query.studentId
+        let teacherIdParam = Array.isArray(req.query.teacherId) ? null : req.query.teacherId
+        let teacherId=undefined
+        if(typeof teacherIdParam !== 'undefined') teacherId = parseInt(teacherIdParam)
+        let result = null
+        if (typeof studentId !== 'undefined') {
+            result = await prisma.classroomToStudent.findMany({
+                select: {
+                    classId: true,
+                    classroom: {
+                        select: selectData
                     }
                 },
-                status: true,
-                students: {
-                    select: {
-                        studentId: true
-                    }
-                },
-                startAt: true,
-                endAt: true
-            },
+                where: {
+                   studentId: parseInt(studentId)
+                }
+            })
+        } 
+        else 
+        {
+        result = await prisma.class.findMany({
+            select: selectData,
             where: {
                 name: {
                     contains: name
                 },
-                teacher:{
-                    name:{
+                teacher: {
+                    name: {
                         contains: teacherName
                     }
-                }
+                },
+                teacherId: teacherId
             }
         })
+        }
         res.status(200).json(result)
     } else if (method === 'PUT') {
         const {

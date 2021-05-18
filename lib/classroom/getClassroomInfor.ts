@@ -4,7 +4,7 @@ import updateStatusClass from './updateStatusClass'
 export async function getAllClassroom(
     option?: {[key: string]:any}
 ) {
-    let data = []
+    let data: API.Classroom[] = []
     await axios.get("http://localhost:3000/api/classrooms",{
         params: {...option}
     }).then(res => {
@@ -34,3 +34,11 @@ export async function getClassById(id: number) {
         schedules
     }
 }
+
+// export async function getClassByStudentId(studentId: number){
+//     await  axios.get(`http://localhost:3000/api/classrooms/${id}`).then(async (res) => {
+//         data = res.data
+//         data.status = await updateStatusClass(data)
+//         schedules = data.schedules
+//     })
+// }

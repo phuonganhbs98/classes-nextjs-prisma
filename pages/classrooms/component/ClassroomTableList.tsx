@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Input, PageHeader, Popconfirm, Row, Table, Tag, Tooltip } from "antd";
+import { Button, Col, Form, Input, PageHeader, Popconfirm, Row, Table, Tag, Tooltip } from "antd";
 import { getAllClassroom } from "../../../lib/classroom/getClassroomInfor";
 import { useRouter } from "next/router";
 import deleteClass from '../../../lib/classroom/deleteClass'
@@ -15,16 +15,18 @@ function onChange(pagination: any) {
 type Props = {
   isTeacher: boolean
 }
+type Search = {
+  name?: string,
+  teacherName?: string
+}
 const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
   const router = useRouter()
   const pathname = router.pathname
   const [data, setData] = useState<API.Classroom[]>([])
   const [total, setTotal] = useState<number>(-1)
-  const [searchClass, setSearchClass] = useState<string>()
-  const [searchByTeacherName, setSearchByTeacherName] = useState<string>()
-  const [search, setSearch] = useState<boolean>(false)
+  const [searchData, setSearchData] = useState<Search>()
   useEffect(() => {
-    getAllClassroom({ name: searchClass, teacherName: searchByTeacherName }).then(res => {
+    getAllClassroom(searchData).then(res => {
       if (isTeacher) {
         const userId = localStorage.getItem('userId')
         const classes = res.filter((x: API.Classroom) => x.teacherId === parseInt(userId))
@@ -35,7 +37,7 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
         setTotal(res.length)
       }
     })
-  }, [search])
+  }, [searchData])
 
   const columns: ColumnsType<API.Classroom> = [
     {
@@ -114,42 +116,42 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
     }
   ];
 
+  const onSearch = (value: Search) => {
+    setSearchData(value)
+  }
+
   return (
     <>
       <div className="site-layout-background">
-        <Row align='middle'>
-          <Col key='searchByTeacherName' span={8} push={1}>
-            <div>Tên lớp: </div>
-            <Input
-              placeholder="Nhập tên lớp"
-              onChange={value => {
-                setSearchClass(value.nativeEvent.data)
-              }}
-              style={{ width: 300 }}
-              allowClear
-            />
-          </Col>
-          <Col key='searchByName' span={8} push={1}>
-            <div>Tên giáo viên: </div>
-            <Input
-              placeholder="Nhập tên giáo viên"
-              onChange={value => setSearchByTeacherName(value.nativeEvent.data)}
-              style={{ width: 300 }}
-              allowClear
-            />
-          </Col>
-          <Col push={5}>
+        <Form
+          className="ant-advanced-search-form"
+          layout='inline'
+          labelCol={{ offset: 3, pull: 1, span: 8 }}
+          onFinish={onSearch}
+          style={{ marginLeft: '150px' }}
+        >
+          <Form.Item
+            label='Tên lớp'
+            name='name'
+          >
+            <Input placeholder="Nhập tên lớp" allowClear />
+          </Form.Item>
+          <Form.Item
+            name='teacherName'
+            label='Tên giáo viên'
+          >
+            <Input placeholder="Nhập tên giáo viên" allowClear />
+          </Form.Item>
+          <Form.Item wrapperCol={{ span: 8, push: 10 }} style={{ marginLeft: '100px' }}>
             <Button
+              type="primary"
+              htmlType="submit"
               icon={<SearchOutlined />}
-              type='primary'
-              onClick={() => {
-                if (search) setSearch(false)
-                else setSearch(true)
-              }}
-            >Tìm kiếm</Button>
-          </Col>
-        </Row>
-
+              shape='round' >
+              Tìm kiếm
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
       <div className="site-layout-background" style={{ marginTop: '20px' }}>
         <PageHeader
@@ -159,6 +161,7 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
             isTeacher ? <Link key="1" href="/classrooms/create">
               <Button
                 type="primary"
+                shape='round'
                 icon={<PlusOutlined />}
               >Tạo lớp mới</Button>
             </Link> : ''

@@ -54,8 +54,6 @@ const MainLayout: React.FC<Props> = ({ children, title }) => {
             >
               <div className=" main-container"
                 style={{
-                  // padding: '0 20px'
-                  // padding:20,
                   minHeight: 360
                 }}>{children}</div>
             </Content>

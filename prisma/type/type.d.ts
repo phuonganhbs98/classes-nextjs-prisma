@@ -23,9 +23,9 @@ declare namespace API {
     id: number,
     name: string,
     capacity: number,
-    students: ClassroomToStudent[],
+    students: StudentAndClassroom[],
     status: string,
-    teacher:{
+    teacher: {
       name: string
     },
     teacherId: number,
@@ -38,7 +38,7 @@ declare namespace API {
     dayInWeek: number,
     startAt: Date,
     endAt: Date
-}
+  }
 
   type AssignmentItem = {
     id: number,
@@ -82,6 +82,20 @@ declare namespace API {
     teacherName: string,
     status: ClassStatus,
     capacity: number
+  }
+
+  type StudentAndClassroom = {
+    studentId: number,
+    classId: number,
+    student: StudentInfor,
+    classroom: Classroom
+  }
+
+  type StudentInfor = {
+    id: number,
+    name: string,
+    email: string,
+    phoneNumber: string
   }
 }
 

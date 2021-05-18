@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import ClassDetail from "../../classrooms/component/ClassDetail";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { Tabs } from "antd";
-import AssignmentList from "../../../components/classroom/AssignmentList";
+import AssignmentList from "../../assignments/component/AssignmentList";
 
 const ClassroomInfor: React.FC = () => {
     const router = useRouter()

@@ -77,12 +77,15 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
     }
 
     const handleRegister = () => {
-        if (classes.capacity > classes.count) {
+        if (classes.capacity <= classes.count){
+            message.error('Lớp đã đầy')
+        }else if(classes.status==='FINISHED'){
+            message.error('Lớp học đã kết thúc. Không thể đăng ký')
+        }else{
             sendRegister(userId, id)
             setRegister(true)
             setRegisterButton('Đã đăng ký')
-        } else {
-            message.error('Lớp đã đầy')
+            message.success('Đăng ký thành công')
         }
     }
 

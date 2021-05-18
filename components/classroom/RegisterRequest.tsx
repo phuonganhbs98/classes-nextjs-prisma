@@ -24,10 +24,12 @@ function onChange(pagination: any) {
 
 const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
     const [data, setData] = useState<ListStudents[]>([])
+    const [total, setTotal] = useState<number>(0)
     const router = useRouter()
     let students = []
     useEffect(() => {
         getRegisteredStudents(classId).then((res: ListStudents[]) => {
+            setTotal(res.length)
             setData(res)
         })
     }, [reload])
@@ -53,27 +55,27 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
 
     const columns = [
         {
-          title:'ID',
-          dataIndex: 'id',
+            title: 'ID',
+            dataIndex: 'id',
         },
         {
-          title:'Tên sinh viên',
-          dataIndex: 'name',
+            title: 'Tên sinh viên',
+            dataIndex: 'name',
         },
         {
-          title:'Email',
-          dataIndex: 'email',
+            title: 'Email',
+            dataIndex: 'email',
         },
         {
-          title:'Số điện thoại',
-          dataIndex: 'phoneNumber',
+            title: 'Số điện thoại',
+            dataIndex: 'phoneNumber',
         },
         {
-          title:'Hành động',
-          dataIndex: 'action',
-        //   align: 'center'
+            title: 'Hành động',
+            dataIndex: 'action',
+            //   align: 'center'
         }
-      ]
+    ]
 
     const handleAccept = (studentId: number) => {
         accept(studentId, classId)
@@ -85,6 +87,12 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
             columns={columns}
             dataSource={students}
             onChange={onChange}
+            pagination={{
+                total: total,
+                showTotal: total => `Tổng ${total} học sinh`,
+                defaultPageSize: 10,
+                defaultCurrent: 1
+            }}
             rowKey={(record) => { return record.id.toString() }}
         />
     )

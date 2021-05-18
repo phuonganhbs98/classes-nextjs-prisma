@@ -96,8 +96,8 @@ const StudentBar: React.FC<Props> = ({ pathname }) => {
                             </Menu.Item>
                         </SubMenu>
                         <SubMenu key="sub2" icon={<TeamOutlined />} title="Bài tập">
-                            <Menu.Item key="/assignments">
-                                <Link href="/assignments">Tất cả bài tập</Link>
+                            <Menu.Item key="/students/assignments">
+                                <Link href="/students/assignments">Tất cả bài tập</Link>
                             </Menu.Item>
                             <Menu.Item key="/assignments/done">
                                 <Link href="/assignments/done" >Bài tập đã làm</Link>
