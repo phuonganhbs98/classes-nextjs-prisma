@@ -48,25 +48,27 @@ export default async function answerDetail(req: NextApiRequest, res: NextApiResp
                     }
                 })
             ])
-        } else if(req.body.data.status){
-            const {status} = req.body.data
-            await prisma.$transaction([
-                prisma.answer.update({
-                    where: {
-                        id: id
-                    },
-                    data: {
-                        status: status
-                    }
-                })
-            ])
-        res.status(200).json('ok')
-        }
+        } 
+        // else if(req.body.data.status){
+        //     const {status} = req.body.data
+        //     await prisma.$transaction([
+        //         prisma.answer.update({
+        //             where: {
+        //                 id: id
+        //             },
+        //             data: {
+        //                 status: status
+        //             }
+        //         })
+        //     ])
+        // res.status(200).json('ok')
+        // }
         else {
             const {
                 content,
                 attachment,
-                updatedAt
+                updatedAt,
+                status,
             } = req.body.data
             await prisma.$transaction([
                 prisma.answer.update({
@@ -76,7 +78,8 @@ export default async function answerDetail(req: NextApiRequest, res: NextApiResp
                     data: {
                         content: content,
                         attachment: attachment,
-                        updatedAt: updatedAt
+                        updatedAt: updatedAt,
+                        status: status
                     }
                 })
             ])

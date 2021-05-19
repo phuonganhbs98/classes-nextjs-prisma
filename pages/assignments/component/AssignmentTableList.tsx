@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { getAllClassroom } from "../../../lib/classroom/getClassroomInfor";
 import AssignmentList from "./AssignmentList";
 import CreateModalForm from "./CreateModalForm";
+import { ClassroomToStudent } from ".prisma/client";
 
 const AssignmentTableList: React.FC<{ isTeacher: boolean }> = ({ isTeacher }) => {
   const [classes, setClasses] = useState<API.Classroom[]>([])
@@ -25,15 +26,10 @@ const AssignmentTableList: React.FC<{ isTeacher: boolean }> = ({ isTeacher }) =>
       let arrayClasses: API.Classroom[] = []
       getAllClassroom({ studentId: userId })
         .then(res => {
-          if (res.length > 0) {
-            res.forEach((x: API.Classroom) => arrayClasses.push(x))
-          }
-          setClasses(arrayClasses)
-          setActiveKey(arrayClasses[0].id)
+          setClasses(res)
         })
     }
   }, [])
-
 
   return (
     <div className="site-layout-background">
@@ -42,14 +38,14 @@ const AssignmentTableList: React.FC<{ isTeacher: boolean }> = ({ isTeacher }) =>
         tabPosition='top'
         onChange={(activeKey) => setActiveKey(parseInt(activeKey))}
         tabBarExtraContent={
-          <Button
+          isTeacher?<Button
             type='primary'
             shape='round'
             icon={<PlusOutlined />}
             onClick={()=> setIsModalVisible(true)}
           >
             Tạo bài tập
-        </Button>}
+        </Button>:null}
       >
         {classes.map((i: API.Classroom) => (
           <Tabs.TabPane tab={`Lớp ${i.name}`} key={i.id} >

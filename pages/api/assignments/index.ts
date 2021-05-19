@@ -27,8 +27,7 @@ export default async function managerAssignment(req: NextApiRequest, res: NextAp
             teacherId,
             attachment
         } = req.body.data
-        let result = null
-        await prisma.$transaction([
+        const [result] = await prisma.$transaction([
             prisma.assignment.create({
                 data: {
                     title: title,
@@ -39,7 +38,7 @@ export default async function managerAssignment(req: NextApiRequest, res: NextAp
                     attachment: attachment
                 }
             })
-        ]).then(res => result = res)
+        ])
         res.status(200).json(result)
     } else if (method === 'GET') {
         const classId = Array.isArray(req.query.classId) ? '0' : req.query.classId

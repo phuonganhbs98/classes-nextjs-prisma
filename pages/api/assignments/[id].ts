@@ -4,7 +4,7 @@ import prisma from "../../../lib/prisma";
 
 export default async function assignmentItemManager(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    const id = Array.isArray(req.query.id)?0:parseInt(req.query.id)
+    const id = Array.isArray(req.query.id) ? 0 : parseInt(req.query.id)
     if (method === 'GET') {
         const result = await prisma.assignment.findUnique({
             where: {
@@ -17,7 +17,13 @@ export default async function assignmentItemManager(req: NextApiRequest, res: Ne
                 attachment: true,
                 status: true,
                 deadline: true,
-                answers: true,
+                answers: {
+                    select: {
+                        id: true,
+                        updatedAt: true,
+                        status: true
+                    }
+                },
                 classId: true,
                 class: {
                     select: {
@@ -34,7 +40,8 @@ export default async function assignmentItemManager(req: NextApiRequest, res: Ne
                 title,
                 content,
                 attachment,
-                deadline
+                deadline,
+                status
             } = req.body.data
             await prisma.$transaction([
                 prisma.assignment.update({
@@ -45,12 +52,13 @@ export default async function assignmentItemManager(req: NextApiRequest, res: Ne
                         title: title,
                         content: content,
                         attachment: attachment,
-                        deadline: deadline
+                        deadline: deadline,
+                        status: status
                     }
                 })
             ])
         } else {
-            const {status} = req.body.data
+            const { status } = req.body.data
             await prisma.$transaction([
                 prisma.assignment.update({
                     where: {

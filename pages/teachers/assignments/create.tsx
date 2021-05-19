@@ -54,7 +54,11 @@ const CreateAssignmentForm: React.FC = () => {
         await create(data)
             .then(res => {
                 message.success('Tạo thành công')
-                router.push(`/teachers/assignments`)
+                router.push(`/teachers/assignments/${res.id}`)
+            })
+            .catch(err=>{
+                console.error(err)
+                message.error('Tạo thất bại')
             })
     }
     const checkDeadline = (_: any, value: string) => {

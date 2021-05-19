@@ -1,11 +1,12 @@
-import { Button, Form, Input, Tooltip } from "antd";
+import { Button, Form, Input, message, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { API } from "../../prisma/type/type";
 import { EditOutlined } from '@ant-design/icons'
 import { AnswerStatus } from ".prisma/client";
 import Modal from "antd/lib/modal/Modal";
 import TextArea from "antd/lib/input/TextArea";
-import { updateAssign } from "../../lib/answer/answer";
+import { setStatusAnswer, updateAssign } from "../../lib/answer/answer";
+import { formatDate } from "../../lib/formatDate";
 
 type Props = {
     data: API.AnswerItem,
@@ -30,21 +31,24 @@ const ShowAnswer: React.FC<Props> = ({ data, reloadAnswer, setReloadAnswer, dead
     const onFinish = async (values: any) => {
         const body = {
             ...values,
-            status: new Date() > new Date(deadline) ? 'LATE' : 'SUBMITTED',
+            status: deadline?setStatusAnswer(deadline):null,
             updatedAt: new Date()
         }
         await updateAssign(body, data.id)
             .then((res: any) => {
-                console.log(res)
+                message.success('Thành công')
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                console.error(err)
+                message.error('Thất bại')
+            })
         setIsModalVisible(false)
         if (reloadAnswer) setReloadAnswer(false)
         else setReloadAnswer(true)
     }
     return (
         <>
-            <p style={{ fontSize: '18px' }}><strong>Bài làm của bạn</strong>
+            <p style={{ fontSize: '20px' }}><strong>Bài làm của bạn</strong>
                 <Tooltip title='Chỉnh sửa'>
                     <Button
                         type='primary'
@@ -55,7 +59,8 @@ const ShowAnswer: React.FC<Props> = ({ data, reloadAnswer, setReloadAnswer, dead
                         style={{ marginLeft: '10px' }} />
                 </Tooltip>
                 <br />
-                {data.status === AnswerStatus.LATE ? (<small style={{ color: 'red' }}>{`<Nộp muộn>`}</small>) : ''}
+                <em style={{fontSize: '12px'}}>Chỉnh sửa lần cuối lúc: {data?formatDate(new Date(data.updatedAt)):null} {data?.status === AnswerStatus.LATE ? (<span style={{ color: 'red' }}>{`<Nộp muộn>`}</span>) : ''}</em>
+                
             </p>
             {data?.content}
             <br />

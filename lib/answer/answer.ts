@@ -31,12 +31,14 @@ export async function updateAssign(answer: API.AnswerItem, answerId: number) {
 
 export async function checkStudentSubmit(studentId: number, assignmentId: number) {
     let result = null
-    await axios.get(`/api/answers/submit`, {
-        params: {
-            studentId: studentId,
-            assignmentId: assignmentId
-        }
-    }).then(res => result = res.data)
+    if (studentId && assignmentId) {
+        await axios.get(`/api/answers/submit`, {
+            params: {
+                studentId: studentId,
+                assignmentId: assignmentId
+            }
+        }).then(res => result = res.data)
+    }
     return result
 }
 
@@ -56,16 +58,18 @@ export async function scoring(id: number, score: number) {
         .catch(err => console.error(err))
 }
 
-export async function updateStatusAnswer(id:number, submmitedDate: Date, deadline: Date) {
-    let status = 'SUBMITTED'
-    if (new Date(submmitedDate) > new Date(deadline)) {
-        status = 'LATE'
-    } else {
-        status = 'SUBMITTED'
+export async function updateStatusAnswer(answer: API.AnswerItem, deadline: Date) {
+    let status = setStatusAnswer(deadline)
+    if (answer.status !== status) {
+        await axios.put(`/api/answers/${answer.id}`, {
+            data: { status: status }
+        })
+            
     }
-    await axios.put(`/api/answers/${id}`,{
-        data: {status: status}
-    })
-    .then(res => console.log(res))
-    .catch(err => console.error(err))
+}
+
+export function setStatusAnswer(deadline: Date) {
+    const now = new Date()
+    if (now > new Date(deadline)) return 'LATE'
+    else return 'SUBMITTED'
 }

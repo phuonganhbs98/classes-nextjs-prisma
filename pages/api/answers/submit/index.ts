@@ -11,7 +11,6 @@ export default async function submitAssignment(req: NextApiRequest, res: NextApi
             studentId,
             status
         } = req.body.data
-        // let answer=null
         const [answer] = await prisma.$transaction([
         prisma.answer.create({
                 data: {

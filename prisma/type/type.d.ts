@@ -45,9 +45,9 @@ declare namespace API {
     title: string,
     content: string,
     attachment: string,
-    status: AssignmentStatus,
+    status: string,
     deadline: Date,
-    answers: Answer,
+    answers: AnswerItem[],
     classId: number
     class: {
       name: string

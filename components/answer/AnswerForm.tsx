@@ -1,6 +1,6 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { submitAssign } from "../../lib/answer/answer";
+import { setStatusAnswer, submitAssign } from "../../lib/answer/answer";
 import { API } from "../../prisma/type/type";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
     deadline: Date,
     data: API.AnswerItem
 }
-const AnswerForm: React.FC<Props> = ({ id, studentId, setCheckSubmit, setAnswer, deadline, data }) => {
+const AnswerForm: React.FC<Props> = ({ id, studentId, setCheckSubmit, setAnswer, data, deadline }) => {
     const layout = {
         labelCol: { span: 8, offset: 0 },
         wrapperCol: { span: 10 },
@@ -29,14 +29,17 @@ const AnswerForm: React.FC<Props> = ({ id, studentId, setCheckSubmit, setAnswer,
             ...values,
             assignmentId: id,
             studentId: studentId,
-            status: new Date()> new Date(deadline)? 'LATE': 'SUBMITTED'
+            status: deadline?setStatusAnswer(deadline):null
         }
         await submitAssign(data)
             .then((res: any) => {
-                console.log(res)
                 setAnswer(res)
+                message.success('Thành công')
             })
-            .catch(err => console.error(err))
+            .catch(err => {
+                console.error(err)
+                message.error('Thất bại')
+            })
         setCheckSubmit(true)
         
     }

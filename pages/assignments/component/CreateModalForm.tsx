@@ -39,7 +39,7 @@ const CreateModalForm: React.FC<{
     }
     return (
         <Modal
-            title="Chỉnh sửa thông tin lớp"
+            title="Tạo bài tập mới"
             visible={isModalVisible}
             footer={null}
             onCancel={() => setIsModalVisible(false)}>
@@ -56,6 +56,10 @@ const CreateModalForm: React.FC<{
                         .then((res: API.AssignmentItem) => {
                             message.success('Tạo thành công')
                             router.push(`/teachers/assignments/${res.id}`)
+                        })
+                        .catch(err=>{
+                            console.error(err)
+                            message.error('Tạo thất bại')
                         })
                 }}
             >

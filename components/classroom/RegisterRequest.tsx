@@ -1,3 +1,4 @@
+import { CheckOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button, Divider, Table, Tooltip } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -40,13 +41,18 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
                 {
                     ...x.student,
                     action: [
-                        <Button
+                        <Tooltip title='Xem'>
+                            <Button
                             key={x.student.id}
                             type="link"
+                            icon={<EyeOutlined />}
                             onClick={() => router.push({
                                 pathname: `/users/${x.student.id}`,
-                            })} >Xem</Button>,
-                        <Button type="primary" onClick={() => handleAccept(x.student.id)} >Đồng ý</Button>
+                            })} /></Tooltip>,
+                        <Tooltip title='Đồng ý'>
+                            <Button type="link" 
+                            icon={<CheckOutlined style={{color: 'green'}} />}
+                        onClick={() => handleAccept(x.student.id)} /></Tooltip>
                     ]
                 }
             ]

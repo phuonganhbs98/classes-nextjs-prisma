@@ -41,7 +41,11 @@ const MenuHeader: React.FC<Props> = ({ title }) => {
       <PageHeader
         style={{ maxHeight: "64px", padding: 12, paddingLeft: 24 }}
         title={title}
-        onBack={() => router.back()}
+        onBack={() => {
+          router.back()
+          // router.reload()
+          // router.prefetch()
+        }}
         extra={auth}
       />
     </Header>

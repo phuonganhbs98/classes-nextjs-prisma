@@ -72,15 +72,14 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         if(typeof teacherIdParam !== 'undefined') teacherId = parseInt(teacherIdParam)
         let result = null
         if (typeof studentId !== 'undefined') {
-            result = await prisma.classroomToStudent.findMany({
-                select: {
-                    classId: true,
-                    classroom: {
-                        select: selectData
-                    }
-                },
+            result = await prisma.class.findMany({
+                select: selectData,
                 where: {
-                   studentId: parseInt(studentId)
+                   students:{
+                       some:{
+                           studentId: parseInt(studentId)
+                       }
+                   }
                 }
             })
         } 

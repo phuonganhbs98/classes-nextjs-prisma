@@ -101,7 +101,7 @@ model Answer {
   id           Int           @id @default(autoincrement())
   content      String
   attachment   String?
-  score        Float         @default(0)
+  score        Float?        
   student      User          @relation(fields: [studentId], references: [id])
   studentId    Int
   assignment   Assignment    @relation(fields: [assignmentId], references: [id])
