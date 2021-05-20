@@ -108,5 +108,27 @@ declare namespace API {
     createdAt?: Date,
     author: string
   }
+
+  type TimetableClassItem = {
+    id?: number,
+    title: string,
+    start: Date,
+    end: Date,
+    classId: number,
+    teacherId: number
+  }
+
+  type TimetableStudentItem = {
+    id?: number,
+    title: string,
+    start: Date,
+    end: Date,
+    studentId: number
+  }
+
+  type Period ={
+    startTime: Date,
+    endTime: Date
+  }
 }
 

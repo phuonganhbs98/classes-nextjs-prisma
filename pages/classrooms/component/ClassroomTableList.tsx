@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, PageHeader, Popconfirm, Row, Table, Tag, Tooltip } from "antd";
+import { Button, Col, Form, Input, message, PageHeader, Popconfirm, Row, Table, Tag, Tooltip } from "antd";
 import { getAllClassroom } from "../../../lib/classroom/getClassroomInfor";
 import { useRouter } from "next/router";
 import deleteClass from '../../../lib/classroom/deleteClass'
@@ -25,6 +25,7 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
   const [data, setData] = useState<API.Classroom[]>([])
   const [total, setTotal] = useState<number>(-1)
   const [searchData, setSearchData] = useState<Search>()
+  const [reload, setReload] = useState<boolean>(false)
   useEffect(() => {
     getAllClassroom(searchData).then(res => {
       if (isTeacher) {
@@ -37,7 +38,7 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
         setTotal(res.length)
       }
     })
-  }, [searchData])
+  }, [searchData, reload])
 
   const columns: ColumnsType<API.Classroom> = [
     {
@@ -116,7 +117,18 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
           {isTeacher ?
             <Popconfirm
               title="Bạn chắc chắn chứ ?"
-              onConfirm={() => deleteClass(record.id)}
+              onConfirm={async () => {
+                deleteClass(record.id)
+                .then(res =>{
+                  message.success('Xóa thành công')
+                  if(reload) setReload(false)
+                  else setReload(true)
+                })
+                .catch(err =>{
+                  message.error('Xóa thất bại')
+                })
+                
+              }}
             >
               <Tooltip title='Xóa'><Button
                 key={`d${record.id}`}
@@ -173,13 +185,14 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
           title={''
           }
           extra={[
-            isTeacher ? <Link key="1" href="/classrooms/create">
+            isTeacher ? 
               <Button
                 type="primary"
                 shape='round'
                 icon={<PlusOutlined />}
+                onClick={()=> router.push('/classrooms/create')}
               >Tạo lớp mới</Button>
-            </Link> : ''
+             : ''
           ]}
         ></PageHeader>
         <Table<API.Classroom>

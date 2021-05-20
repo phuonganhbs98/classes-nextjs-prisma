@@ -22,6 +22,7 @@ model Class {
   startAt          DateTime             @map(name: "start_at")
   endAt            DateTime             @map(name: "end_at")
 
+  TimetableClass TimetableClass[]
   @@map(name: "classes")
 }
 
@@ -63,6 +64,8 @@ model User {
   achievements     Achievement[]
   assignments      Assignment[]
   answers          Answer[]
+  timetableStu     TimetableStudent[]
+  timetableClass   TimetableClass[]
   createdAt        DateTime             @default(now()) @map(name: "created_at")
   updatedAt        DateTime             @updatedAt @map(name: "updated_at")
 
@@ -171,6 +174,30 @@ model Session {
   updatedAt    DateTime @default(now()) @map(name: "updated_at")
 
   @@map(name: "sessions")
+}
+
+model TimetableClass {
+  id        Int       @id @default(autoincrement())
+  title     String
+  start     DateTime?
+  end       DateTime?
+  classId   Int
+  classroom Class     @relation(fields: [classId], references: [id])
+  teacherId Int
+  teacher   User      @relation(fields: [teacherId], references: [id])
+
+  @@map("timetable_classes")
+}
+
+model TimetableStudent {
+  id        Int       @id @default(autoincrement())
+  title     String
+  start     DateTime?
+  end       DateTime?
+  studentId Int
+  student   User      @relation(fields: [studentId], references: [id])
+
+  @@map("timetable_students")
 }
 
 enum Role {

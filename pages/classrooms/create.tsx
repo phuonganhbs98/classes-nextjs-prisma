@@ -6,7 +6,8 @@ import {
     Button,
     InputNumber,
     TimePicker,
-    Space
+    Space,
+    message
 } from "antd";
 import { useRouter } from "next/router";
 import MainLayout from "../../components/layouts/MainLayout";
@@ -19,6 +20,7 @@ import {
     MinusCircleOutlined,
     PlusOutlined
 } from '@ant-design/icons';
+import createClass from "../../lib/classroom/createClass";
 
 const CreateClassroomForm: React.FC = () => {
     const router = useRouter()
@@ -44,13 +46,16 @@ const CreateClassroomForm: React.FC = () => {
             ...values,
             teacherId: teacherId,
         }
-        console.log(values)
-        const res = await fetch('http://localhost:3000/api/classrooms', {
-            body: JSON.stringify(data),
-            method: 'POST'
+        await createClass(data)
+        .then(res => {
+            console.log('new classroom')
+            console.log(res)
+            message.success('Thành công')
+            router.push('/teachers/classrooms')
         })
-        if (res.ok)
-            router.push('/classrooms')
+        .catch(err =>{
+            message.error('Thất bại')
+        })
     }
 
     let [startDate, setStartDate] = useState(null);

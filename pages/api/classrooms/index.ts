@@ -32,7 +32,7 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
             startAt,
             endAt,
             teacherId
-        } = JSON.parse(req.body)
+        } = req.body.data
 
         let newSchedules = []
         if (schedules) {
@@ -47,58 +47,59 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                 ]
             });
         }
-        await prisma.class.create({
-            include: {
-                schedules: true,
-            },
-            data: {
-                name: name,
-                capacity: capacity,
-                startAt: startAt,
-                endAt: endAt,
-                teacherId: teacherId,
-                schedules: {
-                    create: newSchedules
+        const [result] = await prisma.$transaction([
+            prisma.class.create({
+                include: {
+                    schedules: true,
+                },
+                data: {
+                    name: name,
+                    capacity: capacity,
+                    startAt: startAt,
+                    endAt: endAt,
+                    teacherId: teacherId,
+                    schedules: {
+                        create: newSchedules
+                    }
                 }
-            }
-        })
-        res.status(200).json("success")
+            })
+        ])
+            res.status(200).json(result)
     } else if (method === 'GET') {
         const name = Array.isArray(req.query.name) ? null : req.query.name
         const teacherName = Array.isArray(req.query.teacherName) ? null : req.query.teacherName
         const studentId = Array.isArray(req.query.studentId) ? null : req.query.studentId
         let teacherIdParam = Array.isArray(req.query.teacherId) ? null : req.query.teacherId
-        let teacherId=undefined
-        if(typeof teacherIdParam !== 'undefined') teacherId = parseInt(teacherIdParam)
+        let teacherId = undefined
+        if (typeof teacherIdParam !== 'undefined') teacherId = parseInt(teacherIdParam)
         let result = null
         if (typeof studentId !== 'undefined') {
             result = await prisma.class.findMany({
                 select: selectData,
                 where: {
-                   students:{
-                       some:{
-                           studentId: parseInt(studentId)
-                       }
-                   }
+                    students: {
+                        some: {
+                            studentId: parseInt(studentId)
+                        }
+                    }
                 }
             })
-        } 
-        else 
-        {
-        result = await prisma.class.findMany({
-            select: selectData,
-            where: {
-                name: {
-                    contains: name
-                },
-                teacher: {
+        }
+        else {
+            result = await prisma.class.findMany({
+                select: selectData,
+                where: {
                     name: {
-                        contains: teacherName
-                    }
-                },
-                teacherId: teacherId
-            }
-        })
+                        contains: name
+                    },
+                    teacher: {
+                        name: {
+                            contains: teacherName
+                        }
+                    },
+                    teacherId: teacherId
+                }
+            })
         }
         res.status(200).json(result)
     } else if (method === 'PUT') {
