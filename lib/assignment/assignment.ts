@@ -3,7 +3,7 @@ import { API } from "../../prisma/type/type";
 import { getAllClassroom } from "../classroom/getClassroomInfor";
 
 export async function create(data: API.AssignmentItem) {
-    let result:API.AssignmentItem = null
+    let result: API.AssignmentItem = null
     data.status = setStatus(data.deadline)
     await axios.post('http://localhost:3000/api/assignments', {
         data: data
@@ -16,12 +16,14 @@ export async function create(data: API.AssignmentItem) {
 }
 
 export async function update(assignmentId: number, data: API.AssignmentItem) {
+    let result: API.AssignmentItem = null
     data.status = setStatus(data.deadline)
     await axios.put(`http://localhost:3000/api/assignments/${assignmentId}`, {
         data: data
     })
-        .then(res => console.log(res))
-        .catch(err => console.error(err))
+        .then(res => result = res.data)
+    // .catch(err => console.error(err))
+    return result
 }
 
 export async function updateStatus(assignment: API.AssignmentItem) {
@@ -66,7 +68,7 @@ export async function deleteAssignment(assignmentId: number) {
         .catch(err => console.error(err))
 }
 
-export function setStatus(deadline: Date){
+export function setStatus(deadline: Date) {
     if (new Date(deadline) < new Date()) {
         status = 'EXPIRED'
     } else status = 'ASSIGNED'

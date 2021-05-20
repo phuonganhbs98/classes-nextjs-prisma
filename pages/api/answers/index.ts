@@ -27,7 +27,9 @@ export default async function answers(req: NextApiRequest, res: NextApiResponse)
                         title: true
                     }
                 },
-                status: true
+                status: true,
+                createdAt: true,
+                updatedAt: true
             }
         })
         res.status(200).json(result)

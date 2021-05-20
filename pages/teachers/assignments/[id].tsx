@@ -1,12 +1,13 @@
-import { Button, Table, Tabs, Tag, Tooltip } from "antd"
+import { Button, Descriptions, Table, Tabs, Tag, Tooltip } from "antd"
 import { useEffect, useState } from "react"
-import { EyeOutlined } from '@ant-design/icons'
+import { EyeOutlined, ReloadOutlined } from '@ant-design/icons'
 import { useRouter } from "next/router"
 import Link from "next/link"
 import { API } from "../../../prisma/type/type"
 import { getAllAnswer } from "../../../lib/answer/answer"
 import AssignmentDetailLayout from "../../assignments/component/AssignmentDetailLayout"
 import { ColumnsType } from "antd/lib/table"
+import { formatDate } from "../../../lib/formatDate"
 
 const AssignmentDetail: React.FC = (props) => {
     const router = useRouter()
@@ -31,7 +32,7 @@ const AssignmentDetail: React.FC = (props) => {
         console.log('params', pagination);
     }
 
-    const columns:ColumnsType<API.AnswerItem> = [
+    const columns: ColumnsType<API.AnswerItem> = [
         {
             title: 'ID',
             dataIndex: 'id',
@@ -62,8 +63,26 @@ const AssignmentDetail: React.FC = (props) => {
         {
             title: 'Trạng thái',
             dataIndex: 'status',
+            filters: [
+                {
+                    text: 'Nộp muộn',
+                    value: 'LATE'
+                },
+                {
+                    text: 'Đã nộp',
+                    value: 'SUBMITTED'
+                },
+            ],
+            onFilter: (value, record)=> record.status===value,
             render: (text, record) => (
                 <>{record.status === 'LATE' ? (<Tag color="red">Nộp muộn</Tag>) : (<Tag color="green">Đã nộp</Tag>)}</>
+            )
+        },
+        {
+            title: 'Chỉnh sửa gần nhất',
+            dataIndex: 'updatedAt',
+            render: (text, record) => (
+                <div>{formatDate(new Date(record.updatedAt))}</div>
             )
         },
         {
@@ -89,6 +108,21 @@ const AssignmentDetail: React.FC = (props) => {
             <div className="site-layout-background content">
                 <Tabs defaultActiveKey="1" >
                     <Tabs.TabPane tab="Danh sách nộp bài" key="1">
+                        <Descriptions
+                            key='answers'
+                            extra={[
+                                <Button
+                                    type='default'
+                                    shape='round'
+                                    onClick={() => {
+                                        if (reload) setReload(false)
+                                        else setReload(true)
+                                    }}
+                                    icon={<ReloadOutlined />} >
+                                    Tải lại bảng
+                                </Button>
+                            ]}
+                        />
                         <Table columns={columns} dataSource={answers} onChange={onChange} rowKey={(record) => { return record.id?.toString() }} />
                     </Tabs.TabPane>
                 </Tabs>

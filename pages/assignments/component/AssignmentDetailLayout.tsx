@@ -84,6 +84,7 @@ const AssignmentDetailLayout: React.FC<{
     const onFinish = async (values: any) => {
         await update(id, values)
             .then(res => {
+                console.log(res)
                 message.success('Thành công')
                 if (reload) setReload(false)
                 else setReload(true)

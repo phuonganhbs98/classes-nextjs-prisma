@@ -35,42 +35,44 @@ export default async function assignmentItemManager(req: NextApiRequest, res: Ne
         })
         res.status(200).json(result)
     } else if (method === 'PUT') {
-        if (!req.body.data.status) {
-            const {
-                title,
-                content,
-                attachment,
-                deadline,
-                status
-            } = req.body.data
-            await prisma.$transaction([
-                prisma.assignment.update({
-                    where: {
-                        id: id
-                    },
-                    data: {
-                        title: title,
-                        content: content,
-                        attachment: attachment,
-                        deadline: deadline,
-                        status: status
-                    }
-                })
-            ])
-        } else {
-            const { status } = req.body.data
-            await prisma.$transaction([
-                prisma.assignment.update({
-                    where: {
-                        id: id
-                    },
-                    data: {
-                        status: status
-                    }
-                })
-            ])
-        }
-        res.status(200).json('ok')
+        // if (!req.body.data.status) {
+        const {
+            title,
+            content,
+            attachment,
+            deadline,
+            status
+        } = req.body.data
+        const [result] = await prisma.$transaction([
+            prisma.assignment.update({
+                where: {
+                    id: id
+                },
+                data: {
+                    title: title,
+                    content: content,
+                    attachment: attachment,
+                    deadline: deadline,
+                    status: status
+                }
+            })
+        ])
+        res.status(200).json(result)
+        // } 
+        // else {
+        //     const { status } = req.body.data
+        //     const [result] = await prisma.$transaction([
+        //         prisma.assignment.update({
+        //             where: {
+        //                 id: id
+        //             },
+        //             data: {
+        //                 status: status
+        //             }
+        //         })
+        //     ])
+        //     res.status(200).json(result)
+        // }
     } else if (method === 'DELETE') {
         await prisma.$transaction([
             prisma.answer.deleteMany({

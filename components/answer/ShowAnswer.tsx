@@ -7,6 +7,7 @@ import Modal from "antd/lib/modal/Modal";
 import TextArea from "antd/lib/input/TextArea";
 import { setStatusAnswer, updateAssign } from "../../lib/answer/answer";
 import { formatDate } from "../../lib/formatDate";
+import CommentItem from "../comment/CommentItem";
 
 type Props = {
     data: API.AnswerItem,
@@ -31,7 +32,7 @@ const ShowAnswer: React.FC<Props> = ({ data, reloadAnswer, setReloadAnswer, dead
     const onFinish = async (values: any) => {
         const body = {
             ...values,
-            status: deadline?setStatusAnswer(deadline):null,
+            status: deadline ? setStatusAnswer(deadline) : null,
             updatedAt: new Date()
         }
         await updateAssign(body, data.id)
@@ -48,23 +49,32 @@ const ShowAnswer: React.FC<Props> = ({ data, reloadAnswer, setReloadAnswer, dead
     }
     return (
         <>
-            <p style={{ fontSize: '20px' }}><strong>Bài làm của bạn</strong>
-                <Tooltip title='Chỉnh sửa'>
-                    <Button
-                        type='primary'
-                        icon={<EditOutlined />}
-                        shape='circle'
-                        size='middle'
-                        onClick={() => setIsModalVisible(true)}
-                        style={{ marginLeft: '10px' }} />
-                </Tooltip>
+            <div className="site-layout-background content">
+                <p style={{ fontSize: '20px' }}><strong>Bài làm của bạn</strong>
+                    <Tooltip title='Chỉnh sửa'>
+                        <Button
+                            type='primary'
+                            icon={<EditOutlined />}
+                            shape='circle'
+                            size='middle'
+                            onClick={() => setIsModalVisible(true)}
+                            style={{ marginLeft: '10px' }} />
+                    </Tooltip>
+                    <br />
+                    <em style={{ fontSize: '12px' }}>Chỉnh sửa lần cuối lúc: {data ? formatDate(new Date(data.updatedAt)) : null} {data?.status === AnswerStatus.LATE ? (<span style={{ color: 'red' }}>{`<Nộp muộn>`}</span>) : ''}</em>
+
+                </p>
+                {data?.content}
                 <br />
-                <em style={{fontSize: '12px'}}>Chỉnh sửa lần cuối lúc: {data?formatDate(new Date(data.updatedAt)):null} {data?.status === AnswerStatus.LATE ? (<span style={{ color: 'red' }}>{`<Nộp muộn>`}</span>) : ''}</em>
-                
-            </p>
-            {data?.content}
-            <br />
-            <a href={data?.attachment} target='_blank'>{data?.attachment}</a>
+                <br />
+                <a href={data?.attachment} target='_blank'>{data?.attachment}</a>
+                <br />
+                <br />
+                <p><strong>Điểm: </strong><span style={{ color: 'red' }}>{data?.score}</span></p>
+            </div>
+            <CommentItem
+                answerId={data?.id}
+            />
             <Modal title='Chỉnh sửa bài làm' visible={isModalVisible} footer={null} onCancel={() => setIsModalVisible(false)}>
                 <Form
                     {...layout}

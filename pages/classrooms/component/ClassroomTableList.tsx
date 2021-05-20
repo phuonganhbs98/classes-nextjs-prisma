@@ -77,6 +77,21 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
       title: 'Trạng thái',
       dataIndex: 'status',
       align: 'center',
+      filters: [
+        {
+          text: 'Sắp bắt đầu',
+          value: 'PREPARE'
+        },
+        {
+          text: 'Đang mở',
+          value: 'STUDYING'
+        },
+        {
+          text: 'Đã kết thúc',
+          value: 'FINISHED'
+        },
+      ],
+      onFilter: (value, record) => record.status === value,
       render: (text: string, record: API.Classroom) => (
         new Date() < new Date(record.startAt) ?
           <Tag color="purple">Sắp bắt đầu</Tag> :

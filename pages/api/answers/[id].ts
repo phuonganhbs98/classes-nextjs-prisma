@@ -36,19 +36,19 @@ export default async function answerDetail(req: NextApiRequest, res: NextApiResp
         })
         res.status(200).json(result)
     } else if (method === 'PUT') {
-        if (req.body.data.score) {
-            const score = req.body.data
-            await prisma.$transaction([
-                prisma.answer.update({
-                    where: {
-                        id: id
-                    },
-                    data: {
-                        score: score
-                    }
-                })
-            ])
-        } 
+        // if (req.body.data.score) {
+        //     const score = req.body.data
+        //     await prisma.$transaction([
+        //         prisma.answer.update({
+        //             where: {
+        //                 id: id
+        //             },
+        //             data: {
+        //                 score: score
+        //             }
+        //         })
+        //     ])
+        // } 
         // else if(req.body.data.status){
         //     const {status} = req.body.data
         //     await prisma.$transaction([
@@ -63,12 +63,13 @@ export default async function answerDetail(req: NextApiRequest, res: NextApiResp
         //     ])
         // res.status(200).json('ok')
         // }
-        else {
+        // else {
             const {
                 content,
                 attachment,
                 updatedAt,
                 status,
+                score
             } = req.body.data
             await prisma.$transaction([
                 prisma.answer.update({
@@ -79,11 +80,12 @@ export default async function answerDetail(req: NextApiRequest, res: NextApiResp
                         content: content,
                         attachment: attachment,
                         updatedAt: updatedAt,
-                        status: status
+                        status: status,
+                        score: score
                     }
                 })
             ])
-        }
+        // }
 
         res.status(200).json('ok')
     }

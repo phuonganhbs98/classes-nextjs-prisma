@@ -28,6 +28,8 @@ const MainLayout: React.FC<Props> = ({ children, title }) => {
       setRole(session.role)
       localStorage.setItem('userId', session.userId)
       localStorage.setItem('role', session.role)
+      localStorage.setItem('image', session.user.image)
+      localStorage.setItem('name', session.user.name)
     }
   }, [session])
   return loading ? (<Loading />) : session ? (

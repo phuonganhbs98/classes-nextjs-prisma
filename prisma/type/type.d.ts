@@ -97,5 +97,16 @@ declare namespace API {
     email: string,
     phoneNumber: string
   }
+
+  type CommentItem = {
+    id?: number,
+    userId: number,
+    answerId: number,
+    content: string,
+    avatar: string,
+    datetime?: string,
+    createdAt?: Date,
+    author: string
+  }
 }
 

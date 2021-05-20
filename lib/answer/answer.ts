@@ -52,7 +52,7 @@ export async function getAnswerById(id: number) {
 
 export async function scoring(id: number, score: number) {
     await axios.put(`/api/answers/${id}`, {
-        data: score
+        data: {score: score}
     })
         .then(res => console.log(res))
         .catch(err => console.error(err))

@@ -29,7 +29,7 @@ const AnswerForm: React.FC<Props> = ({ id, studentId, setCheckSubmit, setAnswer,
             ...values,
             assignmentId: id,
             studentId: studentId,
-            status: deadline?setStatusAnswer(deadline):null
+            status: deadline ? setStatusAnswer(deadline) : null
         }
         await submitAssign(data)
             .then((res: any) => {
@@ -41,41 +41,43 @@ const AnswerForm: React.FC<Props> = ({ id, studentId, setCheckSubmit, setAnswer,
                 message.error('Thất bại')
             })
         setCheckSubmit(true)
-        
+
     }
     return (
-        <Form
-            {...layout}
-            name="basic"
-            layout="horizontal"
-            initialValues={{ remember: false }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            style={{
-                paddingTop: "2%"
-            }}
-        >
-            <Form.Item
-                label="Bài làm của bạn"
-                name="content"
-                initialValue={data?.content}
-                rules={[{ required: true, message: 'Hãy điền câu trả lời !' }]}
+        <div className="site-layout-background content">
+            <Form
+                {...layout}
+                name="basic"
+                layout="horizontal"
+                initialValues={{ remember: false }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                style={{
+                    paddingTop: "2%"
+                }}
             >
-                <TextArea showCount />
-            </Form.Item>
-            <Form.Item
-                label="Đường dẫn bổ sung"
-                name="attachment"
-                initialValue={data?.attachment}
-            >
-                <Input />
-            </Form.Item>
-            <Form.Item {...tailLayout} >
-                <Button type="primary" htmlType="submit" style={{ margin: '0 0 30px' }}>
-                    Nộp bài
+                <Form.Item
+                    label="Bài làm của bạn"
+                    name="content"
+                    initialValue={data?.content}
+                    rules={[{ required: true, message: 'Hãy điền câu trả lời !' }]}
+                >
+                    <TextArea showCount />
+                </Form.Item>
+                <Form.Item
+                    label="Đường dẫn bổ sung"
+                    name="attachment"
+                    initialValue={data?.attachment}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item {...tailLayout} >
+                    <Button type="primary" htmlType="submit" style={{ margin: '0 0 30px' }}>
+                        Nộp bài
                 </Button>
-            </Form.Item>
-        </Form>
+                </Form.Item>
+            </Form>
+        </div>
     )
 }
 

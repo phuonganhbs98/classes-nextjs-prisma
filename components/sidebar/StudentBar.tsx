@@ -47,7 +47,7 @@ const StudentBar: React.FC<Props> = ({ pathname }) => {
                 <Link href="/students/assignments/done" >Bài tập đã làm</Link>
             </Menu.Item>
             <Menu.Item key="/students/assignments/unfinished">
-                <Link href="/students/assignments/unfinished" >Bài tập chưa hoàn thành</Link>
+                <Link href="/students/assignments/unfinished" >Bài tập chưa làm</Link>
             </Menu.Item>
         </Menu>
     )
@@ -103,7 +103,7 @@ const StudentBar: React.FC<Props> = ({ pathname }) => {
                                 <Link href="/assignments/done" >Bài tập đã làm</Link>
                             </Menu.Item>
                             <Menu.Item key="/assignments/unfinished">
-                                <Link href="/assignments/unfinished" >Bài tập chưa hoàn thành</Link>
+                                <Link href="/assignments/unfinished" >Bài tập chưa làm</Link>
                             </Menu.Item>
                         </SubMenu>
                     </>

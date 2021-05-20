@@ -60,7 +60,7 @@ const AssignmentDetail: React.FC = (props) => {
             id={id}
             isTeacher={false}
         >
-            <div className="site-layout-background content">
+            
                 {checkSubmitAssign ? (
                     <ShowAnswer
                         data={answerOfStu}
@@ -79,7 +79,6 @@ const AssignmentDetail: React.FC = (props) => {
                     />
                 )}
 
-            </div>
         </AssignmentDetailLayout>
     )
 }

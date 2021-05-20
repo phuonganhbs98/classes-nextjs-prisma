@@ -83,7 +83,7 @@ model Schedule {
 model Assignment {
   id         Int              @id @default(autoincrement())
   title      String
-  content    String
+  content    String           @db.LongText
   attachment String?
   deadline   DateTime?
   answers    Answer[]
@@ -99,19 +99,34 @@ model Assignment {
 
 model Answer {
   id           Int           @id @default(autoincrement())
-  content      String
+  content      String        @db.LongText
   attachment   String?
-  score        Float?        
+  score        Float?
   student      User          @relation(fields: [studentId], references: [id])
   studentId    Int
   assignment   Assignment    @relation(fields: [assignmentId], references: [id])
   assignmentId Int
   status       AnswerStatus?
+  Comment      Comment[]
   createdAt    DateTime      @default(now()) @map(name: "created_at")
   updatedAt    DateTime      @default(now()) @map(name: "updated_at")
 
   @@unique([studentId, assignmentId])
   @@map(name: "answers")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  author    String
+  answerId  Int
+  answer    Answer   @relation(fields: [answerId], references: [id])
+  avatar    String?
+  content   String   @db.LongText
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  @@map("comments")
 }
 
 model Achievement {
