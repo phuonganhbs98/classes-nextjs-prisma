@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Button, PageHeader, Row, Col, Table, Divider, Tabs } from "antd";
+import { Button, PageHeader, Row, Col, Table, Tabs, Popconfirm, Tooltip, Tag } from "antd";
 import MainLayout from "../../components/layouts/MainLayout";
 import { signOut } from "next-auth/client";
 import Avatar from "antd/lib/avatar/avatar";
 import { formatDate } from '../../lib/formatDate'
-import column from '../../components/column/Columns'
 import deleteClass from '../../lib/classroom/deleteClass'
 import { useRouter } from "next/router";
 import { Role } from ".prisma/client";
 import { API } from "../../prisma/type/type";
-import { getUserById } from "../../lib/user/getUser";
+import { getUserById } from "../../lib/user/user";
+import { DeleteOutlined, EditOutlined, EyeOutlined, LogoutOutlined } from "@ant-design/icons";
+import { ColumnsType } from "antd/lib/table";
 
 export async function getServerSideProps({ params }) {
   let id = parseInt(params.id)
@@ -32,7 +33,7 @@ const Profile: React.FC<{ id: number }> = (props) => {
   const birthDate = user?.birthDate ? formatDate(new Date(user?.birthDate), true) : "Không có thông tin"
   const phoneNumber = user?.phoneNumber ? user?.phoneNumber : "Không có thông tin"
   const classListTitle = (user?.role === 'STUDENT' ? 'Các lớp đang tham gia' : 'Các lớp đã tạo').toUpperCase()
-  const columns = column.columnClasses
+
   const router = useRouter()
   useEffect(() => {
     getUserById(id).then(res => {
@@ -48,6 +49,69 @@ const Profile: React.FC<{ id: number }> = (props) => {
       }
     })
   }, [])
+
+  const columns: ColumnsType<API.Classroom> = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'key'
+    },
+    {
+      title: 'Tên lớp',
+      dataIndex: 'name',
+      key: 'key'
+    },
+    {
+      title: 'Giáo viên',
+      dataIndex: 'teacherName',
+      key: 'key'
+    },
+    {
+      title: 'SL tối đa',
+      dataIndex: 'capacity',
+      key: 'key',
+      align: 'center',
+    },
+    {
+      title: 'SL hiện tại',
+      dataIndex: 'count',
+      key: 'count',
+      align: 'center',
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      align: 'center',
+      filters: [
+        {
+          text: 'Sắp bắt đầu',
+          value: 'PREPARE'
+        },
+        {
+          text: 'Đang mở',
+          value: 'STUDYING'
+        },
+        {
+          text: 'Đã kết thúc',
+          value: 'FINISHED'
+        },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (text: string, record: API.Classroom) => (
+        new Date() < new Date(record.startAt) ?
+          <Tag color="purple">Sắp bắt đầu</Tag> :
+          new Date() > new Date(record.endAt) ?
+            <Tag color="red">Đã kết thúc</Tag> :
+            <Tag color="green">Đang mở</Tag>
+      )
+    },
+    {
+      title: 'Hành động',
+      dataIndex: 'action',
+      key: 'key',
+      align: 'center',
+    }
+  ]
   const editButton = show ? { display: 'inline' } : { display: 'none' }
   let data = []
   if (classes.length > 0) {
@@ -58,7 +122,9 @@ const Profile: React.FC<{ id: number }> = (props) => {
           teacherName: x.classroom.teacher.name,
           count: x.classroom.students.length,
           action: [
-            (<Button key="1" type="link" onClick={() => router.push(`/classrooms/${x.classroom.id}`)} >Xem</Button>),]
+            (<Tooltip title='Xem'>
+              <Button key="1" type="link" icon={<EyeOutlined />} onClick={() => router.push(`/students/classrooms/${x.classroom.id}`)} />
+            </Tooltip>),]
         }]
       });
     } else {
@@ -68,8 +134,14 @@ const Profile: React.FC<{ id: number }> = (props) => {
           teacherName: x.teacher.name,
           count: x.students.length,
           action: [
-            (<Button key="1" type="link" onClick={() => router.push(`/classrooms/${x.id}`)} >Xem</Button>),
-            (<Button key="2" type="ghost" style={editButton} onClick={() => deleteClass(x.id)} danger>Xóa</Button>)],
+            (<Tooltip title='Xem'>
+              <Button key="1" type="link" icon={<EyeOutlined />} onClick={() => router.push(`/teachers/classrooms/${x.id}`)} /></Tooltip>),
+            (<Popconfirm
+              title="Bạn chắc chắn chứ ?"
+              onConfirm={() => deleteClass(x.id)}
+            >
+              <Tooltip title='Xóa'><Button key="2" type="link" icon={<DeleteOutlined />} danger /></Tooltip>
+            </Popconfirm>)],
         }]
       });
     }
@@ -81,10 +153,13 @@ const Profile: React.FC<{ id: number }> = (props) => {
         <PageHeader
           title=""
           extra={[
-            <Button key="3">Sửa</Button>,
-            <Button key="1" type="primary" danger onClick={() => signOut({callbackUrl: '/login'})}>
-              Đăng xuât
-          </Button>,
+            <Button key='2' type="primary" shape='round' icon={<EditOutlined />} onClick={() => { }}>Sửa</Button>,
+            <Popconfirm
+              title="Bạn chắc chắn chứ ?"
+              onConfirm={() => signOut({ callbackUrl: '/login' })}
+            >
+              <Button key='3' type="primary" shape='round' icon={<LogoutOutlined />} danger>Đăng xuât</Button>
+            </Popconfirm>,
           ]}
         />
         <Row key="r1" align="middle">
@@ -126,7 +201,18 @@ const Profile: React.FC<{ id: number }> = (props) => {
       <div className="site-layout-background content">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab={classListTitle} key="1">
-            <Table columns={columns} dataSource={data} onChange={onChange} rowKey={(record) => { return record.id?.toString() }} />
+            <Table
+              columns={columns}
+              dataSource={data}
+              onChange={onChange}
+              size="middle"
+              pagination={{
+                total: data.length,
+                showTotal: total => `Tổng ${total} lớp`,
+                defaultPageSize: 10,
+                defaultCurrent: 1
+              }}
+              rowKey={(record) => { return record.id?.toString() }} />
           </Tabs.TabPane>
         </Tabs>
       </div>

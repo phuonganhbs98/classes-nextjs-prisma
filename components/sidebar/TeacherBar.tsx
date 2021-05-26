@@ -2,10 +2,10 @@ import Sider from "antd/lib/layout/Sider";
 import { Dropdown, Menu } from "antd";
 import Link from "next/link";
 import {
-  AppstoreOutlined,
-  TeamOutlined,
-  UserOutlined,
+  BankOutlined,
   UploadOutlined,
+  CalendarOutlined,
+  ReadOutlined,
 } from "@ant-design/icons";
 import SubMenu from "antd/lib/menu/SubMenu";
 import { useState } from "react";
@@ -52,7 +52,7 @@ const TeacherBar: React.FC<Props> = ({ pathname }) => {
       onCollapse={onCollapse}
       style={{
         overflow: "auto",
-        height: "100vh",
+        minHeight: "inherit",
         // position:'absolute'
       }}
     >
@@ -62,14 +62,14 @@ const TeacherBar: React.FC<Props> = ({ pathname }) => {
         mode="inline"
         selectedKeys={[pathname]}
       >
-        <Menu.Item key="/" icon={<AppstoreOutlined />} active={true}>
+        <Menu.Item key="/" icon={<CalendarOutlined />} active={true}>
           <Link href="/"><p className={hide}>Thời khóa biểu</p></Link>
         </Menu.Item>
         {collapsed ?
           (<Dropdown overlay={menuClass}>
-            <TeamOutlined style={{ lineHeight: '40px', paddingLeft: '24px', margin: '4px 0' }} />
+            <ReadOutlined style={{ lineHeight: '40px', paddingLeft: '24px', margin: '4px 0' }} />
           </Dropdown>) : (
-            <SubMenu key="class" icon={<TeamOutlined />} title='Lớp học' >
+            <SubMenu key="class" icon={<ReadOutlined />} title='Lớp học' >
               <Menu.Item key="/teachers/classrooms">
                 <Link href="/teachers/classrooms">Danh sách lớp học</Link>
               </Menu.Item>
@@ -79,15 +79,15 @@ const TeacherBar: React.FC<Props> = ({ pathname }) => {
             </SubMenu>
           )
         }
-        <Menu.Item key="/studentList" icon={<UserOutlined />}>
-          <Link href="/studentList"><p className={hide}>Danh sách học sinh</p></Link>
+        <Menu.Item key="/teachers/studentList" icon={<BankOutlined />}>
+          <Link href="/teachers/studentList"><p className={hide}>Danh sách học sinh</p></Link>
         </Menu.Item>
         {collapsed ?
           (
             <Dropdown overlay={menuAssignment}>
-              <UserOutlined style={{ lineHeight: '40px', paddingLeft:'24px', margin: '4px 0' }} />
+              <BankOutlined style={{ lineHeight: '40px', paddingLeft:'24px', margin: '4px 0' }} />
             </Dropdown>
-          ) : (<SubMenu key="assignment" icon={<UserOutlined />} title='Bài tập'>
+          ) : (<SubMenu key="assignment" icon={<ReadOutlined />} title='Bài tập'>
             <Menu.Item key="/teachers/assignments">
               <Link href="/teachers/assignments">Danh sách bài tập</Link>
             </Menu.Item>

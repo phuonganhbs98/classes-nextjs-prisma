@@ -25,8 +25,12 @@ export default function SignInForm() {
 
     return (
         <div style={{
-            margin: "0px 5%",
             padding: "120px 2%",
+            backgroundImage: 'url(./image/home_bg.png)',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            minHeight: '650px'
+
         }}>
             <h2 style={{ textAlign: "center" }}>Đăng nhập</h2>
             <Form
@@ -59,12 +63,12 @@ export default function SignInForm() {
                         Đăng nhập
                     </Button>
                 </Form.Item>
-                <Button type="link" 
-                        htmlType="button" 
-                        style={{marginLeft: '30%'}}
-                        onClick={() => signIn('google', { callbackUrl: '/' })}>Đăng nhập bằng tài khoản google</Button>
+                <Button type="link"
+                    htmlType="button"
+                    style={{ marginLeft: '30%' }}
+                    onClick={() => signIn('google', { callbackUrl: '/' })}>Đăng nhập bằng tài khoản google</Button>
             </Form>
 
-        </div>
+        </div >
     );
 }

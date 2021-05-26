@@ -10,11 +10,7 @@ export default async function createClass(data: API.Classroom){
     })
     .then(async res => {
         result = res.data
-        console.log('Day la trong function createClass...')
-        console.log(res.data)
         dataTimetable = getTimetableClassList(data.name, res.data.id, data.teacherId, res.data)
-        console.log('dataTimetable')
-        console.log(dataTimetable)
         if(dataTimetable.length>0){
             await axios.post(`/api/timetableClasses`,{
                 data: dataTimetable
@@ -27,7 +23,6 @@ export default async function createClass(data: API.Classroom){
         }
     })
     .catch(err =>{
-        console.log('Loi o day ne ....')
         console.log(err)
     })
    

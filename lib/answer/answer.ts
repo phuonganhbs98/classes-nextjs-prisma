@@ -1,11 +1,11 @@
 import axios from "axios"
 import { API } from "../../prisma/type/type"
 
-export async function getAllAnswer(assignmentId: number) {
+export async function getAllAnswer(options?: {[key: string]: any}) {
     let data = []
     await axios.get(`/api/answers`, {
         params: {
-            assignmentId: assignmentId
+            ... options
         }
     })
         .then(res => data = res.data)

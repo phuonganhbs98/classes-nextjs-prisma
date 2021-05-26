@@ -74,3 +74,19 @@ export function setStatus(deadline: Date) {
     } else status = 'ASSIGNED'
     return status
 }
+
+export async function getUndoneAssignments(classId: number, studentId: number) {
+    let result: API.AssignmentItem[] = []
+    await axios.get(`http://localhost:3000/api/assignments/undone`, {
+        params: {
+            classId: classId,
+            studentId: studentId
+        }
+    })
+        .then(res => {
+            console.log(res)
+            result = res.data
+        })
+        .catch(err => console.error(err))
+    return result
+}

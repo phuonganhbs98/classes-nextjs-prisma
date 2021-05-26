@@ -9,10 +9,38 @@ export async function createTimetableClass (data: API.TimetableClassItem[]){
     return result
 }
 
-export async function getAllTimetableClass (teacherId: number){
+export async function getAllTimetableClass (options: {[key: string]: any}){
     let result:API.TimetableClassItem[] = null
     await axios.get(`/api/timetableClasses`, {
-        params: {teacherId: teacherId}
+        params: {...options}
+    }).then(res => result = res.data)
+    return result
+}
+
+export async function updateTimetableClass(
+    classId: number, 
+    options?:{[key: string]: any}){
+    let result: API.TimetableClassItem[] = null
+    await axios.put(`/api/timetableClasses`, {
+        data: {classId: classId, ...options}
+    }).then(res => result = res.data)
+    return result
+}
+
+export async function createTimetableStu (data: API.TimetableStudentItem[]){
+    console.log('-------timetableStu trong ham create....')
+    console.log(data)
+    let result:API.TimetableStudentItem[] = null
+    await axios.post(`/api/timetableStudents`, {
+        data: data
+    }).then(res => result = res.data)
+    return result
+}
+
+export async function getAllTimetableOfStu (options: {[key: string]: any}){
+    let result:API.TimetableClassItem[] = null
+    await axios.get(`/api/timetableStudents`, {
+        params: {...options}
     }).then(res => result = res.data)
     return result
 }

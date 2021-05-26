@@ -7,8 +7,8 @@ declare namespace API {
     gender: Gender,
     birthDate: Date,
     phoneNumber: string,
-    acceptedClasses: AcceptedClass[],
-    createdClasses: Classroom[],
+    acceptedClasses?: AcceptedClass[],
+    createdClasses?: Classroom[],
     createdAt: Date,
     email: string,
     image: string,
@@ -65,11 +65,12 @@ declare namespace API {
     },
     studentId: number,
     assignmentId: number,
-    assignment: {
-      teacherId: number,
-      content: string,
-      title: string
-    },
+    // assignment: {
+    //   teacherId: number,
+    //   content: string,
+    //   title: string
+    // },
+    assignment: AssignmentItem,
     status: string,
     createdAt: Date,
     updatedAt: Date
@@ -120,15 +121,28 @@ declare namespace API {
 
   type TimetableStudentItem = {
     id?: number,
-    title: string,
-    start: Date,
-    end: Date,
-    studentId: number
+    // title: string,
+    // start: Date,
+    // end: Date,
+    studentId: number,
+    timeTable?: TimetableClassItem,
+    timeTableId: number,
+    student?: API.UserInfor
   }
 
-  type Period ={
+  type Period = {
     startTime: Date,
     endTime: Date
+  }
+
+  type Attendance = {
+    id?: number,
+    classId: number,
+    time: string,
+    // timeTableClassId: number,
+    studentId: number,
+    status?: string,
+    student?: UserInfor
   }
 }
 

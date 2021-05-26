@@ -20,7 +20,7 @@ const CommentItem: React.FC<{ answerId: number }> = ({ answerId }) => {
     }, [])
 
     useEffect(() => {
-        if (!Number.isNaN(answerId)) {
+        if (!Number.isNaN(answerId) && typeof answerId !== 'undefined') {
             getAllComments(answerId)
                 .then(res => {
                     setComments(res)

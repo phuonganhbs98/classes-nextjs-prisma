@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { getAllClassroom } from "../../../lib/classroom/getClassroomInfor";
 import AssignmentList from "./AssignmentList";
 import CreateModalForm from "./CreateModalForm";
-import { ClassroomToStudent } from ".prisma/client";
 
 const AssignmentTableList: React.FC<{ isTeacher: boolean }> = ({ isTeacher }) => {
   const [classes, setClasses] = useState<API.Classroom[]>([])

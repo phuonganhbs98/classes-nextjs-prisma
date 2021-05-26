@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, PageHeader, Table } from "antd";
-import MainLayout from "../../components/layouts/MainLayout";
 import { useSession } from "next-auth/client";
-import { ClassStatus, User } from ".prisma/client";
-import getRegisteredClass from "../../lib/register/getRegisteredClass";
-import Columns from "../../components/column/Columns";
-import { cancel } from "../../lib/register/handleRegister";
 import { useRouter } from "next/router";
-import { API } from "../../prisma/type/type";
+import { API } from "../../../prisma/type/type";
+import getRegisteredClass from "../../../lib/register/getRegisteredClass";
+import { cancel } from "../../../lib/register/handleRegister";
+import MainLayout from "../../../components/layouts/MainLayout";
 
 const Classes: React.FC = () => {
   const [session, loading] = useSession()

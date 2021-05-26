@@ -26,9 +26,9 @@ const CreateClassroomForm: React.FC = () => {
     const router = useRouter()
     const [session] = useSession()
     const [teacherId, setTeacherId] = useState<number>()
-    useEffect(()=> {
-        if(session) setTeacherId(session.userId)
-    },[])
+    useEffect(() => {
+        if (session) setTeacherId(session.userId)
+    }, [])
     const layout = {
         labelCol: { span: 8, offset: 0 },
         wrapperCol: { span: 10 },
@@ -47,15 +47,15 @@ const CreateClassroomForm: React.FC = () => {
             teacherId: teacherId,
         }
         await createClass(data)
-        .then(res => {
-            console.log('new classroom')
-            console.log(res)
-            message.success('Thành công')
-            router.push('/teachers/classrooms')
-        })
-        .catch(err =>{
-            message.error('Thất bại')
-        })
+            .then(res => {
+                console.log('new classroom')
+                console.log(res)
+                message.success('Thành công')
+                router.push('/teachers/classrooms')
+            })
+            .catch(err => {
+                message.error('Thất bại')
+            })
     }
 
     let [startDate, setStartDate] = useState(null);
@@ -65,7 +65,7 @@ const CreateClassroomForm: React.FC = () => {
     const checkEndDate = (_: any, value: Moment) => {
         console.log(value)
         console.log(startDate)
-        if ((startDate == null && !value ) || (value > startDate)) {
+        if ((startDate == null && !value) || (value > startDate)) {
             return Promise.resolve()
         }
         return Promise.reject(new Error('Ngày kết thúc phải lớn hơn ngày bắt đầu'))
@@ -109,12 +109,15 @@ const CreateClassroomForm: React.FC = () => {
                     <Form.Item
                         label="Ngày lớp học kết thúc"
                         name="endAt"
-                        rules={[{ validator: checkEndDate }, {required: true, message: 'Xin vui lòng nhập ngày lớp học kết thúc!'}]}
+                        rules={[{ validator: checkEndDate }, { required: true, message: 'Xin vui lòng nhập ngày lớp học kết thúc!' }]}
                     >
                         <DatePicker />
                     </Form.Item>
-                    <Form.Item label="Thời khóa biểu" >
-                        <Form.List name="schedules" >
+                    <Form.Item
+                        label="Thời khóa biểu"
+                    >
+                        <Form.List
+                            name="schedules">
                             {(fields, { add, remove }) => {
                                 return (
                                     <>
@@ -187,7 +190,7 @@ const CreateClassroomForm: React.FC = () => {
                                         < Form.Item >
                                             <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                                                 Thêm lịch
-                                </Button>
+                                            </Button>
                                         </Form.Item>
                                     </>
                                 )
@@ -199,6 +202,7 @@ const CreateClassroomForm: React.FC = () => {
                             Tạo lớp
                         </Button>
                     </Form.Item>
+                    <small style={{color: 'red'}}>*Lưu ý: Ngày bắt đầu, kết thúc lớp học và thời khóa biểu sau khi tạo lớp không thể thay đổi.<br />Hãy điền chính xác.</small>
                 </Form>
             </div>
         </MainLayout >

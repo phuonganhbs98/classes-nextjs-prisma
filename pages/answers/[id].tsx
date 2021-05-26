@@ -12,7 +12,7 @@ import { useSession } from "next-auth/client";
 import { formatDate } from "../../lib/formatDate";
 
 const AnswerDetail: React.FC = () => {
-    const [userId, setUserId] = useState<number>()
+    const [userId, setUserId] = useState<number>(-1)
     const [data, setData] = useState<API.AnswerItem>()
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
     const [score, setScore] = useState<number>(0)
@@ -23,8 +23,13 @@ const AnswerDetail: React.FC = () => {
     if (!Array.isArray(router.query?.id)) {
         id = parseInt(router.query.id)
     }
+
     useEffect(() => {
-        if (!Number.isNaN(id)) {
+        setUserId(parseInt(localStorage.getItem('userId')))
+    }, [])
+
+    useEffect(() => {
+        if (!Number.isNaN(id) && !Number.isNaN(userId) && userId!== -1) {
             getAnswerById(id)
                 .then(res => {
                     setData(res)
@@ -35,7 +40,7 @@ const AnswerDetail: React.FC = () => {
                 })
         }
 
-    }, [id, reload])
+    }, [id, reload, userId])
 
     const showModal = () => {
         setIsModalVisible(true)
@@ -66,7 +71,7 @@ const AnswerDetail: React.FC = () => {
                         <p> Điểm: <strong style={{ color: 'red' }}>{data?.score}/10</strong></p>
                     ]}
                 />
-                {data?.content}
+                <p style={{textAlign: 'justify'}}>{data?.content}</p>
                 <br />
                 <a href={data?.attachment} target='_blank'>{data?.attachment}</a>
                 <br />

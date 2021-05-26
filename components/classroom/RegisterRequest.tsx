@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import getRegisteredStudents from "../../lib/register/getRegisteredStudents";
 import { accept } from "../../lib/register/handleRegister";
+import { getAllTimetableClass } from "../../lib/timetable/timetable";
+import { API } from "../../prisma/type/type";
 
 type Props = {
     classId: number,
@@ -26,6 +28,7 @@ function onChange(pagination: any) {
 const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
     const [data, setData] = useState<ListStudents[]>([])
     const [total, setTotal] = useState<number>(0)
+    const [timeTable, setTimetable] = useState<API.TimetableClassItem[]>([])
     const router = useRouter()
     let students = []
     useEffect(() => {
@@ -34,6 +37,11 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
             setData(res)
         })
     }, [reload])
+
+    useEffect(() => {
+        getAllTimetableClass({ classId: classId })
+            .then(res => setTimetable(res))
+    }, [])
     if (data.length > 0) {
         data.forEach((x: ListStudents) => {
             students = [
@@ -43,16 +51,16 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
                     action: [
                         <Tooltip title='Xem'>
                             <Button
-                            key={x.student.id}
-                            type="link"
-                            icon={<EyeOutlined />}
-                            onClick={() => router.push({
-                                pathname: `/users/${x.student.id}`,
-                            })} /></Tooltip>,
+                                key={x.student.id}
+                                type="link"
+                                icon={<EyeOutlined />}
+                                onClick={() => router.push({
+                                    pathname: `/users/${x.student.id}`,
+                                })} /></Tooltip>,
                         <Tooltip title='Đồng ý'>
-                            <Button type="link" 
-                            icon={<CheckOutlined style={{color: 'green'}} />}
-                        onClick={() => handleAccept(x.student.id)} /></Tooltip>
+                            <Button type="link"
+                                icon={<CheckOutlined style={{ color: 'green' }} />}
+                                onClick={() => handleAccept(x.student.id)} /></Tooltip>
                     ]
                 }
             ]
@@ -84,7 +92,7 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
     ]
 
     const handleAccept = (studentId: number) => {
-        accept(studentId, classId)
+        accept(studentId, classId, timeTable)
         if (reload) setReload(false)
         else setReload(true)
     }

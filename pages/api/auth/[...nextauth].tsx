@@ -17,13 +17,13 @@ const options = {
   adapter: Adapters.Prisma.Adapter({ prisma }),
   secret: process.env.SECRET,
   theme: 'dark',
+  pages: {
+    newUser: '/users/selectType'
+  },
   session: {
     // jwt: true
     maxAge: 24*60*60
   },
-  // jwt: {
-  //   secret: process.env.SECRET,
-  // },
   callbacks: {
     /**
      * @param  {object}  token     Decrypted JSON Web Token

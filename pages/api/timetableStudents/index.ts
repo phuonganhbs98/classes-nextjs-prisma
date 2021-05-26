@@ -1,33 +1,37 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
 
-export default async function manageTimetable(req: NextApiRequest, res: NextApiResponse) {
+export default async function manageTimetableStu(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    const selectData = {
-        id: true,
-        studentId: true,
-        title: true,
-        start: true,
-        end: true,
-    }
 
     if(method==='POST'){
-        const data = req.body.data
-        console.log(data)
-        const [result] = await prisma.$transaction([
-            prisma.timetableStudent.create({
-                data: data
-            })
-        ])
+        const dataInput:any[] = req.body.data
+        let result = []
+        console.log('--------timetable Student')
+        console.log(dataInput)
+        dataInput.forEach(async (x: any) => {
+            const [timetable] = await prisma.$transaction([
+                prisma.timetableStudent.create({
+                    data: x
+                })
+            ])
+            result = [...result, timetable]
+        })
         res.status(200).json(result)
     }else if(method === 'GET'){
         const studentId = Array.isArray(req.query.studentId)?null:req.query.studentId
         console.log('studentId: ' +studentId)
 
-        const result = await prisma.timetableStudent.findMany({
-            select: selectData,
+        const result = await prisma.timetableClass.findMany({
             where:{
-                studentId: parseInt(studentId)
+                TimetableStudent:{
+                    some:{
+                        studentId: parseInt(studentId)
+                    }
+                }
+            },
+            include:{
+                classroom: true
             }
         })
         res.status(200).json(result)

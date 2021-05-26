@@ -42,7 +42,7 @@ const EditClassForm: React.FC<{
             })
             .catch(err => {
                 console.error(err)
-                message.success('Thất bại')
+                message.error('Thất bại')
             })
     }
     return (
@@ -79,7 +79,7 @@ const EditClassForm: React.FC<{
                     initialValue={moment(classroom?.startAt)}
                     rules={[{ required: true, message: 'Xin vui lòng nhập ngày lớp học bắt đầu!' }]}
                 >
-                    <DatePicker onChange={onChangeDate} allowClear={true} />
+                    <DatePicker onChange={onChangeDate} allowClear={true} disabled/>
                 </Form.Item>
                 <Form.Item
                     label="Ngày lớp học kết thúc"
@@ -87,7 +87,7 @@ const EditClassForm: React.FC<{
                     initialValue={moment(classroom?.endAt)}
                     rules={[{ validator: checkEndDate }, { required: true, message: 'Xin vui lòng nhập ngày lớp học kết thúc!' }]}
                 >
-                    <DatePicker />
+                    <DatePicker disabled/>
                 </Form.Item>
                 <Form.Item >
                     <Button type="primary" htmlType="submit" style={{ margin: '0 0 30px' }}>

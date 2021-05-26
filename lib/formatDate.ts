@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { format, set } from 'date-fns'
 import { vi } from 'date-fns/locale'
 
 export function formatDate(date: Date, time?: boolean) {
@@ -35,4 +35,8 @@ export function formatDay(day: Number) {
         default:
             return 'Thứ 7'
     }
+}
+
+export function setTimeToZero(date: Date) {
+    return set(new Date(date), { hours: 0, minutes: 0, seconds: 0 })
 }

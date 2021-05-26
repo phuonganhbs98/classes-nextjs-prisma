@@ -20,7 +20,7 @@ const AssignmentDetail: React.FC = (props) => {
 
     useEffect(() => {
         if (!Number.isNaN(id)) {
-            getAllAnswer(id)
+            getAllAnswer({assignmentId: id})
                 .then(answers => {
                     setAnswers(answers)
                 })

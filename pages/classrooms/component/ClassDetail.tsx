@@ -77,11 +77,11 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
     }
 
     const handleRegister = () => {
-        if (classes.capacity <= classes.count){
+        if (classes.capacity <= classes.count) {
             message.error('Lớp đã đầy')
-        }else if(classes.status==='FINISHED'){
+        } else if (classes.status === 'FINISHED') {
             message.error('Lớp học đã kết thúc. Không thể đăng ký')
-        }else{
+        } else {
             sendRegister(userId, id)
             setRegister(true)
             setRegisterButton('Đã đăng ký')
@@ -114,9 +114,14 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
                     <br />,
                 ] : [
                     <Button key='1' disabled={disableButton} type="primary" onClick={() => handleRegister()}>{registerButton}</Button>,
-                    (<Tooltip title="Hủy đăng ký">
-                        <Button type="primary" size="small" style={{ display: (disableButton) ? 'inline' : 'none' }} shape="circle" icon={<MinusOutlined />} onClick={() => cancelRegister()} danger />
-                    </Tooltip>),
+                    (<Popconfirm
+                        title="Bạn chắc chắn chứ ?"
+                        onConfirm={() => cancelRegister()}
+                    >
+                        <Tooltip title="Hủy đăng ký">
+                            <Button type="primary" size="small" style={{ display: (disableButton) ? 'inline' : 'none' }} shape="circle" icon={<MinusOutlined />} danger />
+                        </Tooltip>
+                    </Popconfirm>),
                 ]}
             ></PageHeader>
             <Divider orientation="left" plain={false} style={{ fontSize: '14px' }}>

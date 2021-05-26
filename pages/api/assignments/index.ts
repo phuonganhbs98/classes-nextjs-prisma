@@ -3,21 +3,6 @@ import prisma from "../../../lib/prisma";
 
 export default async function managerAssignment(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    const selectData = {
-        id: true,
-        title: true,
-        content: true,
-        attachment: true,
-        status: true,
-        deadline: true,
-        answers: true,
-        classId: true,
-        class: {
-            select: {
-                name: true
-            }
-        }
-    }
     if (method === 'POST') {
         const {
             title,
@@ -52,7 +37,9 @@ export default async function managerAssignment(req: NextApiRequest, res: NextAp
                 where: {
                     classId: parseInt(classId)
                 },
-                select: selectData
+                include: {
+                    class: true
+                }
             })
         } else if (typeof studentId !== 'undefined') {
             console.log('StudentID: ' + studentId)
@@ -70,7 +57,9 @@ export default async function managerAssignment(req: NextApiRequest, res: NextAp
             })
 
             result = await prisma.assignment.findMany({
-                select: selectData,
+                include: {
+                    class: true
+                },
                 where: {
                     classId: {
                         in: arrayId
@@ -84,7 +73,9 @@ export default async function managerAssignment(req: NextApiRequest, res: NextAp
                 where: {
                     teacherId: parseInt(teacherId[0])
                 },
-                select: selectData
+                include: {
+                    class: true
+                }
             })
         }
         res.status(200).json(result)

@@ -68,6 +68,7 @@ model User {
   timetableClass   TimetableClass[]
   createdAt        DateTime             @default(now()) @map(name: "created_at")
   updatedAt        DateTime             @updatedAt @map(name: "updated_at")
+  attendance       Attendance[]
 
   @@map(name: "users")
 }
@@ -139,7 +140,6 @@ model Achievement {
   studentId Int
   class     Class @relation(fields: [classId], references: [id])
   classId   Int
-  //studentId, classId
 
   @@map(name: "achievements")
 }
@@ -177,27 +177,37 @@ model Session {
 }
 
 model TimetableClass {
-  id        Int       @id @default(autoincrement())
-  title     String
-  start     DateTime?
-  end       DateTime?
-  classId   Int
-  classroom Class     @relation(fields: [classId], references: [id])
-  teacherId Int
-  teacher   User      @relation(fields: [teacherId], references: [id])
+  id               Int                @id @default(autoincrement())
+  title            String
+  start            DateTime?
+  end              DateTime?
+  classId          Int
+  classroom        Class              @relation(fields: [classId], references: [id])
+  teacherId        Int
+  teacher          User               @relation(fields: [teacherId], references: [id])
+  TimetableStudent TimetableStudent[]
 
   @@map("timetable_classes")
 }
 
 model TimetableStudent {
-  id        Int       @id @default(autoincrement())
-  title     String
-  start     DateTime?
-  end       DateTime?
-  studentId Int
-  student   User      @relation(fields: [studentId], references: [id])
+  id          Int            @id @default(autoincrement())
+  timeTableId Int
+  timeTable   TimetableClass @relation(fields: [timeTableId], references: [id])
+  studentId   Int
+  student     User           @relation(fields: [studentId], references: [id])
 
+  @@unique([timeTableId, studentId])
   @@map("timetable_students")
+}
+
+model Attendance {
+  id               Int               @id @default(autoincrement())
+  classId          Int
+  time             String
+  studentId        Int
+  student          User              @relation(fields: [studentId], references: [id])
+  status           AttendanceStatus?
 }
 
 enum Role {
@@ -230,4 +240,10 @@ enum AssignmentStatus {
 enum AnswerStatus {
   SUBMITTED
   LATE
+}
+
+enum AttendanceStatus {
+  P
+  L
+  UA
 }

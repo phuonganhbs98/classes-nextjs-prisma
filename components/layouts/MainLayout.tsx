@@ -34,10 +34,10 @@ const MainLayout: React.FC<Props> = ({ children, title }) => {
   }, [session])
   return loading ? (<Loading />) : session ? (
     <Layout
-      style={{ minHeight: '100vh' }}
+      style={{ minHeight: '160vh' }}
     >
-      <Row>
-        <Col flex='none'>
+      <Row style={{minHeight: 'inherit'}}>
+        <Col flex='none' style={{minHeight: 'inherit'}}>
           {/* <MenuSider role={role} loading={loading} /> */}
           {(role === "STUDENT") ? (
         <StudentBar pathname={router.pathname}/>
@@ -52,14 +52,19 @@ const MainLayout: React.FC<Props> = ({ children, title }) => {
               style={{
                 margin: '0 16px',
                 overflow: "initial",
+                minHeight: '120vh'
               }}
             >
               <div className=" main-container"
                 style={{
-                  minHeight: 360
+                  minHeight: 'inherit'
                 }}>{children}</div>
             </Content>
-            <Footer style={{ textAlign: "center" }}>NextJS Prisma</Footer>
+            <Footer style={{ textAlign: "center" }}>
+            <div>Trường đại học Bách Khoa Hà Nội</div>
+            <div>Viện CNTT-TT</div>
+            <div>Classes Management - Nguyễn Phương Anh</div>
+            </Footer>
           </Layout>
         </Col>
       </Row>

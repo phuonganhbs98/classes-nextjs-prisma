@@ -3,17 +3,6 @@ import prisma from "../../../lib/prisma";
 
 export default async function manageComment(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    const selectData = {
-        id: true,
-        userId: true,
-        avatar: true,
-        answerId: true,
-        content: true,
-        author: true,
-        createdAt: true,
-        updatedAt: true
-    }
-
     if(method==='POST'){
         const data = req.body.data
         console.log(data)
@@ -28,7 +17,6 @@ export default async function manageComment(req: NextApiRequest, res: NextApiRes
         console.log('answerId: ' +answerId)
 
         const result = await prisma.comment.findMany({
-            select: selectData,
             where:{
                 answerId: parseInt(answerId)
             }
