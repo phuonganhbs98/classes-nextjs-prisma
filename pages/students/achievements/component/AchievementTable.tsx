@@ -12,14 +12,6 @@ const AchievementTable: React.FC = () => {
     useEffect(() => {
         const userId = parseInt(localStorage.getItem('userId'))
         setUserId(userId)
-        // if (isTeacher) {
-        //   getAllClassroom({ teacherId: userId })
-        //     .then(res => {
-        //       setClasses(res)
-        //       setActiveKey(res[0].id)
-        //     })
-        //     .catch(err => console.error(err))
-        // } else {
         getAllClassroom({ studentId: userId })
             .then(res => {
                 setClasses(res)
@@ -30,16 +22,6 @@ const AchievementTable: React.FC = () => {
             <Tabs
                 defaultActiveKey="1"
                 tabPosition='top'
-            // onChange={(activeKey) => setActiveKey(parseInt(activeKey))}
-            // tabBarExtraContent={
-            //     isTeacher ? <Button
-            //         type='primary'
-            //         shape='round'
-            //         icon={<PlusOutlined />}
-            //         onClick={() => setIsModalVisible(true)}
-            //     >
-            //         Tạo bài tập
-            // </Button> : null}
             >
                 {classes.map((i: API.Classroom) => (
                     <Tabs.TabPane tab={`Lớp ${i.name}`} key={i.id} >

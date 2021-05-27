@@ -2,44 +2,58 @@ import { id } from "date-fns/locale";
 import { NextApiRequest, NextApiResponse } from "next-auth/_utils";
 import prisma from "../../../lib/prisma";
 
-export default async function findUnique(req: NextApiRequest, res: NextApiResponse){
+export default async function findUnique(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    const id = Array.isArray(req.query.id)?0:parseInt(req.query.id)
-    if(method === 'GET'){
-        const result= await prisma.class.findUnique({
-            where:{
+    const id = Array.isArray(req.query.id) ? 0 : parseInt(req.query.id)
+    if (method === 'GET') {
+        const result = await prisma.class.findUnique({
+            where: {
                 id: id
             },
-            select:{
-                id: true,
-                name: true,
-                teacherId: true,
-                teacher:{
-                    select:{
-                        name: true
-                    }
-                },
-                status: true,
-                capacity: true,
+            include: {
+                teacher: true,
                 students: {
-                    select:{
-                        student:{
-                            select:{
-                                id:true,
-                                name: true,
-                                email: true,
-                                phoneNumber: true
-                            }
-                        }
+                    include: {
+                        student: true
                     }
                 },
-                startAt: true,
-                endAt: true,
+                assignments: {
+                    include: {
+                        answers: true
+                    }
+                },
                 schedules: true
             }
+            // select:{
+            //     id: true,
+            //     name: true,
+            //     teacherId: true,
+            //     teacher:{
+            //         select:{
+            //             name: true
+            //         }
+            //     },
+            //     status: true,
+            //     capacity: true,
+            //     students: {
+            //         select:{
+            //             student:{
+            //                 select:{
+            //                     id:true,
+            //                     name: true,
+            //                     email: true,
+            //                     phoneNumber: true
+            //                 }
+            //             }
+            //         }
+            //     },
+            //     startAt: true,
+            //     endAt: true,
+            //     schedules: true
+            // }
         })
         res.status(200).json(result)
-    }else if(method === 'DELETE'){
+    } else if (method === 'DELETE') {
         await prisma.$transaction([
             prisma.schedule.deleteMany({
                 where: {
@@ -47,7 +61,7 @@ export default async function findUnique(req: NextApiRequest, res: NextApiRespon
                 }
             }),
             prisma.achievement.deleteMany({
-                where:{
+                where: {
                     classId: id
                 }
             }),
@@ -59,31 +73,31 @@ export default async function findUnique(req: NextApiRequest, res: NextApiRespon
                 }
             }),
             prisma.assignment.deleteMany({
-                where:{
+                where: {
                     classId: id
                 }
             }),
             prisma.class.delete({
-                where:{
+                where: {
                     id: id
                 }
             })
         ])
         res.status(200).json("Delete success!")
-    }else if(method ==='PUT'){
+    } else if (method === 'PUT') {
         const {
             name, capacity, startAt, endAt, status
         } = req.body.data
         await prisma.$transaction([
             prisma.class.update({
-                data:{
-                    name:name,
+                data: {
+                    name: name,
                     capacity: capacity,
                     startAt: startAt,
                     endAt: endAt,
                     status: status
                 },
-                where:{
+                where: {
                     id: id
                 }
             })

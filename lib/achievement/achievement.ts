@@ -23,5 +23,17 @@ export async function calculateAveragePoint(classId: number, studentId: number) 
 
 export function getAnswer(answers:API.AnswerItem[], assignmentId: number) {
     const result = answers.filter((x: API.AnswerItem)=> x.assignmentId === assignmentId)
+    console.log('result')
+    console.log(result)
     return result
+}
+
+export function getAveragePoint(answers: API.AnswerItem[], assignmentsTotal: number, classId: number){
+    let total = assignmentsTotal
+    let sumPoint = 0
+    let answersOfClass:API.AnswerItem[]=answers.filter((x: API.AnswerItem)=> x.assignment.classId === classId)
+    answersOfClass.forEach((x: API.AnswerItem)=>{
+        sumPoint= sumPoint + x.score
+    })
+    return sumPoint/total
 }

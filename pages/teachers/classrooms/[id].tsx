@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ClassDetail from "../../classrooms/component/ClassDetail";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { Tabs } from "antd";
+import { Button, Tabs, Tooltip } from "antd";
 import RegisterRequest from "../../../components/classroom/RegisterRequest";
 import StudentList from "../../../components/classroom/StudentList";
 import AssignmentList from "../../assignments/component/AssignmentList";
+import { TrophyOutlined } from "@ant-design/icons";
 
 const ClassroomInfor: React.FC = () => {
     const router = useRouter()
-    let id=-1
-    if(!Array.isArray(router.query?.id)){
+    let id = -1
+    if (!Array.isArray(router.query?.id)) {
         id = parseInt(router.query.id)
     }
     const [role, setRole] = useState<string>()
@@ -27,7 +28,21 @@ const ClassroomInfor: React.FC = () => {
         <MainLayout title="Thông tin lớp học">
             <ClassDetail id={id} isTeacher={true} />
             <div className="site-layout-background content">
-                <Tabs defaultActiveKey="1" >
+                <Tabs
+                    defaultActiveKey="1"
+                    tabBarExtraContent={<Tooltip title='Thống kê điểm danh và thành tích của học sinh'><Button key='2' type="primary" shape='round' icon={<TrophyOutlined />} onClick={() => {
+                        if (!Number.isNaN(id) && id !== -1) {
+                            router.push({
+                                pathname: `/teachers/classrooms/statistic`,
+                                query: {
+                                    classId: id
+                                }
+                            }, `/classrooms/${id}/statistic`)
+                        }
+                    }
+                    }
+                    > Thống kê </Button></Tooltip>}
+                >
                     <Tabs.TabPane tab="Yêu cầu vào lớp" key="1">
                         <RegisterRequest
                             classId={id}

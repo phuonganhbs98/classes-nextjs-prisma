@@ -246,4 +246,5 @@ enum AttendanceStatus {
   P
   L
   UA
+  AA
 }

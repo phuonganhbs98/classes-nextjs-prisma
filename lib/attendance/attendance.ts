@@ -18,3 +18,11 @@ export async function getAttendanceByClassId(options:{[key: string]: any}) {
     .catch(err => console.error(err))
     return result
 }
+
+export async function update(data: API.UpdateStatusAttendance[]){
+    await axios.put(`/api/attendances`,{
+        data: data
+    })
+    .then(res => console.log(res))
+    .catch(err => console.error(err))
+}

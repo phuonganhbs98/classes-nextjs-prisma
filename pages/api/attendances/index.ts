@@ -5,34 +5,51 @@ import { API } from "../../../prisma/type/type";
 
 export default async function manageAttendance(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    if(method==='POST'){
-        let result =[]
+    if (method === 'POST') {
+        let result = []
         const data: API.Attendance[] = req.body.data
         console.log(data)
-        data.forEach(async (x: any)=>{
+        data.forEach(async (x: any) => {
             result = await prisma.$transaction([
                 prisma.attendance.create({
                     data: x
                 })
-            ])  
+            ])
         })
         res.status(200).json(result)
     }
-    else if(method === 'GET'){
-        const classId = Array.isArray(req.query.classId)?null:parseInt(req.query.classId)
-        const date = Array.isArray(req.query.date)?undefined:setTimeToZero(new Date(req.query.date))
+    else if (method === 'GET') {
+        const classId = Array.isArray(req.query.classId) ? null : parseInt(req.query.classId)
+        const date = Array.isArray(req.query.date) ? undefined : setTimeToZero(new Date(req.query.date))
         console.log(new Date(date).toLocaleDateString())
         console.log(new Date(date).toLocaleDateString() === '5/3/2021')
         const result = await prisma.attendance.findMany({
-            where:{
-                classId: Number.isNaN(classId)?undefined:classId,
-                time: new Date(date).toLocaleDateString()        
+            where: {
+                classId: Number.isNaN(classId) ? undefined : classId,
+                time: new Date(date).toLocaleDateString()
             },
-            include:{
+            include: {
                 student: true,
             }
         })
         res.status(200).json(result)
+    }
+    else if (method === 'PUT') {
+        const data: API.UpdateStatusAttendance[] = req.body.data
+        data.forEach(async (x: API.UpdateStatusAttendance) => {
+            await prisma.$transaction([
+                prisma.attendance.update({
+                    where: {
+                        id: x.id
+                    },
+                    data: {
+                        status: x.status
+                    }
+                })
+            ])
+        })
+        // const [result] = 
+        res.status(200).json('ok')
     }
     else res.status(405).json("Method not allowed!")
 }

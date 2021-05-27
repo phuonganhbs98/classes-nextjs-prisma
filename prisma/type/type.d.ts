@@ -1,4 +1,4 @@
-import { Answer, AssignmentStatus, Class, ClassroomToStudent, ClassStatus } from ".prisma/client"
+import { Answer, AssignmentStatus, AttendanceStatus, Class, ClassroomToStudent, ClassStatus } from ".prisma/client"
 
 declare namespace API {
   type UserInfor = {
@@ -12,7 +12,14 @@ declare namespace API {
     createdAt: Date,
     email: string,
     image: string,
-    name: string
+    name: string,
+    attendance: Attendance[],
+    presents?: Attendance[];
+    absences?: Attendance[];
+    total?: number;
+    answers?: AnswerItem[],
+    assignments?: AssignmentItem[],
+    averagePoint?: number
   }
 
   type AcceptedClass = {
@@ -31,7 +38,8 @@ declare namespace API {
     teacherId: number,
     startAt: Date,
     endAt: Date,
-    schedules: Schedules[]
+    schedules: Schedules[],
+    assignments: AssignmentItem[]
   }
 
   type Schedules = {
@@ -116,7 +124,8 @@ declare namespace API {
     start: Date,
     end: Date,
     classId: number,
-    teacherId: number
+    teacherId: number,
+    tooltip?: string
   }
 
   type TimetableStudentItem = {
@@ -139,10 +148,34 @@ declare namespace API {
     id?: number,
     classId: number,
     time: string,
+    no?: number,
     // timeTableClassId: number,
     studentId: number,
     status?: string,
     student?: UserInfor
+  }
+
+  type UpdateStatusAttendance = {
+    id: number,
+    status: AttendanceStatus
+  }
+
+  type AttendanceStatistic = {
+    presents: Attendance[];
+    absences: Attendance[];
+    total: number;
+  }
+
+  type AchievementItem = {
+    title: string,
+    score: number
+  }
+
+  type AchievementOfStudent = {
+    id?: number,
+    student: UserInfor,
+    achievements?: AchievementItem[],
+    averagePoint: number,
   }
 }
 

@@ -4,25 +4,25 @@ import prisma from "../../../lib/prisma";
 
 export default async function create(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    const selectData = {
-        id: true,
-        name: true,
-        capacity: true,
-        teacherId: true,
-        teacher: {
-            select: {
-                name: true
-            }
-        },
-        status: true,
-        students: {
-            select: {
-                studentId: true
-            }
-        },
-        startAt: true,
-        endAt: true
-    }
+    // const selectData = {
+    //     id: true,
+    //     name: true,
+    //     capacity: true,
+    //     teacherId: true,
+    //     teacher: {
+    //         select: {
+    //             name: true
+    //         }
+    //     },
+    //     status: true,
+    //     students: {
+    //         select: {
+    //             studentId: true
+    //         }
+    //     },
+    //     startAt: true,
+    //     endAt: true
+    // }
 
     if (method === 'POST') {
         const {
@@ -75,19 +75,21 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
         let result = null
         if (typeof studentId !== 'undefined') {
             result = await prisma.class.findMany({
-                select: selectData,
                 where: {
                     students: {
                         some: {
                             studentId: parseInt(studentId)
                         }
                     }
+                },
+                include:{
+                    teacher: true,
+                    students: true
                 }
             })
         }
         else {
             result = await prisma.class.findMany({
-                select: selectData,
                 where: {
                     name: {
                         contains: name
@@ -98,6 +100,10 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                         }
                     },
                     teacherId: teacherId
+                },
+                include:{
+                    teacher: true,
+                    students: true
                 }
             })
         }
