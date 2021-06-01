@@ -1,4 +1,4 @@
-import { List, PageHeader, Button, Row, Col, Divider, Tooltip, Alert, Descriptions, Tabs, Tag, message, Popconfirm } from "antd";
+import { List, PageHeader, Button, Row, Col, Divider, Tooltip, Tag, message, Popconfirm } from "antd";
 import React, { useEffect, useState } from "react";
 import { RegisterStatus } from ".prisma/client";
 import { MinusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -9,6 +9,9 @@ import { formatDate, formatDay, formatTime } from "../../../lib/formatDate";
 import { cancel, sendRegister } from "../../../lib/register/handleRegister";
 import deleteClass from "../../../lib/classroom/deleteClass";
 import EditClassForm from "./EditClassForm";
+import { getAllTimetableOfStu } from "../../../lib/timetable/timetable";
+import checkDuplicateTimetable from "../../../lib/register/checkDuplicateTimetable";
+import { useRouter } from "next/router";
 
 const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeacher }) => {
     const [role, setRole] = useState<string>()
@@ -20,6 +23,10 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
     const [registerButton, setRegisterButton] = useState<string>()
     const [reload, setReload] = useState<boolean>(false)
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+    const [timetableStu, setTimetableStu] = useState<API.TimetableClassItem[]>([])
+    const [checkDuplicate, setCheckDuplicate] = useState<boolean>()
+    const [canRegister, setCanRegister] = useState<{enable: boolean, message?: string}>()
+    const router = useRouter()
 
     useEffect(() => {
         const role = localStorage.getItem('role')
@@ -35,23 +42,53 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
     }, [reload])
 
     useEffect(() => {
-        if (userId) {
-            checkRegister(userId, id).then(res => {
-                if (res === null) {
-                    setRegister(false)
-                    setRegisterButton('Đăng ký')
-                }
-                else {
-                    setRegister(true)
-                    if (res === RegisterStatus.REGISTERED)
-                        setRegisterButton('Đã đăng ký')
-                    else setRegisterButton('Đang tham gia')
-                }
-            })
+        if (!isTeacher) {
+            if (userId) {
+                checkRegister(userId, id).then(res => {
+                    if (res === null) {
+                        setRegister(false)
+                        setRegisterButton('Đăng ký')
+                    }
+                    else {
+                        setRegister(true)
+                        if (res === RegisterStatus.REGISTERED)
+                            setRegisterButton('Đã đăng ký')
+                        else setRegisterButton('Đang tham gia')
+                    }
+                })
+
+                getAllTimetableOfStu({ studentId: userId })
+                    .then(res => {
+                        setTimetableStu(res)
+                    })
+            }
         }
     }, [userId, register])
 
-    const editButton = canEdit ? { display: 'inline' } : { display: 'none' }
+    // useEffect(() => {
+    //     if (!isTeacher && timetableStu.length > 0 && schedules.length > 0 && typeof data !== 'undefined') {
+    //         setCheckDuplicate(checkDuplicateTimetable(schedules, timetableStu, data))
+    //         console.log('=-----chekc: ' + checkDuplicateTimetable(schedules, timetableStu, data))
+    //     }
+    // }, [schedules.length, timetableStu.length, data])
+
+    // useEffect(() => {
+    //     if (typeof checkDuplicate !== 'undefined') {
+    //         if (classes.capacity <= classes.count) {
+    //             setCanRegister({enable:false, message: 'Lớp đã đầy'})
+    //         } else if (classes.status === 'FINISHED') {
+    //             setCanRegister({enable:false, message: 'Lớp học đã kết thúc. Không thể đăng ký'})
+    //         } else {
+    //             if (!checkDuplicate) {
+    //                 setCanRegister({enable:false, message: 'Trùng lịch học'})
+    //             }else {
+    //                 setCanRegister({enable:true, message: 'Đăng ký thành công'})
+
+    //             }
+    //         }
+    //     }
+    // }, [checkDuplicate])
+
     const disableButton = ((role === 'STUDENT') && !register) ? false : true
     let schedule = []
     if (schedules.length > 0) {
@@ -77,17 +114,21 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
     }
 
     const handleRegister = () => {
-        if (classes.capacity <= classes.count) {
-            message.error('Lớp đã đầy')
-        } else if (classes.status === 'FINISHED') {
-            message.error('Lớp học đã kết thúc. Không thể đăng ký')
+        console.log('canRegister: ' + canRegister)
+        if (typeof canRegister !== 'undefined') {
+            if(canRegister.enable){
+                sendRegister(userId, id)
+                setRegister(true)
+                setRegisterButton('Đã đăng ký')
+                message.success('Đăng ký thành công')
+            }else {
+                message.error(canRegister.message)
+            }
         } else {
-            sendRegister(userId, id)
-            setRegister(true)
-            setRegisterButton('Đã đăng ký')
-            message.success('Đăng ký thành công')
+            handleRegister()
         }
     }
+
 
     const cancelRegister = () => {
         cancel(userId, id)
@@ -107,7 +148,10 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
                     <Button key='2' type="primary" shape='round' icon={<EditOutlined />} onClick={() => setIsModalVisible(true)}>Sửa</Button>,
                     <Popconfirm
                         title="Bạn chắc chắn chứ ?"
-                        onConfirm={() => deleteClass(id)}
+                        onConfirm={() => {
+                            deleteClass(id)
+                            router.push(`/teachers/classrooms`)
+                        }}
                     >
                         <Button key='3' type="primary" shape='round' icon={<DeleteOutlined />} danger>Xóa</Button>
                     </Popconfirm>,

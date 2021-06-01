@@ -58,7 +58,6 @@ const Blog: React.FC<Props> = (props) => {
         <Calendar
           localizer={localizer}
           events={events}
-          // tooltipAccessor='tooltip'
           startAccessor="start"
           endAccessor="end"
           onSelectEvent={(event: API.TimetableClassItem, e) => {

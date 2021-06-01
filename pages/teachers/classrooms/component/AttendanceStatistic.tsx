@@ -6,21 +6,24 @@ import { API } from "../../../../prisma/type/type"
 const AttendanceStatistic: React.FC<{
     students: API.UserInfor[],
     classId: number
-}> = ({students, classId}) => {
+}> = ({ students, classId }) => {
 
     let studentList: API.UserInfor[] = []
-    students.forEach((x: API.UserInfor) => {
-        let attendance = getAttendanceDetail(classId, x.attendance)
-        studentList = [
-            ...studentList,
-            {
-                ...x,
-                presents: attendance.presents,
-                absences: attendance.absences,
-                total: attendance.total
-            }
-        ]
-    })
+    if (typeof students !== 'undefined') {
+        students.forEach((x: API.UserInfor) => {
+            let attendance = getAttendanceDetail(classId, x.attendance)
+            studentList = [
+                ...studentList,
+                {
+                    ...x,
+                    presents: attendance.presents,
+                    absences: attendance.absences,
+                    total: attendance.total
+                }
+            ]
+        })
+    }
+
     const attendanceColumns: ColumnsType<API.UserInfor> = [
         {
             title: 'Avatar',
@@ -67,7 +70,7 @@ const AttendanceStatistic: React.FC<{
                 expandedRowRender: (record) => {
                     let show: any[] = []
                     const attendances = [...record.presents, ...record.absences]
-                    attendances.forEach((x: API.Attendance) => {
+                    typeof attendances !== 'undefined' ? attendances.forEach((x: API.Attendance) => {
                         show = [
                             ...show,
                             <div
@@ -75,14 +78,14 @@ const AttendanceStatistic: React.FC<{
                                 style={{ marginLeft: '8%' }}
                             >Ngày {x.time}: &nbsp;&nbsp;&nbsp;&nbsp;{x.status}<Divider /></div>
                         ]
-                    })
+                    }) : null
                     return (
                         <p>{show}</p>
                     )
                 }
             }}
             pagination={{
-                total: students.length,
+                total: typeof students !== 'undefined'?students.length:0,
                 showTotal: total => `Tổng ${total} học sinh`,
                 defaultPageSize: 10,
                 defaultCurrent: 1

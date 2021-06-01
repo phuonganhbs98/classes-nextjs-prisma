@@ -48,10 +48,9 @@ const CreateClassroomForm: React.FC = () => {
         }
         await createClass(data)
             .then(res => {
-                console.log('new classroom')
                 console.log(res)
                 message.success('Thành công')
-                router.push('/teachers/classrooms')
+                router.push(`/teachers/classrooms/${res.id}`)
             })
             .catch(err => {
                 message.error('Thất bại')

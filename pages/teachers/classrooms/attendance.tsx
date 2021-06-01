@@ -129,7 +129,7 @@ const Attendance: React.FC = () => {
                         <Button key='2' type="primary" shape='round' icon={<SaveOutlined />} onClick={() => handleUpdate()}>Lưu</Button>,
                     ]}
                 />
-                <div style={{ marginLeft: '5%' }}>Buổi học ngày {formatDate(new Date(date), false)}</div>
+                <div style={{ marginLeft: '5%' }}>Buổi học ngày {typeof date !== 'undefined'?formatDate(new Date(date), false):null}</div>
             </div>
             <div className="site-layout-background content">
 

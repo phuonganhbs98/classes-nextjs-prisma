@@ -24,37 +24,15 @@ export default async function findUnique(req: NextApiRequest, res: NextApiRespon
                 },
                 schedules: true
             }
-            // select:{
-            //     id: true,
-            //     name: true,
-            //     teacherId: true,
-            //     teacher:{
-            //         select:{
-            //             name: true
-            //         }
-            //     },
-            //     status: true,
-            //     capacity: true,
-            //     students: {
-            //         select:{
-            //             student:{
-            //                 select:{
-            //                     id:true,
-            //                     name: true,
-            //                     email: true,
-            //                     phoneNumber: true
-            //                 }
-            //             }
-            //         }
-            //     },
-            //     startAt: true,
-            //     endAt: true,
-            //     schedules: true
-            // }
         })
         res.status(200).json(result)
     } else if (method === 'DELETE') {
         await prisma.$transaction([
+            prisma.timetableClass.deleteMany({
+                where:{
+                    classId: id
+                }
+            }),
             prisma.schedule.deleteMany({
                 where: {
                     classId: id

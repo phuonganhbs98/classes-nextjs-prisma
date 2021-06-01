@@ -7,6 +7,7 @@ import RegisterRequest from "../../../components/classroom/RegisterRequest";
 import StudentList from "../../../components/classroom/StudentList";
 import AssignmentList from "../../assignments/component/AssignmentList";
 import { TrophyOutlined } from "@ant-design/icons";
+import FileUpload from "../../../components/classroom/FileUpload";
 
 const ClassroomInfor: React.FC = () => {
     const router = useRouter()
@@ -60,6 +61,12 @@ const ClassroomInfor: React.FC = () => {
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Bài tập" key="3">
                         <AssignmentList
+                            isTeacher={true}
+                            classId={id}
+                        />
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="Files" key="4">
+                        <FileUpload
                             isTeacher={true}
                             classId={id}
                         />

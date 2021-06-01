@@ -73,11 +73,6 @@ declare namespace API {
     },
     studentId: number,
     assignmentId: number,
-    // assignment: {
-    //   teacherId: number,
-    //   content: string,
-    //   title: string
-    // },
     assignment: AssignmentItem,
     status: string,
     createdAt: Date,
@@ -130,9 +125,6 @@ declare namespace API {
 
   type TimetableStudentItem = {
     id?: number,
-    // title: string,
-    // start: Date,
-    // end: Date,
     studentId: number,
     timeTable?: TimetableClassItem,
     timeTableId: number,
@@ -149,7 +141,6 @@ declare namespace API {
     classId: number,
     time: string,
     no?: number,
-    // timeTableClassId: number,
     studentId: number,
     status?: string,
     student?: UserInfor
@@ -176,6 +167,14 @@ declare namespace API {
     student: UserInfor,
     achievements?: AchievementItem[],
     averagePoint: number,
+    answers?: API.AnswerItem[]
+  }
+
+  type FileUpload = {
+    uid: number,
+    url: string,
+    name: string,
+    status: string
   }
 }
 

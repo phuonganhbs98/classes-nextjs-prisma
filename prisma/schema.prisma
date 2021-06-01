@@ -202,12 +202,14 @@ model TimetableStudent {
 }
 
 model Attendance {
-  id               Int               @id @default(autoincrement())
-  classId          Int
-  time             String
-  studentId        Int
-  student          User              @relation(fields: [studentId], references: [id])
-  status           AttendanceStatus?
+  id        Int               @id @default(autoincrement())
+  classId   Int
+  time      String
+  studentId Int
+  student   User              @relation(fields: [studentId], references: [id])
+  status    AttendanceStatus?
+
+  @@map("attendances")
 }
 
 enum Role {

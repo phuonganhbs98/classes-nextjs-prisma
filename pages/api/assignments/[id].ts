@@ -10,32 +10,35 @@ export default async function assignmentItemManager(req: NextApiRequest, res: Ne
             where: {
                 id: id
             },
-            select: {
-                id: true,
-                title: true,
-                content: true,
-                attachment: true,
-                status: true,
-                deadline: true,
-                answers: {
-                    select: {
-                        id: true,
-                        updatedAt: true,
-                        status: true
-                    }
-                },
-                classId: true,
-                class: {
-                    select: {
-                        name: true
-                    }
-                },
-                teacherId: true
+            include:{
+                answers: true,
+                class: true
             }
+            // select: {
+            //     id: true,
+            //     title: true,
+            //     content: true,
+            //     attachment: true,
+            //     status: true,
+            //     deadline: true,
+            //     answers: {
+            //         select: {
+            //             id: true,
+            //             updatedAt: true,
+            //             status: true
+            //         }
+            //     },
+            //     classId: true,
+            //     class: {
+            //         select: {
+            //             name: true
+            //         }
+            //     },
+            //     teacherId: true
+            // }
         })
         res.status(200).json(result)
     } else if (method === 'PUT') {
-        // if (!req.body.data.status) {
         const {
             title,
             content,
@@ -58,21 +61,6 @@ export default async function assignmentItemManager(req: NextApiRequest, res: Ne
             })
         ])
         res.status(200).json(result)
-        // } 
-        // else {
-        //     const { status } = req.body.data
-        //     const [result] = await prisma.$transaction([
-        //         prisma.assignment.update({
-        //             where: {
-        //                 id: id
-        //             },
-        //             data: {
-        //                 status: status
-        //             }
-        //         })
-        //     ])
-        //     res.status(200).json(result)
-        // }
     } else if (method === 'DELETE') {
         await prisma.$transaction([
             prisma.answer.deleteMany({
