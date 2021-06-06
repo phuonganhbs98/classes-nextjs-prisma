@@ -65,29 +65,29 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
         }
     }, [userId, register])
 
-    // useEffect(() => {
-    //     if (!isTeacher && timetableStu.length > 0 && schedules.length > 0 && typeof data !== 'undefined') {
-    //         setCheckDuplicate(checkDuplicateTimetable(schedules, timetableStu, data))
-    //         console.log('=-----chekc: ' + checkDuplicateTimetable(schedules, timetableStu, data))
-    //     }
-    // }, [schedules.length, timetableStu.length, data])
+    useEffect(() => {
+        if (!isTeacher && timetableStu.length > 0 && schedules.length > 0 && typeof data !== 'undefined') {
+            setCheckDuplicate(checkDuplicateTimetable(schedules, timetableStu, data))
+            console.log('=-----chekc: ' + checkDuplicateTimetable(schedules, timetableStu, data))
+        }
+    }, [schedules.length, timetableStu.length, data])
 
-    // useEffect(() => {
-    //     if (typeof checkDuplicate !== 'undefined') {
-    //         if (classes.capacity <= classes.count) {
-    //             setCanRegister({enable:false, message: 'Lớp đã đầy'})
-    //         } else if (classes.status === 'FINISHED') {
-    //             setCanRegister({enable:false, message: 'Lớp học đã kết thúc. Không thể đăng ký'})
-    //         } else {
-    //             if (!checkDuplicate) {
-    //                 setCanRegister({enable:false, message: 'Trùng lịch học'})
-    //             }else {
-    //                 setCanRegister({enable:true, message: 'Đăng ký thành công'})
+    useEffect(() => {
+        if (typeof checkDuplicate !== 'undefined') {
+            if (classes.capacity <= classes.count) {
+                setCanRegister({enable:false, message: 'Lớp đã đầy'})
+            } else if (classes.status === 'FINISHED') {
+                setCanRegister({enable:false, message: 'Lớp học đã kết thúc. Không thể đăng ký'})
+            } else {
+                if (!checkDuplicate) {
+                    setCanRegister({enable:false, message: 'Trùng lịch học'})
+                }else {
+                    setCanRegister({enable:true, message: 'Đăng ký thành công'})
 
-    //             }
-    //         }
-    //     }
-    // }, [checkDuplicate])
+                }
+            }
+        }
+    }, [checkDuplicate])
 
     const disableButton = ((role === 'STUDENT') && !register) ? false : true
     let schedule = []
@@ -128,7 +128,6 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
             handleRegister()
         }
     }
-
 
     const cancelRegister = () => {
         cancel(userId, id)

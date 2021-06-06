@@ -19,6 +19,7 @@ model Class {
   schedules        Schedule[]
   assignments      Assignment[]
   achievements     Achievement[]
+  notification     Notification[]
   startAt          DateTime             @map(name: "start_at")
   endAt            DateTime             @map(name: "end_at")
 
@@ -210,6 +211,30 @@ model Attendance {
   status    AttendanceStatus?
 
   @@map("attendances")
+}
+
+model Notification {
+  id          Int           @id @default(autoincrement())
+  classId     Int
+  classroom   Class         @relation(fields: [classId], references: [id])
+  content     String        @db.LongText
+  notiComment NotiComment[]
+  createdAt   DateTime      @default(now()) @map(name: "created_at")
+  updatedAt   DateTime      @updatedAt @map(name: "updated_at")
+
+  @@map("notifications")
+}
+
+model NotiComment {
+  id           Int          @id @default(autoincrement())
+  userId       Int
+  author       String
+  notiId       Int
+  notification Notification @relation(fields: [notiId], references: [id])
+  avatar       String?
+  content      String       @db.LongText
+  createdAt    DateTime     @default(now()) @map(name: "created_at")
+  updatedAt    DateTime     @updatedAt @map(name: "updated_at")
 }
 
 enum Role {

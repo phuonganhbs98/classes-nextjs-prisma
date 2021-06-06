@@ -8,6 +8,7 @@ import StudentList from "../../../components/classroom/StudentList";
 import AssignmentList from "../../assignments/component/AssignmentList";
 import { TrophyOutlined } from "@ant-design/icons";
 import FileUpload from "../../../components/classroom/FileUpload";
+import NotificationTab from "../../classrooms/component/NotificationTab";
 
 const ClassroomInfor: React.FC = () => {
     const router = useRouter()
@@ -44,7 +45,13 @@ const ClassroomInfor: React.FC = () => {
                     }
                     > Thống kê </Button></Tooltip>}
                 >
-                    <Tabs.TabPane tab="Yêu cầu vào lớp" key="1">
+                    <Tabs.TabPane tab="Thông báo" key="1">
+                        <NotificationTab
+                            classId={id}
+                            isTeacher={true}
+                        />
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="Yêu cầu vào lớp" key="5">
                         <RegisterRequest
                             classId={id}
                             reload={reloadRequest}

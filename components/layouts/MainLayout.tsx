@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { Col, Layout, Row } from "antd";
+import { Col, Divider, Layout, Row } from "antd";
 import MenuHeader from "./MenuHeader";
 import { useSession } from "next-auth/client"
 import { Role } from ".prisma/client";
@@ -52,7 +52,7 @@ const MainLayout: React.FC<Props> = ({ children, title }) => {
               style={{
                 margin: '0 16px',
                 overflow: "initial",
-                minHeight: '120vh'
+                minHeight: '130vh'
               }}
             >
               <div className=" main-container"
@@ -60,6 +60,7 @@ const MainLayout: React.FC<Props> = ({ children, title }) => {
                   minHeight: 'inherit'
                 }}>{children}</div>
             </Content>
+            <Divider />
             <Footer style={{ textAlign: "center" }}>
             <div>Trường đại học Bách Khoa Hà Nội</div>
             <div>Viện CNTT-TT</div>

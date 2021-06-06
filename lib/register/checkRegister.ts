@@ -9,4 +9,18 @@ import axios from "axios"
     return result;
 }
 
+export async function checkStudentOfClass(studentId: number, classId: number) {
+    let result = null
+    await axios.get(`http://localhost:3000/api/registers`,{
+        params:{
+            studentId: studentId,
+            classId: classId
+        }
+    }).then(res => {
+        if (res.data)
+            result = res.data
+    })
+    return result
+}
+
 export default checkRegister;

@@ -27,8 +27,6 @@ const AchievementStatistic: React.FC<{
 
     let studentList: API.AchievementOfStudent[] = []
     if (typeof students !== 'undefined') {
-        console.log('-------students')
-        console.log(students)
          students.forEach((x: API.UserInfor) => {
             studentList = [
                 ...studentList,
@@ -70,8 +68,6 @@ const AchievementStatistic: React.FC<{
             }
         },
     ]
-    console.log('----------studentList')
-    console.log(studentList)
     return (
         <Table<API.AchievementOfStudent>
             columns={columns}

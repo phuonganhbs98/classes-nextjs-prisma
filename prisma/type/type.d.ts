@@ -105,11 +105,13 @@ declare namespace API {
   type CommentItem = {
     id?: number,
     userId: number,
-    answerId: number,
+    answerId?: number,
+    notiId?: number,
     content: string,
     avatar: string,
     datetime?: string,
     createdAt?: Date,
+    updatedAt?: Date,
     author: string
   }
 
@@ -175,6 +177,16 @@ declare namespace API {
     url: string,
     name: string,
     status: string
+  }
+
+  type NotificationItem ={
+    id?: number,
+    classId: number,
+    classroom?: Classroom,
+    content: string,
+    notiComment?: CommentItem[],
+    createdAt?: Date,
+    updatedAt?: Date
   }
 }
 
