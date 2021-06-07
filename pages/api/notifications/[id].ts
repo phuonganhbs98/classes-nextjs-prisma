@@ -8,6 +8,9 @@ export default async function manageNotification(req: NextApiRequest, res: NextA
         const result = await prisma.notification.findUnique({
             where: {
                 id: parseInt(id)
+            },
+            include:{
+                classroom: true
             }
         })
         res.status(200).json(result)

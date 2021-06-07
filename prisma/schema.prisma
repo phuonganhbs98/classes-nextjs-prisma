@@ -22,6 +22,8 @@ model Class {
   notification     Notification[]
   startAt          DateTime             @map(name: "start_at")
   endAt            DateTime             @map(name: "end_at")
+  createdAt        DateTime             @default(now()) @map(name: "created_at")
+  updatedAt        DateTime?            @default(now()) @updatedAt @map(name: "updated_at")
 
   TimetableClass TimetableClass[]
   @@map(name: "classes")
@@ -46,6 +48,7 @@ model ClassroomToStudent {
   classroom Class @relation(fields: [classId], references: [id])
 
   @@id([studentId, classId])
+  // @@map("classroomToStudents")
 }
 
 model User {
@@ -68,7 +71,7 @@ model User {
   timetableStu     TimetableStudent[]
   timetableClass   TimetableClass[]
   createdAt        DateTime             @default(now()) @map(name: "created_at")
-  updatedAt        DateTime             @updatedAt @map(name: "updated_at")
+  updatedAt        DateTime             @default(now()) @updatedAt @map(name: "updated_at")
   attendance       Attendance[]
 
   @@map(name: "users")
@@ -105,7 +108,7 @@ model Assignment {
 model Answer {
   id           Int           @id @default(autoincrement())
   content      String        @db.LongText
-  attachment   String?
+  attachment   String?       @db.LongText
   score        Float?
   student      User          @relation(fields: [studentId], references: [id])
   studentId    Int
@@ -234,7 +237,9 @@ model NotiComment {
   avatar       String?
   content      String       @db.LongText
   createdAt    DateTime     @default(now()) @map(name: "created_at")
-  updatedAt    DateTime     @updatedAt @map(name: "updated_at")
+  updatedAt    DateTime     @default(now()) @updatedAt @map(name: "updated_at")
+
+  @@map("notiComments")
 }
 
 enum Role {

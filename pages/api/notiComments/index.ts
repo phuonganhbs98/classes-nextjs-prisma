@@ -5,7 +5,7 @@ export default async function manageNotiComment(req: NextApiRequest, res: NextAp
     const method = req.method
     if(method==='POST'){
         const data = req.body.data
-        console.log(data)
+        // console.log(data)
         const [result] = await prisma.$transaction([
             prisma.notiComment.create({
                 data: data

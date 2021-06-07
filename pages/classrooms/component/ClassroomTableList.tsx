@@ -114,7 +114,7 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
             onClick={() => router.push({
               pathname: `${pathname}/${record.id}`,
             })} /></Tooltip>
-          {isTeacher ?
+          {/* {isTeacher ?
             <Popconfirm
               title="Bạn chắc chắn chứ ?"
               onConfirm={async () => {
@@ -137,7 +137,7 @@ const ClassroomTableList: React.FC<Props> = ({ isTeacher }) => {
                 danger
               /></Tooltip>
             </Popconfirm> : ''
-          }
+          } */}
         </>
       )
     }

@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axios from "axios";
 import { API } from "../../prisma/type/type";
 
@@ -23,6 +24,12 @@ export async function update(data: API.UpdateStatusAttendance[]){
     await axios.put(`/api/attendances`,{
         data: data
     })
-    .then(res => console.log(res))
-    .catch(err => console.error(err))
+    .then(res => {
+        message.success('Thành công')
+        console.log(res)
+    })
+    .catch(err => {
+        message.error('Thất bại')
+        console.error(err)
+    })
 }

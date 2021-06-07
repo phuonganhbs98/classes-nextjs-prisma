@@ -45,7 +45,8 @@ declare namespace API {
   type Schedules = {
     dayInWeek: number,
     startAt: Date,
-    endAt: Date
+    endAt: Date,
+    day: string
   }
 
   type AssignmentItem = {

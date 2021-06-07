@@ -5,8 +5,6 @@ export default async function manageNotification(req: NextApiRequest, res: NextA
     const method = req.method
     if (method === 'POST') {
         const data = req.body.data
-        console.log('-------- new notification: -------')
-        console.log(data)
         const [result] = await prisma.$transaction([
             prisma.notification.create({
                 data: data
@@ -14,8 +12,8 @@ export default async function manageNotification(req: NextApiRequest, res: NextA
         ])
         res.status(200).json(result)
     } else if (method === 'GET') {
-        const classId = Array.isArray(req.query.classId) ? null : req.query.classId
-        console.log('classId: ' + classId)
+        const classId = parseInt(Array.isArray(req.query.classId) ? null : req.query.classId)
+        const studentId = parseInt(Array.isArray(req.query.studentId) ? null : req.query.studentId)
 
         const result = await prisma.notification.findMany({
             orderBy: [
@@ -24,14 +22,22 @@ export default async function manageNotification(req: NextApiRequest, res: NextA
                 }
             ],
             where: {
-                classId: parseInt(classId)
+                classId: Number.isNaN(classId)?undefined:classId,
+                classroom:Number.isNaN(studentId)?undefined:{
+                    students:{
+                        some:{
+                            studentId: studentId,
+                        }
+                    }
+                }
             },
             include:{
                 notiComment:{
                     orderBy:{
-                        createdAt: 'desc'
+                        updatedAt: 'desc'
                     }
-                }
+                },
+                classroom: true
             }
         })
         res.status(200).json(result)

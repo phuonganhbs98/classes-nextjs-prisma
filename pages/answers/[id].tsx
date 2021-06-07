@@ -8,7 +8,6 @@ import { getAnswerById, scoring } from "../../lib/answer/answer";
 import { API } from "../../prisma/type/type";
 import { ReadOutlined } from '@ant-design/icons'
 import Modal from "antd/lib/modal/Modal";
-import { useSession } from "next-auth/client";
 import { formatDate } from "../../lib/formatDate";
 
 const AnswerDetail: React.FC = () => {
@@ -29,7 +28,7 @@ const AnswerDetail: React.FC = () => {
     }, [])
 
     useEffect(() => {
-        if (!Number.isNaN(id) && !Number.isNaN(userId) && userId!== -1) {
+        if (!Number.isNaN(id) && !Number.isNaN(userId) && userId !== -1) {
             getAnswerById(id)
                 .then(res => {
                     setData(res)
@@ -50,11 +49,12 @@ const AnswerDetail: React.FC = () => {
         setIsModalVisible(false);
     };
 
-    const handleOk = () => {
-        scoring(id, score)
-        setIsModalVisible(false);
-        if (reload) setReload(false)
-        else setReload(true)
+    const handleOk = async () => {
+        await scoring(id, score).then(res => {
+            setIsModalVisible(false);
+            if (reload) setReload(false)
+            else setReload(true)
+        })
     };
 
     const onScoreChange = (e) => {
@@ -71,9 +71,9 @@ const AnswerDetail: React.FC = () => {
                         <p> Điểm: <strong style={{ color: 'red' }}>{data?.score}/10</strong></p>
                     ]}
                 />
-                <p style={{textAlign: 'justify'}}>{data?.content}</p>
+                <p style={{ textAlign: 'justify' }}>{data?.content}</p>
                 <br />
-                <a href={data?.attachment} target='_blank'>{data?.attachment}</a>
+                <div style={{whiteSpace: 'nowrap',overflow: 'hidden',textOverflow: 'ellipsis', width: 'inherit'}}><a href={data?.attachment} target='_blank'>{data?.attachment}</a></div>
                 <br />
                 <br />
                 <em style={{ fontSize: '12px' }}>Chỉnh sửa lần cuối lúc: {data ? formatDate(new Date(data.updatedAt)) : null} {data?.status === AnswerStatus.LATE ? (<span style={{ color: 'red' }}>{`<Nộp muộn>`}</span>) : ''}</em>
@@ -82,7 +82,8 @@ const AnswerDetail: React.FC = () => {
                 answerId={id}
             />
             <Modal title="Chấm điểm" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                <InputNumber min={0} max={10} value={score} onChange={onScoreChange} /><small> (Nhập từ 0 đến 10)</small>
+                <InputNumber value={score} min={0} max={10} onChange={onScoreChange} /><small> (Nhập từ 0 đến 10)</small><br />
+                {/* <small style={{ color: 'red' }}>{error}</small> */}
             </Modal>
         </MainLayout>
     )

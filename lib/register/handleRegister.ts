@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axios from "axios";
 import { set } from "date-fns";
 import { API } from "../../prisma/type/type";
@@ -13,8 +14,14 @@ export async function sendRegister(studentId: number, classId: number) {
 
 export async function cancel(studentId: number, classId: number) {
     await axios.delete(`/api/registers/${studentId}/${classId}`)
-        .then(res => console.log(res.data))
-        .catch(err => console.error(err))
+        .then(res => {
+            message.success('Thành công')
+            console.log(res.data)
+        })
+        .catch(err => {
+            console.error(err)
+            message.error("Thất bại")
+        })
 }
 
 export async function accept(studentId: number, classId: number, timeTable: API.TimetableClassItem[]) {
@@ -42,10 +49,19 @@ export async function accept(studentId: number, classId: number, timeTable: API.
             })
             await createAttendance(attendance)
                 .then(res => console.log(res))
-                .catch(err => console.error(err))
+                .catch(err => {
+                    console.error(err)
+                    message.error('Tạo danh sách điểm danh thất bại')
+                })
             await createTimetableStu(timeTableStu)
                 .then(res => console.log(res))
-            console.log('----------tao xog attendance va timetablestu....')
+                .catch(err => {
+                    console.error(err)
+                    message.error('Tạo thời khóa biểu cho sinh viên thất bại')
+                })
         })
-        .catch(err => console.error(err))
+        .catch(err => {
+            console.error(err)
+            message.error('Thêm sinh viên vào lớp thất bại')
+        })
 }

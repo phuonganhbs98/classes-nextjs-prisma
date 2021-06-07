@@ -25,7 +25,7 @@ const CommentItem: React.FC<{ answerId: number }> = ({ answerId }) => {
                 .then(res => {
                     setComments(res)
                 })
-        }   
+        }
     }, [reload, answerId])
 
     if (comments.length > 0) {
@@ -34,7 +34,7 @@ const CommentItem: React.FC<{ answerId: number }> = ({ answerId }) => {
         })
     }
 
-    const handleSubmit = async (value:any) => {
+    const handleSubmit = async (value: any) => {
         if (!Number.isNaN(answerId) && !Number.isNaN(userId)) {
             const data: API.CommentItem = {
                 ...value,
@@ -54,7 +54,7 @@ const CommentItem: React.FC<{ answerId: number }> = ({ answerId }) => {
     const CommentList = ({ comments }) => (
         <List
             dataSource={comments}
-            header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
+            header={`${comments.length} câu trả lời`}
             itemLayout="horizontal"
             renderItem={(props: any) => <Comment {...props} />}
         />
@@ -69,7 +69,7 @@ const CommentItem: React.FC<{ answerId: number }> = ({ answerId }) => {
             </Form.Item>
             <Form.Item>
                 <Button htmlType="submit" type="primary">
-                    Comment
+                    Đăng
             </Button>
             </Form.Item>
         </Form>
@@ -91,7 +91,7 @@ const CommentItem: React.FC<{ answerId: number }> = ({ answerId }) => {
                     />
                 }
                 content={
-                    <Editor/>
+                    <Editor />
                 }
             />
         </div>

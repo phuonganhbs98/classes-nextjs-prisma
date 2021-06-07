@@ -11,24 +11,32 @@ import {
 } from "antd";
 import { useRouter } from "next/router";
 import MainLayout from "../../components/layouts/MainLayout";
-import { useSession } from "next-auth/client";
 import { useEffect, useState } from "react";
 import { Moment } from "moment";
-import { formatDate } from "../../lib/formatDate"
-
 import {
     MinusCircleOutlined,
     PlusOutlined
 } from '@ant-design/icons';
 import createClass from "../../lib/classroom/createClass";
+import { API } from "../../prisma/type/type";
+import { getAllTimetableClass } from "../../lib/timetable/timetable";
+import checkDuplicateTimetable from "../../lib/register/checkDuplicateTimetable";
 
 const CreateClassroomForm: React.FC = () => {
     const router = useRouter()
-    const [session] = useSession()
     const [teacherId, setTeacherId] = useState<number>()
+    const [timetables, setTimetables] = useState<API.TimetableClassItem[]>([])
     useEffect(() => {
-        if (session) setTeacherId(session.userId)
+        setTeacherId(parseInt(localStorage.getItem('userId')))
     }, [])
+
+    useEffect(()=>{
+        if(typeof teacherId !== 'undefined'){
+            getAllTimetableClass({ teacherId: teacherId })
+            .then(res => setTimetables(res))
+        }
+    },[teacherId])
+
     const layout = {
         labelCol: { span: 8, offset: 0 },
         wrapperCol: { span: 10 },
@@ -39,32 +47,41 @@ const CreateClassroomForm: React.FC = () => {
     };
     const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
+        message.error('Thất bại')
     };
 
-    const onFinish = async (values: any) => {
+    const onFinish = async (values: API.Classroom) => {
         const data = {
             ...values,
             teacherId: teacherId,
         }
-        await createClass(data)
+        values.schedules.forEach((x: API.Schedules)=>{
+            x.dayInWeek = parseInt(x.day)
+        })
+        const check = checkDuplicateTimetable(values.schedules, timetables, values)
+        console.log('checkDuplicate: ' + check)
+        if(check){
+            await createClass(data)
             .then(res => {
-                console.log(res)
-                message.success('Thành công')
                 router.push(`/teachers/classrooms/${res.id}`)
             })
-            .catch(err => {
-                message.error('Thất bại')
-            })
+        }else {
+            message.error('Bị trùng thời khóa biểu')
+        }
     }
 
-    let [startDate, setStartDate] = useState(null);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const onChangeDate = (e: Moment) => {
         setStartDate(e)
     }
+    const onChangeEndDate= (e: Moment) => {
+        setEndDate(e)
+    }
     const checkEndDate = (_: any, value: Moment) => {
-        console.log(value)
+        console.log(endDate)
         console.log(startDate)
-        if ((startDate == null && !value) || (value > startDate)) {
+        if (startDate == null || endDate == null || (endDate > startDate)) {
             return Promise.resolve()
         }
         return Promise.reject(new Error('Ngày kết thúc phải lớn hơn ngày bắt đầu'))
@@ -96,12 +113,12 @@ const CreateClassroomForm: React.FC = () => {
                         name="capacity"
                         rules={[{ required: true, message: 'Xin vui lòng điền số lượng học sinh / sinh viên!' }]}
                     >
-                        <InputNumber />
+                        <InputNumber min={0}/>
                     </Form.Item>
                     <Form.Item
                         label="Ngày lớp học bắt đầu"
                         name="startAt"
-                        rules={[{ required: true, message: 'Xin vui lòng nhập ngày lớp học bắt đầu!' }]}
+                        rules={[{ validator: checkEndDate },{ required: true, message: 'Xin vui lòng nhập ngày lớp học bắt đầu!' }]}
                     >
                         <DatePicker onChange={onChangeDate} allowClear={true} />
                     </Form.Item>
@@ -110,7 +127,7 @@ const CreateClassroomForm: React.FC = () => {
                         name="endAt"
                         rules={[{ validator: checkEndDate }, { required: true, message: 'Xin vui lòng nhập ngày lớp học kết thúc!' }]}
                     >
-                        <DatePicker />
+                        <DatePicker onChange={onChangeEndDate}/>
                     </Form.Item>
                     <Form.Item
                         label="Thời khóa biểu"

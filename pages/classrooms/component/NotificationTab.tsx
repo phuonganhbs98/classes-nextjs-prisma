@@ -19,13 +19,12 @@ const NotificationTab: React.FC<{
     const [notiId, setNotiId] = useState<number>(-1)
     const [notiContent, setNotiContent] = useState<string>('')
     const router = useRouter()
-    const pathname= isTeacher?'/teachers':'/students'
+    const pathname = isTeacher ? '/teachers' : '/students'
 
     useEffect(() => {
         if (!Number.isNaN(classId)) {
-            getAllNotifications(classId)
+            getAllNotifications({ classId })
                 .then(res => {
-                    console.log(res)
                     setNotifications(res)
                 })
         }
@@ -39,10 +38,9 @@ const NotificationTab: React.FC<{
             }
             await createNoti(data)
                 .then(res => {
-                    message.success('Đăng thông báo thành công')
                     if (reload) setReload(false)
                     else setReload(true)
-                }).catch(err => message.error('Thất bại'))
+                })
         }
     }
 
@@ -50,11 +48,10 @@ const NotificationTab: React.FC<{
         if (!Number.isNaN(notiId) && notiId !== -1) {
             await editNoti(value, notiId)
                 .then(res => {
-                    message.success('Thành công')
                     if (reload) setReload(false)
                     else setReload(true)
                     setIsModalVisible(false)
-                }).catch(err => message.error('Thất bại'))
+                })
         }
     }
 
@@ -64,8 +61,6 @@ const NotificationTab: React.FC<{
             {text}
         </Space>
     );
-
-    console.log(`${pathname}/classrooms/notifications`)
 
     return (
         <>
@@ -95,11 +90,13 @@ const NotificationTab: React.FC<{
                     </Form>
                 </>
             ) : null}
-            <List
+            {notifications.length !== 0 ? <List
                 itemLayout="vertical"
                 dataSource={notifications}
                 pagination={{
-                    pageSize: 3
+                    pageSize: 3,
+                    total: notifications.length,
+                    showTotal: total => `Tổng ${total} thông báo`,
                 }}
                 renderItem={item => (
                     <List.Item
@@ -108,19 +105,19 @@ const NotificationTab: React.FC<{
                         ]}
                         extra={[
                             <Tooltip title='Xem'>
-                                <Button 
-                                type='link' 
-                                shape='circle'
-                                onClick={()=>{
-                                    router.push({
-                                        pathname: `${pathname}/classrooms/notifications`,
-                                        query: {
-                                          id: item.id
-                                        }
-                                      }, `${pathname}/classrooms/${item.classId}/notifications/${item.id}`)
-                                }} 
-                                icon={<EyeOutlined />} /></Tooltip>,
-                            <Tooltip title='Sửa'><Button
+                                <Button
+                                    type='link'
+                                    shape='circle'
+                                    onClick={() => {
+                                        router.push({
+                                            pathname: `${pathname}/classrooms/notifications`,
+                                            query: {
+                                                id: item.id
+                                            }
+                                        }, `${pathname}/classrooms/${item.classId}/notifications/${item.id}`)
+                                    }}
+                                    icon={<EyeOutlined />} /></Tooltip>,
+                            isTeacher?<Tooltip title='Sửa'><Button
                                 type='link'
                                 shape='circle'
                                 onClick={() => {
@@ -128,8 +125,8 @@ const NotificationTab: React.FC<{
                                     setNotiContent(item.content)
                                     setIsModalVisible(true)
                                 }}
-                                icon={<EditOutlined />} /></Tooltip>,
-                            <Popconfirm
+                                icon={<EditOutlined />} /></Tooltip>:null,
+                            isTeacher?<Popconfirm
                                 title="Bạn chắc chắn chứ ?"
                                 onConfirm={async () => {
                                     await deleteNoti(item.id).then(res => {
@@ -140,7 +137,7 @@ const NotificationTab: React.FC<{
                                 }}
                             >
                                 <Button key='3' type="link" shape='circle' icon={<DeleteOutlined />} danger />
-                            </Popconfirm>,
+                            </Popconfirm>:null,
                         ]}
                     >
                         <List.Item.Meta
@@ -151,11 +148,14 @@ const NotificationTab: React.FC<{
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis'
                             }}>{item.content}</div>}
-                            description={<><small>{formatDate(new Date(item.updatedAt), true)}</small> - <IconText icon={MessageOutlined} text={item.notiComment.length} key="list-vertical-message" /></>}
+                            description={<>
+                                <small>{item.classroom.name}</small><br />
+                                <small>{formatDate(new Date(item.updatedAt), true)}</small> - <Tooltip title={`Có ${item.notiComment.length} bình luận`}><span><IconText icon={MessageOutlined} text={item.notiComment.length} key="list-vertical-message" /></span></Tooltip>
+                            </>}
                         />
                     </List.Item>
                 )}
-            />
+            /> : <p>Không có thông báo nào</p>}
             <Modal
                 footer={null}
                 title='Chỉnh sửa'

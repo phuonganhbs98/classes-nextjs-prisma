@@ -47,7 +47,7 @@ const AssignmentTableList: React.FC<{ isTeacher: boolean }> = ({ isTeacher }) =>
         </Button>:null}
       >
         {classes.map((i: API.Classroom) => (
-          <Tabs.TabPane tab={`Lớp ${i.name}`} key={i.id} >
+          <Tabs.TabPane tab={`${i.name}`} key={i.id} >
             <AssignmentList
               classId={i.id}
               isTeacher={isTeacher}

@@ -108,8 +108,8 @@ const Attendance: React.FC = () => {
         console.log('params', pagination);
     }
 
-    const handleUpdate = () => {
-        update(array)
+    const handleUpdate = async() => {
+        await update(array)
             .then(res => {
                 if (reload) setReload(false)
                 else setReload(true)

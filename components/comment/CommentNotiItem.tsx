@@ -26,7 +26,7 @@ const CommentNotiItem: React.FC<{ notiId: number }> = ({ notiId }) => {
                 .then(res => {
                     setComments(res)
                 })
-        }   
+        }
     }, [reload, notiId])
 
     if (comments.length > 0) {
@@ -35,7 +35,7 @@ const CommentNotiItem: React.FC<{ notiId: number }> = ({ notiId }) => {
         })
     }
 
-    const handleSubmit = async (value:any) => {
+    const handleSubmit = async (value: any) => {
         if (!Number.isNaN(notiId) && !Number.isNaN(userId)) {
             const data: API.CommentItem = {
                 ...value,
@@ -70,8 +70,8 @@ const CommentNotiItem: React.FC<{ notiId: number }> = ({ notiId }) => {
             </Form.Item>
             <Form.Item>
                 <Button htmlType="submit" type="primary">
-                    Comment
-            </Button>
+                    Đăng
+                </Button>
             </Form.Item>
         </Form>
     );
@@ -92,7 +92,7 @@ const CommentNotiItem: React.FC<{ notiId: number }> = ({ notiId }) => {
                     />
                 }
                 content={
-                    <Editor/>
+                    <Editor />
                 }
             />
         </div>

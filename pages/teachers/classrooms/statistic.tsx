@@ -1,13 +1,9 @@
-import { Avatar, Button, Divider, Tabs, Tooltip } from "antd"
+import { Tabs } from "antd"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import MainLayout from "../../../components/layouts/MainLayout"
 import { API } from "../../../prisma/type/type"
 import { getAllStudents } from '../../../lib/classroom/getAllStudents'
-import Table, { ColumnsType } from "antd/lib/table"
-import StudentList from "../../../components/classroom/StudentList"
-import getAttendanceDetail from "../../../lib/attendance/getAttendanceDetail"
-import { EyeOutlined } from "@ant-design/icons"
 import AttendanceStatistic from "./component/AttendanceStatistic"
 import AchievementStatistic from "./component/AchievementStatistic"
 
@@ -35,6 +31,7 @@ const StatisticOfClass: React.FC = () => {
                         <AttendanceStatistic
                             students={students}
                             classId={classId}
+                            isTeacher={true}
                         />
                     </Tabs.TabPane>
                     <Tabs.TabPane tab="Thành tích học tập" key="2">

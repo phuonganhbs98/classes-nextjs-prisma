@@ -1,9 +1,9 @@
-import { CheckOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Divider, Table, Tooltip } from "antd";
+import { CheckOutlined, CloseOutlined, EyeOutlined } from "@ant-design/icons";
+import { Button, Divider, message, Table, Tooltip } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import getRegisteredStudents from "../../lib/register/getRegisteredStudents";
-import { accept } from "../../lib/register/handleRegister";
+import { accept, cancel } from "../../lib/register/handleRegister";
 import { getAllTimetableClass } from "../../lib/timetable/timetable";
 import { API } from "../../prisma/type/type";
 
@@ -60,7 +60,11 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
                         <Tooltip title='Đồng ý'>
                             <Button type="link"
                                 icon={<CheckOutlined style={{ color: 'green' }} />}
-                                onClick={() => handleAccept(x.student.id)} /></Tooltip>
+                                onClick={() => handleAccept(x.student.id)} /></Tooltip>,
+                        <Tooltip title='Không đồng ý'>
+                            <Button type="link"
+                                icon={<CloseOutlined style={{ color: 'red' }} />}
+                                onClick={() => handleCancel(x.student.id)} /></Tooltip>,
                     ]
                 }
             ]
@@ -91,11 +95,24 @@ const RegisterRequest: React.FC<Props> = ({ classId, reload, setReload }) => {
         }
     ]
 
-    const handleAccept = (studentId: number) => {
-        accept(studentId, classId, timeTable)
-        if (reload) setReload(false)
-        else setReload(true)
+    const handleAccept = async (studentId: number) => {
+        await accept(studentId, classId, timeTable)
+            .then(res => {
+                message.success('Thành công')
+                if (reload) setReload(false)
+                else setReload(true)
+            })
     }
+
+    const handleCancel = async (studentId: number) => {
+        await cancel(studentId, classId)
+            .then(res => {
+                message.success('Thành công')
+                if (reload) setReload(false)
+                else setReload(true)
+            })
+    }
+
     return (
         <Table
             columns={columns}

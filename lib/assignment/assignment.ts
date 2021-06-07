@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axios from "axios";
 import { API } from "../../prisma/type/type";
 import { getAllClassroom } from "../classroom/getClassroomInfor";
@@ -10,8 +11,9 @@ export async function create(data: API.AssignmentItem) {
     })
         .then(res => {
             result = res.data
+            message.success('Tạo thành công')
         })
-        .catch(err => console.error(err))
+        .catch(err => message.error('Thất bại'))
     return result
 }
 
@@ -21,8 +23,13 @@ export async function update(assignmentId: number, data: API.AssignmentItem) {
     await axios.put(`http://localhost:3000/api/assignments/${assignmentId}`, {
         data: data
     })
-        .then(res => result = res.data)
-    // .catch(err => console.error(err))
+        .then(res => {
+            message.success('Thành công')
+            result = res.data
+        }).catch(err => {
+            console.error(err)
+            message.error('Thất bại')
+        })
     return result
 }
 
@@ -64,8 +71,14 @@ export async function findAll(
 
 export async function deleteAssignment(assignmentId: number) {
     await axios.delete(`http://localhost:3000/api/assignments/${assignmentId}`)
-        .then(res => console.log(res))
-        .catch(err => console.error(err))
+        .then(res => {
+            console.log(res)
+            message.success('Xóa thành công')
+        })
+        .catch(err => {
+            console.error(err)
+            message.error('Xóa thất bại')
+        })
 }
 
 export function setStatus(deadline: Date) {

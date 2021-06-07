@@ -1,3 +1,4 @@
+import { message } from "antd"
 import axios from "axios"
 import { API } from "../../prisma/type/type"
 
@@ -17,7 +18,13 @@ export async function submitAssign(answer: API.AnswerItem) {
     let result = null
     await axios.post(`/api/answers/submit`, {
         data: answer
-    }).then(res => result = res.data)
+    }).then(res => {
+        result = res.data
+        message.success('Thành công')
+    }).catch(err => {
+        console.error(err)
+        message.error('Thất bại')
+    })
     return result
 }
 
@@ -25,7 +32,13 @@ export async function updateAssign(answer: API.AnswerItem, answerId: number) {
     let result = null
     await axios.put(`/api/answers/${answerId}`, {
         data: answer
-    }).then(res => result = res.data)
+    }).then(res => {
+        result = res.data
+        message.success('Thành công')
+    }).catch(err => {
+        console.error(err)
+        message.error('Thất bại')
+    })
     return result
 }
 
@@ -37,7 +50,9 @@ export async function checkStudentSubmit(studentId: number, assignmentId: number
                 studentId: studentId,
                 assignmentId: assignmentId
             }
-        }).then(res => result = res.data)
+        }).then(res => {
+            result = res.data
+        })
     }
     return result
 }
@@ -54,8 +69,14 @@ export async function scoring(id: number, score: number) {
     await axios.put(`/api/answers/${id}`, {
         data: {score: score}
     })
-        .then(res => console.log(res))
-        .catch(err => console.error(err))
+        .then(res => {
+            message.success('Thành công')
+            console.log(res)
+        })
+        .catch(err => {
+            console.error(err)
+            message.error('Thất bại')
+        })
 }
 
 export async function updateStatusAnswer(answer: API.AnswerItem, deadline: Date) {

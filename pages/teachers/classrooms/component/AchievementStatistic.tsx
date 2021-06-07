@@ -64,7 +64,7 @@ const AchievementStatistic: React.FC<{
             dataIndex: 'averagePoint',
             align: 'center',
             render: (text, record) => {
-                return (<div style={{ color: 'red' }}>{text}/10</div>)
+                return (<div style={{ color: 'red' }}>{Number.isNaN(record.averagePoint)?null:text}/10</div>)
             }
         },
     ]

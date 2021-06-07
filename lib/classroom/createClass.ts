@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axios from "axios";
 import { API } from "../../prisma/type/type";
 import { getTimetableClassList } from "../processTimetable";
@@ -19,15 +20,11 @@ export default async function createClass(data: API.Classroom){
                 console.log('dang trong createClass: da tao timetable thanh cong')
                 console.log(res.data)
             })
-            .catch(err=> console.log(err))
+            .catch(err=> message.error('Tạo thời khóa biểu thất bại'))
         }
+        message.success('Thành công')
     })
-    .catch(err =>{
-        console.log(err)
-    })
-   
-
-    
+    .catch(err=> message.error('Thất bại'))
 
     return result
 }

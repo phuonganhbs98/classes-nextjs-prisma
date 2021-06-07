@@ -4,8 +4,8 @@ import prisma from "../../../lib/prisma";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const method = req.method
-    const studentId =parseInt(req.query.id[0])
-    console.log('studentId: '+studentId)
+    const studentId = parseInt(req.query.id[0])
+    console.log('studentId: ' + studentId)
     if (method === 'GET') {
         let result = null
         if (req.query.id[1]) { //check register
@@ -24,19 +24,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                     studentId: studentId,
                     status: RegisterStatus.REGISTERED
                 },
-                select: {
+                include:{
                     classroom: {
-                        select: {
-                            id: true,
-                            name: true,
-                            students: true,
-                            teacher: {
-                                select: {
-                                    name: true
-                                }
-                            },
-                            status: true,
-                            capacity: true
+                        include:{
+                            teacher: true,
+                            students: true
                         }
                     }
                 }
@@ -57,14 +49,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     } else if (method === 'DELETE') {
         const classId = parseInt(req.query.id[1])
         const register = await prisma.register.findUnique({
-            where:{
-                studentId_classId:{
+            where: {
+                studentId_classId: {
                     studentId: studentId,
                     classId: classId
                 }
             }
         })
-        if(register.status === RegisterStatus.REGISTERED){
+        if (register.status === RegisterStatus.REGISTERED) {
             await prisma.$transaction([
                 prisma.register.delete({
                     where: {
@@ -79,24 +71,56 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         else {
             await prisma.$transaction([
                 prisma.register.delete({
-                    where:{
-                        studentId_classId:{
+                    where: {
+                        studentId_classId: {
                             studentId: studentId,
                             classId: classId
                         }
                     }
                 }),
                 prisma.classroomToStudent.delete({
-                    where:{
-                        studentId_classId:{
+                    where: {
+                        studentId_classId: {
                             studentId: studentId,
                             classId: classId
                         }
                     }
-                })
+                }),
+                prisma.attendance.deleteMany({
+                    where: {
+                        studentId: studentId,
+                        classId: classId
+                    }
+                }),
+                prisma.timetableStudent.deleteMany({
+                    where: {
+                        studentId: studentId,
+                        timeTable: {
+                            classId: classId
+                        }
+                    }
+                }),
+                prisma.comment.deleteMany({
+                    where: {
+                        answer: {
+                            studentId: studentId,
+                            assignment: {
+                                classId: classId
+                            }
+                        }
+                    }
+                }),
+                prisma.answer.deleteMany({
+                    where: {
+                        studentId: studentId,
+                        assignment: {
+                            classId: classId
+                        }
+                    }
+                }),
             ])
         }
-        
+
         res.status(200).json("Cancel register success!")
     } else if (method === 'PUT') {
         const classId = parseInt(req.query.id[1])
@@ -119,7 +143,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             }),
 
             prisma.classroomToStudent.create({
-                data:{
+                data: {
                     studentId: studentId,
                     classId: classId
                 }

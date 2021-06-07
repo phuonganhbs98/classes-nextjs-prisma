@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                             include: {
                                 teacher: true,
                                 students: true
-                            }
+                            },
                         }
                     }
                 },
@@ -25,7 +25,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         teacher: true,
                         students: true
                     }
-                }
+                },
+                attendance: true
             },
         })
         res.status(200).json(result)

@@ -48,17 +48,12 @@ const CreateAssignmentForm: React.FC = () => {
             ...values,
             teacherId: teacherId
         }
-        if (typeof values.title === 'undefined') {
+        if (typeof values.title === 'undefined' || values.title.trim() === '') {
             data.title = 'Bài tập ngày ' + formatDate(new Date(), false)
         }
         await create(data)
             .then(res => {
-                message.success('Tạo thành công')
                 router.push(`/teachers/assignments/${res.id}`)
-            })
-            .catch(err=>{
-                console.error(err)
-                message.error('Tạo thất bại')
             })
     }
     const checkDeadline = (_: any, value: string) => {

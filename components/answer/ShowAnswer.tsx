@@ -37,19 +37,14 @@ const ShowAnswer: React.FC<Props> = ({ data, reloadAnswer, setReloadAnswer, dead
         }
         await updateAssign(body, data.id)
             .then((res: any) => {
-                message.success('Thành công')
+                setIsModalVisible(false)
+                if (reloadAnswer) setReloadAnswer(false)
+                else setReloadAnswer(true)
             })
-            .catch(err => {
-                console.error(err)
-                message.error('Thất bại')
-            })
-        setIsModalVisible(false)
-        if (reloadAnswer) setReloadAnswer(false)
-        else setReloadAnswer(true)
     }
     return (
         <>
-            <div className="site-layout-background content">
+            <div className="site-layout-background content" style={{width: 'inherit'}}>
                 <p style={{ fontSize: '20px' }}><strong>Bài làm của bạn</strong>
                     <Tooltip title='Chỉnh sửa'>
                         <Button
@@ -64,10 +59,9 @@ const ShowAnswer: React.FC<Props> = ({ data, reloadAnswer, setReloadAnswer, dead
                     <em style={{ fontSize: '12px' }}>Chỉnh sửa lần cuối lúc: {data ? formatDate(new Date(data.updatedAt)) : null} {data?.status === AnswerStatus.LATE ? (<span style={{ color: 'red' }}>{`<Nộp muộn>`}</span>) : ''}</em>
 
                 </p>
-                {data?.content}
+                <p style={{textAlign:'justify'}}>{data?.content}</p>
                 <br />
-                <br />
-                <a href={data?.attachment} target='_blank'>{data?.attachment}</a>
+                <div style={{whiteSpace: 'nowrap',overflow: 'hidden',textOverflow: 'ellipsis', width: 'inherit'}}><a href={data?.attachment} target='_blank'>{data?.attachment}</a></div>
                 <br />
                 <br />
                 <p><strong>Điểm: </strong><span style={{ color: 'red' }}>{data?.score}</span></p>
@@ -100,7 +94,7 @@ const ShowAnswer: React.FC<Props> = ({ data, reloadAnswer, setReloadAnswer, dead
                     </Form.Item>
                     <Form.Item {...tailLayout} >
                         <Button type="primary" htmlType="submit" style={{ margin: '0 0 30px' }}>
-                            Nộp bài
+                        Nộp bài
                         </Button>
                     </Form.Item>
                 </Form>

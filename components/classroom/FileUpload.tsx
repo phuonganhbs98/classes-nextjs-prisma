@@ -50,6 +50,7 @@ const FileUpload: React.FC<{ classId: number, isTeacher: boolean }> = ({ classId
                 }}
                 customRequest={async (a) => {
                     if (!Number.isNaN(classId)) {
+                        // message.success('Đang tải tài liệu')
                         const uploadTask = storage.ref(`/images/class${classId}/${file.name}`).put(new Blob([file.originFileObj], { type: file.originFileObj.type }))
                         uploadTask.on('state_changed',
                             (snapShot) => {
@@ -57,11 +58,12 @@ const FileUpload: React.FC<{ classId: number, isTeacher: boolean }> = ({ classId
                             }, (err) => {
                                 console.log(err)
                             }, () => {
-                                message.success('Thành công')
+
                                 // gets the functions from storage refences the image storage in firebase by the children
                                 // gets the download url then sets the image from firebase as the value for the imgUrl key:
                                 storage.ref(`/images/class${classId}`).child(file.name).getDownloadURL()
                                     .then(fireBaseUrl => {
+                                        message.success('Thành công')
                                         file.status = 'done'
                                         file.url = fireBaseUrl
                                         setFiles([...files, file])

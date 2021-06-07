@@ -1,4 +1,4 @@
-import { Button, DatePicker, Descriptions, Form, Input, message, Popconfirm, Tag } from "antd"
+import { Button, DatePicker, Descriptions, Form, Input, Popconfirm, Tag } from "antd"
 import { ReactNode, useEffect, useState } from "react"
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useRouter } from "next/router"
@@ -8,7 +8,7 @@ import { API } from "../../../prisma/type/type"
 import { deleteAssignment, getAssignmentById, update, updateStatus } from "../../../lib/assignment/assignment"
 import { formatDate } from "../../../lib/formatDate"
 import MainLayout from "../../../components/layouts/MainLayout"
-import { getAllAnswer, updateStatusAnswer } from "../../../lib/answer/answer"
+import { updateStatusAnswer } from "../../../lib/answer/answer"
 
 const AssignmentDetailLayout: React.FC<{
     id: number,
@@ -51,9 +51,9 @@ const AssignmentDetailLayout: React.FC<{
         setIsModalVisible(true)
     }
 
-    const handleDelete = () => {
-        deleteAssignment(id)
-            .then(res => router.push('/assignments'))
+    const handleDelete = async () => {
+        await deleteAssignment(id)
+            .then(res => router.push('/teachers/assignments'))
             .catch(err => console.error(err))
     }
 
@@ -84,13 +84,8 @@ const AssignmentDetailLayout: React.FC<{
     const onFinish = async (values: any) => {
         await update(id, values)
             .then(res => {
-                console.log(res)
-                message.success('Thành công')
                 if (reload) setReload(false)
                 else setReload(true)
-            }).catch(err => {
-                console.error(err)
-                message.error('Thất bại')
             })
         setIsModalVisible(false)
     }
@@ -174,7 +169,7 @@ const AssignmentDetailLayout: React.FC<{
                     <Form.Item  {...tailLayout}>
                         <Button type="primary" htmlType="submit" style={{ margin: '0 0 30px' }}>
                             Submit
-                    </Button>
+                        </Button>
                     </Form.Item>
                 </Form>
             </Modal>

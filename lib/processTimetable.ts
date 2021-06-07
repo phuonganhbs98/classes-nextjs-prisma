@@ -6,11 +6,15 @@ export function firstDate(startDate: Date, schedule: API.Schedules) {
     const startAt = schedule.startAt
     const endAt = schedule.endAt
     let check = new Date(startDate)
-    while (!checkFirstDate(check, dayOfWeek)) {
+    while (!checkDayOfWeek(check, dayOfWeek)) {
         check = add(check, { days: 1 })
     }
-    let firstDateStart = set(check, { hours: new Date(startAt).getHours(), minutes: new Date(startAt).getMinutes() })
-    let firstDateEnd = set(check, { hours: new Date(endAt).getHours(), minutes: new Date(endAt).getMinutes() })
+    let firstDateStart = set(check, 
+        {   hours: new Date(startAt).getHours(), 
+            minutes: new Date(startAt).getMinutes() })
+    let firstDateEnd = set(check, 
+        {   hours: new Date(endAt).getHours(), 
+            minutes: new Date(endAt).getMinutes() })
     return {
         startTime: firstDateStart,
         endTime: firstDateEnd
@@ -33,7 +37,7 @@ export function getAllStudyDay(firstDate: API.Period, endDate: Date) {
     return arrayDates;
 }
 
-export function checkFirstDate(date: Date, dayOfWeek: number) {
+export function checkDayOfWeek(date: Date, dayOfWeek: number) {
     switch (dayOfWeek) {
         case 0:
             return isSunday(new Date(date))
@@ -58,7 +62,8 @@ export function checkFirstDate(date: Date, dayOfWeek: number) {
     }
 }
 
-export function getTimetableClassList(title: string, classId: number, teacherId: number, classroom: API.Classroom) {
+export function getTimetableClassList(title: string, classId: number, 
+                                    teacherId: number, classroom: API.Classroom) {
     const startDate = new Date(classroom.startAt)
     const endDate = new Date(classroom.endAt)
     let result: API.TimetableClassItem[] = []

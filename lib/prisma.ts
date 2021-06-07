@@ -9,7 +9,7 @@ declare global {
 }
 
 let prisma = new PrismaClient({
-  log: [{ level: 'query', emit: 'event' }],
+  // log: [{ level: 'query', emit: 'event' }],
 });
 
 
@@ -25,7 +25,7 @@ let prisma = new PrismaClient({
 //   }
 //   prisma = global.prisma;
 // }
-prisma.$on("query", e => {
-  console.log({query: e.query, params: e.params})
-})
+// prisma.$on("query", e => {
+//   console.log({query: e.query, params: e.params})
+// })
 export default prisma;

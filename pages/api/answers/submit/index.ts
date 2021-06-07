@@ -26,8 +26,8 @@ export default async function submitAssignment(req: NextApiRequest, res: NextApi
         res.status(200).json(answer)
     }
     else if(method==='GET'){
-         const assignmentId = parseInt(req.query.assignmentId[0])   
-     const studentId = parseInt(req.query.studentId[0])   
+         const assignmentId = parseInt(Array.isArray(req.query.assignmentId)?null:req.query.assignmentId)   
+     const studentId = parseInt(Array.isArray(req.query.studentId)?null:req.query.studentId)   
      const result = await prisma.answer.findUnique({
          where:{
              studentId_assignmentId:{
@@ -35,28 +35,10 @@ export default async function submitAssignment(req: NextApiRequest, res: NextApi
                  assignmentId: assignmentId
              },
          },
-         select:{
-            id: true,
-            content: true,
-            attachment: true,
-            score: true,
-            student:{
-                select:{
-                    name: true
-                }
-            },
-            studentId: true,
-            assignmentId: true,
-            assignment:{
-                select:{
-                    content: true,
-                    title: true
-                }
-            },
-            createdAt: true,
-            updatedAt: true,
-            status: true
-        }
+         include:{
+             student: true,
+             assignment: true
+         }
      })
      res.status(200).json(result)
     }

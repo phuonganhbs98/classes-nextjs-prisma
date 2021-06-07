@@ -5,8 +5,9 @@ import { API } from "../../../../prisma/type/type"
 
 const AttendanceStatistic: React.FC<{
     students: API.UserInfor[],
-    classId: number
-}> = ({ students, classId }) => {
+    classId: number,
+    isTeacher: boolean
+}> = ({ students, classId, isTeacher }) => {
 
     let studentList: API.UserInfor[] = []
     if (typeof students !== 'undefined') {
@@ -84,12 +85,12 @@ const AttendanceStatistic: React.FC<{
                     )
                 }
             }}
-            pagination={{
+            pagination={isTeacher?{
                 total: typeof students !== 'undefined'?students.length:0,
                 showTotal: total => `Tổng ${total} học sinh`,
                 defaultPageSize: 10,
                 defaultCurrent: 1
-            }}
+            }:false}
             rowKey={(record) => { return record.id.toString() }} />
     )
 }

@@ -7,10 +7,14 @@ import AssignmentList from "../../assignments/component/AssignmentList";
 import FileUpload from "../../../components/classroom/FileUpload";
 import NotificationTab from "../../classrooms/component/NotificationTab";
 import checkRegister, { checkStudentOfClass } from "../../../lib/register/checkRegister";
+import { API } from "../../../prisma/type/type";
+import { getUserById } from "../../../lib/user/user";
+import AttendanceStatistic from "../../teachers/classrooms/component/AttendanceStatistic";
 
 const ClassroomInfor: React.FC = () => {
     const router = useRouter()
     const [visible, setVisible] = useState<boolean>(false)
+    const [student, setStudent] = useState<API.UserInfor>()
     let id = -1
     if (!Array.isArray(router.query?.id)) {
         id = parseInt(router.query.id)
@@ -25,6 +29,8 @@ const ClassroomInfor: React.FC = () => {
                     else setVisible(false)
                 })
         }
+        getUserById(parseInt(userId))
+            .then(res => setStudent(res))
     }, [id])
 
     return (
@@ -44,10 +50,17 @@ const ClassroomInfor: React.FC = () => {
                             classId={id}
                         />
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="Files" key="4">
+                    <Tabs.TabPane tab="Tài liệu" key="4">
                         <FileUpload
                             isTeacher={false}
                             classId={id}
+                        />
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="Điểm danh" key="5">
+                        <AttendanceStatistic
+                            students={[student]}
+                            classId={id}
+                            isTeacher={false}
                         />
                     </Tabs.TabPane>
                 </Tabs>

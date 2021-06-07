@@ -4,26 +4,6 @@ import prisma from "../../../lib/prisma";
 
 export default async function create(req: NextApiRequest, res: NextApiResponse) {
     const method = req.method
-    // const selectData = {
-    //     id: true,
-    //     name: true,
-    //     capacity: true,
-    //     teacherId: true,
-    //     teacher: {
-    //         select: {
-    //             name: true
-    //         }
-    //     },
-    //     status: true,
-    //     students: {
-    //         select: {
-    //             studentId: true
-    //         }
-    //     },
-    //     startAt: true,
-    //     endAt: true
-    // }
-
     if (method === 'POST') {
         const {
             name,
@@ -42,7 +22,7 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                     {
                         startAt: x.startAt,
                         endAt: x.endAt,
-                        dayInWeek: parseInt(x.day)
+                        dayInWeek: parseInt(x.dayInWeek)
                     }
                 ]
             });
@@ -64,7 +44,7 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                 }
             })
         ])
-            res.status(200).json(result)
+        res.status(200).json(result)
     } else if (method === 'GET') {
         const name = Array.isArray(req.query.name) ? null : req.query.name
         const teacherName = Array.isArray(req.query.teacherName) ? null : req.query.teacherName
@@ -82,10 +62,15 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                         }
                     }
                 },
-                include:{
+                include: {
                     teacher: true,
                     students: true
-                }
+                },
+                orderBy: [
+                    {
+                        createdAt: 'desc'
+                    }
+                ]
             })
         }
         else {
@@ -101,10 +86,15 @@ export default async function create(req: NextApiRequest, res: NextApiResponse) 
                     },
                     teacherId: teacherId
                 },
-                include:{
+                include: {
                     teacher: true,
                     students: true
-                }
+                },
+                orderBy: [
+                    {
+                        updatedAt: 'desc'
+                    }
+                ]
             })
         }
         res.status(200).json(result)

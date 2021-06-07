@@ -1,43 +1,50 @@
 import React, { useEffect, useState } from "react";
-import { Button, PageHeader, Table } from "antd";
+import { Button, PageHeader, Popconfirm, Table, Tag, Tooltip } from "antd";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/router";
 import { API } from "../../../prisma/type/type";
 import getRegisteredClass from "../../../lib/register/getRegisteredClass";
 import { cancel } from "../../../lib/register/handleRegister";
 import MainLayout from "../../../components/layouts/MainLayout";
+import { ColumnsType } from "antd/lib/table";
+import { MinusOutlined } from "@ant-design/icons";
 
 const Classes: React.FC = () => {
-  const [session, loading] = useSession()
-  const [studentId, setStudentId] = useState(session ? session.userId : 0)
-  const [data, setData] = useState<API.RegisteredClass[]>([])
+  const [studentId, setStudentId] = useState<number>()
+  const [data, setData] = useState<API.Classroom[]>([])
   const router = useRouter()
   let list = []
   useEffect(() => {
-    if (session) {
-      setStudentId(session.userId)
-      getRegisteredClass(session.userId).then(res => {
-        setData(res)
+    const userId = parseInt(localStorage.getItem('userId'))
+    setStudentId(userId)
+    getRegisteredClass(userId).then(res => {
+      setData(res)
+    })
+  }, [])
+
+  const cancelRegister = async (classId: number) => {
+    if (typeof studentId !== 'undefined') {
+      await cancel(studentId, classId).then(res => {
+        router.reload()
       })
-
     }
-  }, [session])
-
-  const cancelRegister = (classId: number) => {
-    cancel(studentId, classId)
-    router.reload()
   }
   if (data.length > 0) {
-    list = data.map((x: API.RegisteredClass) => ({
+    list = data.map((x: API.Classroom) => ({
       ...x,
-      action: (<Button type="ghost" onClick={() => cancelRegister(x.id)} danger>Hủy đăng ký</Button>),
+      action: (<Popconfirm
+        title="Bạn chắc chắn chứ ?"
+        onConfirm={() => cancelRegister(x.id)}
+      >
+        <Tooltip title='Hủy đăng ký'><Button type="primary" size="small" shape="circle" icon={<MinusOutlined />} danger /></Tooltip>
+      </Popconfirm>),
     }))
   }
   function onChange(pagination: any) {
     console.log('params', pagination);
   }
 
-  const column = [
+  const column: ColumnsType<API.Classroom> = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -51,7 +58,11 @@ const Classes: React.FC = () => {
     {
       title: 'Giáo viên',
       dataIndex: 'teacherName',
-      key: 'key'
+      render: (text, record) => {
+        return (
+          <a onClick={() => router.push(`/users/${record.teacherId}`)}>{text}</a>
+        )
+      }
     },
     {
       title: 'SL tối đa',
@@ -66,7 +77,29 @@ const Classes: React.FC = () => {
     {
       title: 'Trạng thái',
       dataIndex: 'status',
-      key: 'key'
+      align: 'center',
+      filters: [
+        {
+          text: 'Sắp bắt đầu',
+          value: 'PREPARE'
+        },
+        {
+          text: 'Đang mở',
+          value: 'STUDYING'
+        },
+        {
+          text: 'Đã kết thúc',
+          value: 'FINISHED'
+        },
+      ],
+      onFilter: (value, record) => record.status === value,
+      render: (text: string, record: API.Classroom) => (
+        new Date() < new Date(record.startAt) ?
+          <Tag color="purple">Sắp bắt đầu</Tag> :
+          new Date() > new Date(record.endAt) ?
+            <Tag color="red">Đã kết thúc</Tag> :
+            <Tag color="green">Đang mở</Tag>
+      )
     },
     {
       title: 'Hành động',

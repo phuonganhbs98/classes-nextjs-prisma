@@ -38,11 +38,12 @@ const NotificationDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, 
                     <Col span={2}>
                         <Avatar style={{ backgroundColor: 'orange' }} icon={<NotificationOutlined />} />
                     </Col>
-                    <Col span={10}>
-                        <div style={{ fontSize: '18px' }}>{noti?.content}</div>
+                    <Col span={15}>
+                        <div style={{ fontSize: '18px', textAlign: 'justify' }}>{noti?.content}</div>
+                        <small>{noti?.classroom?.name}</small> <br/>
                         <small>{noti ? formatDate(new Date(noti.updatedAt)) : null}</small>
                     </Col>
-                    {isTeacher ? <Col span={12} style={{ textAlign: 'right', marginRight: '0px' }}>
+                    {isTeacher ? <Col span={7} style={{ textAlign: 'right', marginRight: '0px' }}>
                         <Button
                             type='primary'
                             shape='round'
@@ -90,11 +91,9 @@ const NotificationDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, 
                     </Form>
                 </Modal>
             </div>
-            {/* <div className="site-layout-background content"> */}
             <CommentNotiItem
                 notiId={id}
             />
-            {/* </div> */}
         </>
     )
 }

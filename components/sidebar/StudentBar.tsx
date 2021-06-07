@@ -1,9 +1,10 @@
 import Sider from "antd/lib/layout/Sider";
-import { Dropdown, Menu } from "antd";
+import { Avatar, Divider, Dropdown, Menu, Space } from "antd";
 import Link from "next/link";
 import {
     BankOutlined,
     CalendarOutlined,
+    NotificationOutlined,
     ReadOutlined,
     TrophyOutlined,
 } from "@ant-design/icons";
@@ -54,14 +55,22 @@ const StudentBar: React.FC<Props> = ({ pathname }) => {
 
     return (
         <Sider
-            collapsible
+            // collapsible
             collapsed={collapsed}
             onCollapse={onCollapse}
             style={{
                 overflow: "auto",
-                minHeight: "inherit",
+                height: '100%',
+                position: 'fixed'
             }}>
-            <div className="logo" />
+            <div className="logo" style={{ color: 'white' }} >
+                {collapsed ? <Avatar shape="square" style={{ backgroundColor: 'white' }} size="large" src='/image/logo.png' />
+                    : (<Space align='center'>
+                        <Avatar shape="square" style={{ backgroundColor: 'white' }} size="large" src='/image/logo.png' />
+                        <strong style={{ fontSize: '18px' }}>Classroom Management</strong>
+                    </Space>
+                    )}
+            </div>
             <Menu
                 theme="dark"
                 mode="inline"
@@ -72,12 +81,15 @@ const StudentBar: React.FC<Props> = ({ pathname }) => {
                 <Menu.Item key="/students/schedule" icon={<CalendarOutlined />} active={true}>
                     <Link href="/"><p className={hide}>Thời khóa biểu</p></Link>
                 </Menu.Item>
+                <Menu.Item key="/students/notifications" icon={<NotificationOutlined />} active={true}>
+                    <Link href="/students/notifications"><p className={hide}>Thông báo</p></Link>
+                </Menu.Item>
                 {collapsed ? (
                     <>
                         <Dropdown overlay={menuClass}>
-                        <BankOutlined style={{ lineHeight: '40px', paddingLeft: '24px', margin: '4px 0' }} />
+                            <BankOutlined style={{ lineHeight: '40px', paddingLeft: '24px', margin: '4px 0' }} />
                         </Dropdown>
-                        <br/>
+                        <br />
                         <Dropdown overlay={menuAssignment}>
                             <ReadOutlined style={{ lineHeight: '40px', paddingLeft: '24px', margin: '4px 0' }} />
                         </Dropdown>

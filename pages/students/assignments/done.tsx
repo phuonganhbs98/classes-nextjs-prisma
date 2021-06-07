@@ -7,7 +7,6 @@ import AssignmentList from "../../assignments/component/AssignmentList";
 
 const DoneAssignments: React.FC = () => {
   const [classess, setClassess] = useState<API.Classroom[]>([])
-  // let classes: API.Classroom[]= []
   useEffect(() => {
     const userId = parseInt(localStorage.getItem('userId'))
     getAllClassroom({ studentId: userId })
@@ -23,7 +22,7 @@ const DoneAssignments: React.FC = () => {
           tabPosition='top'
         >
           {classess.map((i: API.Classroom) => (
-            <Tabs.TabPane tab={`Lớp ${i.name}`} key={i.id} >
+            <Tabs.TabPane tab={`${i.name}`} key={i.id} >
               <AssignmentList
                 classId={i.id}
                 isTeacher={false}

@@ -34,15 +34,9 @@ const AnswerForm: React.FC<Props> = ({ id, studentId, setCheckSubmit, setAnswer,
         await submitAssign(data)
             .then((res: any) => {
                 setAnswer(res)
-                message.success('Thành công')
+                setCheckSubmit(true)
             })
-            .catch(err => {
-                console.error(err)
-                message.error('Thất bại')
-            })
-        setCheckSubmit(true)
-
-    }
+        }
     return (
         <div className="site-layout-background content">
             <Form

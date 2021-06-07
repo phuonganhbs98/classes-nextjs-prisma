@@ -1,4 +1,4 @@
-import { Button, Popconfirm, Table, Tooltip } from "antd";
+import { Button, message, Popconfirm, Table, Tooltip } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { getClassById } from "../../lib/classroom/getClassroomInfor";
@@ -88,10 +88,13 @@ const StudentList: React.FC<Props> = ({ classId, reloadRequest, reload, setReloa
         }
     ]
 
-    const handleDelete = (studentId: number) => {
-        cancel(studentId, classId)
-        if (reload) setReload(false)
-        else setReload(true)
+    const handleDelete = async (studentId: number) => {
+        await cancel(studentId, classId)
+        .then(res =>{
+            if (reload) setReload(false)
+            else setReload(true)
+        })
+        
     }
 
     return (

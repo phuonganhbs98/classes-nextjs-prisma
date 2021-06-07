@@ -91,7 +91,7 @@ const AveragePoint: React.FC<{
             <Divider />
             <div style={{ textAlign: 'right', fontWeight: 'bolder' }}>
                 <p>Điểm trung bình</p>
-                <p style={{ color: 'red', fontSize: '16px' }}>{total/(assignments.length)}</p>
+                <p style={{ color: 'red', fontSize: '16px' }}>{Number.isNaN(total/(assignments.length))?null:total/(assignments.length)}</p>
             </div>
         </>
     )

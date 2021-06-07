@@ -7,7 +7,6 @@ import { getClassById } from "../../../lib/classroom/getClassroomInfor";
 import checkRegister from "../../../lib/register/checkRegister";
 import { formatDate, formatDay, formatTime } from "../../../lib/formatDate";
 import { cancel, sendRegister } from "../../../lib/register/handleRegister";
-import deleteClass from "../../../lib/classroom/deleteClass";
 import EditClassForm from "./EditClassForm";
 import { getAllTimetableOfStu } from "../../../lib/timetable/timetable";
 import checkDuplicateTimetable from "../../../lib/register/checkDuplicateTimetable";
@@ -19,13 +18,14 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
     const [data, setData] = useState<API.Classroom>()
     const [schedules, setSchedules] = useState<API.Schedules[]>([])
     const [canEdit, setCanEdit] = useState(false)
-    const [register, setRegister] = useState<Boolean>()
+    const [register, setRegister] = useState<boolean>(false)
     const [registerButton, setRegisterButton] = useState<string>()
     const [reload, setReload] = useState<boolean>(false)
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
     const [timetableStu, setTimetableStu] = useState<API.TimetableClassItem[]>([])
     const [checkDuplicate, setCheckDuplicate] = useState<boolean>()
-    const [canRegister, setCanRegister] = useState<{enable: boolean, message?: string}>()
+    const [canRegister, setCanRegister] = useState<{ enable: boolean, message?: string }>()
+    const [classes, setClasses] = useState<any>()
     const router = useRouter()
 
     useEffect(() => {
@@ -35,15 +35,20 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
         setUserId(userId)
         getClassById(id).then(res => {
             setData(res.data)
+            setClasses({
+                ...res.data,
+                teacherName: res.data.teacher.name,
+                count: res.data.students.length
+            })
             setSchedules(res.schedules)
-            if (isTeacher) setCanEdit(true)
+            if (userId === res.data.teacherId) setCanEdit(true)
             else setCanEdit(false)
         })
     }, [reload])
 
     useEffect(() => {
         if (!isTeacher) {
-            if (userId) {
+            if (userId && id) {
                 checkRegister(userId, id).then(res => {
                     if (res === null) {
                         setRegister(false)
@@ -68,26 +73,27 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
     useEffect(() => {
         if (!isTeacher && timetableStu.length > 0 && schedules.length > 0 && typeof data !== 'undefined') {
             setCheckDuplicate(checkDuplicateTimetable(schedules, timetableStu, data))
-            console.log('=-----chekc: ' + checkDuplicateTimetable(schedules, timetableStu, data))
-        }
+        } else if (!isTeacher && timetableStu.length === 0) setCheckDuplicate(true)
     }, [schedules.length, timetableStu.length, data])
 
     useEffect(() => {
-        if (typeof checkDuplicate !== 'undefined') {
+        if (typeof classes !== 'undefined' && register === false) {
             if (classes.capacity <= classes.count) {
-                setCanRegister({enable:false, message: 'Lớp đã đầy'})
+                setCanRegister({ enable: false, message: 'Lớp đã đầy' })
             } else if (classes.status === 'FINISHED') {
-                setCanRegister({enable:false, message: 'Lớp học đã kết thúc. Không thể đăng ký'})
-            } else {
+                setCanRegister({ enable: false, message: 'Lớp học đã kết thúc. Không thể đăng ký' })
+            } else if (typeof checkDuplicate !== 'undefined') {
                 if (!checkDuplicate) {
-                    setCanRegister({enable:false, message: 'Trùng lịch học'})
-                }else {
-                    setCanRegister({enable:true, message: 'Đăng ký thành công'})
-
+                    setCanRegister({ enable: false, message: 'Trùng lịch học' })
+                } else {
+                    setCanRegister({ enable: true, message: 'Đăng ký thành công' })
                 }
             }
+            else {
+                console.log('im here...........')
+            }
         }
-    }, [checkDuplicate])
+    }, [checkDuplicate, classes, register])
 
     const disableButton = ((role === 'STUDENT') && !register) ? false : true
     let schedule = []
@@ -104,35 +110,28 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
         schedule = [(<p>Chưa cập nhật</p>)]
     }
 
-    let classes = null
-    if (data) {
-        classes = {
-            ...data,
-            teacherName: data.teacher.name,
-            count: data.students.length
-        }
-    }
-
-    const handleRegister = () => {
-        console.log('canRegister: ' + canRegister)
+    const handleRegister = async () => {
+        console.log('canRegister')
+        console.log(canRegister)
         if (typeof canRegister !== 'undefined') {
-            if(canRegister.enable){
-                sendRegister(userId, id)
-                setRegister(true)
-                setRegisterButton('Đã đăng ký')
-                message.success('Đăng ký thành công')
-            }else {
+            if (canRegister.enable) {
+                await sendRegister(userId, id).then(res => {
+                    setRegister(true)
+                    setRegisterButton('Đã đăng ký')
+                    message.success('Đăng ký thành công')
+                })
+            } else {
                 message.error(canRegister.message)
             }
-        } else {
-            handleRegister()
         }
     }
 
-    const cancelRegister = () => {
-        cancel(userId, id)
-        setRegister(false)
-        setRegisterButton('Đăng ký')
+    const cancelRegister = async () => {
+        await cancel(userId, id).then(res => {
+            setRegister(false)
+            setRegisterButton('Đăng ký')
+            message.success('Hủy đăng ký lớp thành công')
+        })
     }
 
     return (
@@ -143,26 +142,26 @@ const ClassDetail: React.FC<{ id: number, isTeacher: boolean }> = ({ id, isTeach
                     fontWeight: 'bolder',
                     margin: '0 20px 0 2%',
                 }}> {classes?.name} </div>}
-                extra={isTeacher ? [
+                extra={isTeacher? canEdit ? [
                     <Button key='2' type="primary" shape='round' icon={<EditOutlined />} onClick={() => setIsModalVisible(true)}>Sửa</Button>,
-                    <Popconfirm
-                        title="Bạn chắc chắn chứ ?"
-                        onConfirm={() => {
-                            deleteClass(id)
-                            router.push(`/teachers/classrooms`)
-                        }}
-                    >
-                        <Button key='3' type="primary" shape='round' icon={<DeleteOutlined />} danger>Xóa</Button>
-                    </Popconfirm>,
+                    // <Popconfirm
+                    //     title="Bạn chắc chắn chứ ?"
+                    //     onConfirm={() => {
+                    //         deleteClass(id)
+                    //         router.push(`/teachers/classrooms`)
+                    //     }}
+                    // >
+                    //     <Button key='3' type="primary" shape='round' icon={<DeleteOutlined />} danger>Xóa</Button>
+                    // </Popconfirm>,
                     <br />,
-                ] : [
-                    <Button key='1' disabled={disableButton} type="primary" onClick={() => handleRegister()}>{registerButton}</Button>,
+                ] : []:[
+                    <Button key='1' disabled={disableButton} shape='round' type="primary" onClick={handleRegister}>{registerButton}</Button>,
                     (<Popconfirm
                         title="Bạn chắc chắn chứ ?"
                         onConfirm={() => cancelRegister()}
                     >
                         <Tooltip title="Hủy đăng ký">
-                            <Button type="primary" size="small" style={{ display: (disableButton) ? 'inline' : 'none' }} shape="circle" icon={<MinusOutlined />} danger />
+                            <Button  key='3' type="primary" size="small" style={{ display: (disableButton) ? 'inline' : 'none' }} shape="circle" icon={<MinusOutlined />} danger />
                         </Tooltip>
                     </Popconfirm>),
                 ]}

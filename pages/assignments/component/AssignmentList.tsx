@@ -61,22 +61,6 @@ const AssignmentList: React.FC<Props> = ({ classId, isTeacher, done }) => {
     }
   }, [checkReload])
 
-  // useEffect(() => {
-  //   if (typeof done !== 'undefined') {
-  //     if (userId !== -1 && Number.isNaN(userId)) {
-
-  //     }
-  //   }
-  // }, [])
-
-  // if (typeof done !== 'undefined') {
-  //   if (done) {
-  //     setData(data.filter((x: API.AssignmentItem) => doneAssignment.includes(x.id)))
-  //   }else {
-  //     setData(data.filter((x: API.AssignmentItem) => !doneAssignment.includes(x.id)))
-  //   }
-  // }
-
   if (data.length > 0) {
     data.forEach((x: API.AssignmentItem) => {
       updateStatus(x)
@@ -120,7 +104,7 @@ const AssignmentList: React.FC<Props> = ({ classId, isTeacher, done }) => {
       // align: 'center'
     },
     {
-      title: 'Status',
+      title: 'Trạng thái',
       dataIndex: 'statusRender',
       // align: 'center',
       render: (value, record) => {

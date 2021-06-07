@@ -9,6 +9,7 @@ import AssignmentList from "../../assignments/component/AssignmentList";
 import { TrophyOutlined } from "@ant-design/icons";
 import FileUpload from "../../../components/classroom/FileUpload";
 import NotificationTab from "../../classrooms/component/NotificationTab";
+import { getClassById } from "../../../lib/classroom/getClassroomInfor";
 
 const ClassroomInfor: React.FC = () => {
     const router = useRouter()
@@ -20,16 +21,24 @@ const ClassroomInfor: React.FC = () => {
     const [userId, setUserId] = useState<number>()
     const [reloadRequest, setReloadRequest] = useState<boolean>(false)
     const [reloadStudent, setReloadStudent] = useState<boolean>(false)
+    const [canShow, setCanShow] = useState<boolean>(false)
 
     useEffect(() => {
+        const userId = parseInt(localStorage.getItem('userId'))
         setRole(localStorage.getItem('role'))
-        setUserId(parseInt(localStorage.getItem('userId')))
+        setUserId(userId)
+        if (!Number.isNaN(id) && id !== -1) {
+            getClassById(id).then(res => {
+                if (res.data.teacherId === userId) setCanShow(true)
+                else setCanShow(false)
+            })
+        }
     }, [])
 
     return (
         <MainLayout title="Thông tin lớp học">
             <ClassDetail id={id} isTeacher={true} />
-            <div className="site-layout-background content">
+            {canShow ? <div className="site-layout-background content">
                 <Tabs
                     defaultActiveKey="1"
                     tabBarExtraContent={<Tooltip title='Thống kê điểm danh và thành tích của học sinh'><Button key='2' type="primary" shape='round' icon={<TrophyOutlined />} onClick={() => {
@@ -72,14 +81,14 @@ const ClassroomInfor: React.FC = () => {
                             classId={id}
                         />
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="Files" key="4">
+                    <Tabs.TabPane tab="Tài liệu" key="4">
                         <FileUpload
                             isTeacher={true}
                             classId={id}
                         />
                     </Tabs.TabPane>
                 </Tabs>
-            </div>
+            </div> : null}
         </MainLayout>
     )
 }
