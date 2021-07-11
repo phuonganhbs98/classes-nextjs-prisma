@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import { deleteAssignment, findAll, getUndoneAssignments, updateStatus } from "../../../lib/assignment/assignment";
 import { formatDate } from "../../../lib/formatDate";
 import { API } from "../../../prisma/type/type";
-import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { EyeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { ColumnsType } from "antd/lib/table";
 import { calculateAveragePoint } from "../../../lib/achievement/achievement";
 import { getAllAnswer } from "../../../lib/answer/answer";
+import CreateModalForm from "./CreateModalForm";
 
 type Props = {
   classId: number,
@@ -22,6 +23,8 @@ const AssignmentList: React.FC<Props> = ({ classId, isTeacher, done }) => {
   const [checkReload, setCheckReload] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const [userId, setUserId] = useState<number>(-1)
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+
   let doneAssignment: number[] = []
   const router = useRouter()
   const pathname = isTeacher ? '/teachers/assignments' : '/students/assignments'
@@ -122,18 +125,33 @@ const AssignmentList: React.FC<Props> = ({ classId, isTeacher, done }) => {
     }
   ]
   return (
-    <Table<API.AssignmentItem>
-      columns={columns}
-      dataSource={assignments}
-      onChange={onChange}
-      pagination={{
-        total: total,
-        showTotal: total => `Tổng ${total} bài tập`,
-        defaultPageSize: 10,
-        defaultCurrent: 1
-      }}
-      rowKey={(record) => { return record.id.toString() }}
-    />
+    <>
+    <div style={{textAlign:'right', marginBottom:'10px'}}>{isTeacher?<Button
+            type='primary'
+            shape='round'
+            icon={<PlusOutlined />}
+            onClick={()=> setIsModalVisible(true)}
+          >
+            Tạo bài tập
+        </Button>:null}</div>
+      <Table<API.AssignmentItem>
+        columns={columns}
+        dataSource={assignments}
+        onChange={onChange}
+        pagination={{
+          total: total,
+          showTotal: total => `Tổng ${total} bài tập`,
+          defaultPageSize: 10,
+          defaultCurrent: 1
+        }}
+        rowKey={(record) => { return record.id.toString() }}
+      />
+      <CreateModalForm
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+        currentTabKey={classId}
+      />
+    </>
   )
 }
 

@@ -1,6 +1,8 @@
 import { Avatar, Divider, Table } from "antd"
 import { ColumnsType } from "antd/lib/table"
+import router from "next/router"
 import getAttendanceDetail from "../../../../lib/attendance/getAttendanceDetail"
+import { formatDate } from "../../../../lib/formatDate"
 import { API } from "../../../../prisma/type/type"
 
 const AttendanceStatistic: React.FC<{
@@ -40,6 +42,11 @@ const AttendanceStatistic: React.FC<{
             title: 'Tên học sinh',
             dataIndex: 'name',
             key: 'key',
+            render: (text, record) => {
+                return (
+                    <a onClick={()=> router.push(`/users/${record.id}`)}>{text}</a>
+                )
+            }
         },
         {
             title: 'Đi học',
@@ -77,7 +84,7 @@ const AttendanceStatistic: React.FC<{
                             <div
                                 key={`attendance detail ${record.id}`}
                                 style={{ marginLeft: '8%' }}
-                            >Ngày {x.time}: &nbsp;&nbsp;&nbsp;&nbsp;{x.status}<Divider /></div>
+                            >Ngày {formatDate(new Date(x.time), false) }: &nbsp;&nbsp;&nbsp;&nbsp;{x.status}<Divider /></div>
                         ]
                     }) : null
                     return (

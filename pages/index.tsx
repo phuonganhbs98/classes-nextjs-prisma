@@ -6,12 +6,14 @@ import { API } from "../prisma/type/type";
 import { getAllTimetableClass, getAllTimetableOfStu } from "../lib/timetable/timetable";
 import { useRouter } from "next/router";
 import Modal from "antd/lib/modal/Modal";
+import { useSession } from "next-auth/client";
 
 const localizer = momentLocalizer(moment);
 type Props = {};
 
 const Blog: React.FC<Props> = (props) => {
   const [events, setEvents] = useState<API.TimetableClassItem[]>([])
+  const [session, loading] = useSession();
   const [role, setRole] = useState<string>()
   const [userId, setUserId] = useState<number>(-1)
   const [event, setEvent] = useState<API.TimetableClassItem>()
@@ -20,7 +22,16 @@ const Blog: React.FC<Props> = (props) => {
   useEffect(() => {
     setUserId(parseInt(localStorage.getItem('userId')))
     setRole(localStorage.getItem('role'))
-  }, [])
+  }, [session])
+
+  // useEffect(() => {
+  //   console.log(session?.user.email);
+  //   if(session){
+  //     setUserId(session?.userId);
+  //     setRole(session?.role);
+  //   }
+    
+  // }, [session])
 
   const pathname = role === 'TEACHER' ? '/teachers/classrooms' : '/students/classrooms'
   useEffect(() => {
@@ -28,6 +39,8 @@ const Blog: React.FC<Props> = (props) => {
       if (role === 'TEACHER') {
         getAllTimetableClass({ teacherId: userId })
           .then(res => {
+            console.log(userId);
+            
             setEvents(res.map(({ start, end, ...rest }) => {
               return {
                 start: new Date(start),
@@ -40,6 +53,7 @@ const Blog: React.FC<Props> = (props) => {
       else {
         getAllTimetableOfStu({ studentId: userId })
           .then(res => {
+            console.log(userId);
             setEvents(res.map(({ start, end, ...rest }) => {
               return {
                 start: new Date(start),

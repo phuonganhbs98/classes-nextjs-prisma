@@ -55,7 +55,7 @@ const AchievementStatistic: React.FC<{
             dataIndex: 'name',
             render: (text, record) => {
                 return (
-                    <div>{record.student.name}</div>
+                    <a onClick={()=> router.push(`/users/${record.student.id}`)}>{record.student.name}</a>
                 )
             }
         },

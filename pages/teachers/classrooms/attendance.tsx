@@ -74,7 +74,7 @@ const Attendance: React.FC = () => {
             dataIndex: 'studentName',
             render: (text, record) => {
                 return (
-                    <div>{record.student.name}</div>
+                    <a onClick={()=> router.push(`/users/${record.studentId}`)}>{record.student.name}</a>
                 )
             }
         },
@@ -124,7 +124,10 @@ const Attendance: React.FC = () => {
                         fontSize: '30px',
                         fontWeight: 'bolder',
                         margin: '0 20px 0 2%',
-                    }}>Lớp {classroom?.name} </div>}
+                        cursor: 'pointer'
+                    }}
+                    onClick={()=> router.push(`/teachers/classrooms/${classroom?.id}`)}
+                    >{classroom?.name} </div>}
                     extra={[
                         <Button key='2' type="primary" shape='round' icon={<SaveOutlined />} onClick={() => handleUpdate()}>Lưu</Button>,
                     ]}
